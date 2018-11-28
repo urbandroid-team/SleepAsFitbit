@@ -1,0 +1,21 @@
+.sensor-label {
+  font-family: System-Regular;
+  fill: white;
+  text-anchor: middle;
+  text-length: 32;
+}
+
+.sensor-data {
+  font-family: System-Light;
+  fill: yellow;
+  text-anchor: middle;
+  text-length: 32;
+}
+
+#alarmScreen {
+  display: none;
+}
+.text-container {
+  /* width: 90%; */
+  x: 6;
+}

@@ -1,0 +1,40 @@
+<svg class="screen">
+  <svg id="trackingScreen" class="container" fill="black">
+
+    <use id="btn-br" href="#combo-button-lower-right" fill="fb-peach">
+      <set href="combo-button-icon" attributeName="href" to="icon.png"/>
+      <set href="combo-button-icon-press" attributeName="href" to="play_press.png"/>
+      <set href="combo-button-stroke" attributeName="display" to="inline"/>
+    </use>
+
+    <svg class="text-container">
+      <text y="10%+12" font-size="35" fill="white">Connecting.</text>
+      <text font-size="120" font-family="Seville-Condensed" fill="white">23:59</text><text x="$" font-size="50" font-family="Seville-Regular" fill="white">am</text>
+      <text y="100%-12" font-size="35" fill="white">Bell + time</text>
+    </svg>
+
+  </svg>
+
+  <svg id="alarmScreen" fill="white">
+
+    <use id="btn-tr" href="#combo-button-upper-right" fill="fb-red">
+      <set href="combo-button-icon" attributeName="href" to="icon.png"/>
+      <set href="combo-button-icon-press" attributeName="href" to="list_press.png"/>
+      <set href="combo-button-stroke" attributeName="display" to="inline"/>
+    </use>
+
+    <use id="btn-br" href="#combo-button-lower-right" fill="fb-peach">
+      <set href="combo-button-icon" attributeName="href" to="icon.png"/>
+      <set href="combo-button-icon-press" attributeName="href" to="play_press.png"/>
+      <set href="combo-button-stroke" attributeName="display" to="inline"/>
+    </use>
+
+  </svg>
+
+
+  <!-- <text id="accel-label" class="sensor-label" x="50%" y="30">accelerometer</text>
+  <text id="accel-data" class="sensor-data" x="50%" y="65">{ ... }</text>
+  <text id="hrm-label" class="sensor-label" x="50%" y="190">heart rate</text>
+  <text id="hrm-data" class="sensor-data" x="50%" y="225">{ ... }</text> -->
+
+</svg>
