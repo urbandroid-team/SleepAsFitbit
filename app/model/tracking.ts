@@ -1,13 +1,15 @@
 export class Tracking {
-  constructor() {
-    this.tracking = false
-    this.tracking_paused = false
-  }
+  private _tracking:boolean = false
+  private _hr_tracking:boolean = false
+  private _tracking_paused:boolean = false
 
-  isTracking() { return this.tracking }
-  isTrackingPaused() { return this.tracking_paused }
+  get isTracking(): boolean { return this._tracking; }
+  set setTracking(state: boolean) { this._tracking = state;}
 
-  setTracking(state:boolean) { this.tracking = state }
-  setTrackingPaused(state:boolean) { this.tracking_paused = state }
+  get isHrTracking(): boolean { return this._hr_tracking; }
+  set setHrTracking(state: boolean) { this._hr_tracking = state;}
+
+  get isTrackingPaused(): boolean { return this._tracking_paused; }
+  set setTrackingPaused(state: boolean) { this._tracking_paused = state;}
 
 }
