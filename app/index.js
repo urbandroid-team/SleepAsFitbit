@@ -8,14 +8,14 @@ import * as messaging from "messaging";
 import clock from "clock";
 import { Context } from "./controller/context";
 import { MsgManager } from "./controller/msgManager";
+import { UIManager } from "./view/uiManager";
 
 var debug = true;
 var fitbitSdk = 2;
 
 var context = new Context()
 
-let clockElement = document.getElementById("clock");
-clock.granularity = 'minutes';
+new UIManager().initializeClock()
 
 if (debug) {
   display.autoOff = false;
@@ -28,10 +28,6 @@ if (fitbitSdk > 1) {
   }
 }
 
-clock.ontick = function (evt) {
-  clockElement.text = ("0" + evt.date.getHours()).slice(-2) + ":" +
-  ("0" + evt.date.getMinutes()).slice(-2)
-};
 
 let msgManager = new MsgManager(context)
 msgManager.startCompanionCommChannel()

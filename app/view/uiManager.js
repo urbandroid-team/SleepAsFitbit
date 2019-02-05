@@ -47,4 +47,15 @@ export class UIManager {
     status.text = ""
   }
 
+  initializeClock() {
+    let clockElement = document.getElementById("clock");
+    clock.granularity = 'minutes';
+
+    clock.ontick = function (evt) {
+      clockElement.text = ("0" + evt.date.getHours()).slice(-2) + ":" +
+        ("0" + evt.date.getMinutes()).slice(-2)
+    };
+  }
+
+
 }
