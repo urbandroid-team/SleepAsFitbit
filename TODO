@@ -1,0 +1,10 @@
+Model
+  - stavy
+
+Controller
+  - vstupy od senzoru?
+
+
+
+View
+  - UI, vstupy od uzivatele
