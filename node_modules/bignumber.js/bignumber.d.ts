@@ -1,4 +1,4 @@
-// Type definitions for bignumber.js >=6.0.0
+// Type definitions for bignumber.js >=8.0.0
 // Project: https://github.com/MikeMcl/bignumber.js
 // Definitions by: Michael Mclaughlin <https://github.com/MikeMcl>
 // Definitions: https://github.com/MikeMcl/bignumber.js
@@ -163,6 +163,9 @@ export namespace BigNumber {
      * See `BigNumber.random`.
      *
      * ```ts
+     * // Node.js
+     * global.crypto = require('crypto')
+     *
      * BigNumber.config({ CRYPTO: true })
      * BigNumber.config().CRYPTO       // true
      * BigNumber.random()              // 0.54340758610486147524
@@ -236,6 +239,8 @@ export namespace BigNumber {
      * ```ts
      * BigNumber.config({
      *   FORMAT: {
+     *     // string to prepend
+     *     prefix: '',
      *     // the decimal separator
      *     decimalSeparator: '.',
      *     // the grouping separator of the integer part
@@ -247,7 +252,9 @@ export namespace BigNumber {
      *     // the grouping separator of the fraction part
      *     fractionGroupSeparator: ' ',
      *     // the grouping size of the fraction part
-     *     fractionGroupSize: 0
+     *     fractionGroupSize: 0,
+     *     // string to append
+     *     suffix: ''
      *   }
      * })
      * ```
@@ -255,13 +262,14 @@ export namespace BigNumber {
     FORMAT?: BigNumber.Format;
 
     /**
-     * A string representing the alphabet used for base conversion.
+     * The alphabet used for base conversion. The length of the alphabet corresponds to the maximum
+     * value of the base argument that can be passed to the BigNumber constructor or `toString`.
+     *  
      * Default value: `'0123456789abcdefghijklmnopqrstuvwxyz'`.
      *
-     * The length of the alphabet corresponds to the maximum value of the base argument that can be
-     * passed to the BigNumber constructor or `toString`. There is no maximum length, but it must be
-     * at least 2 characters long, and it must not contain a repeated character, or `'.'` - the
-     * decimal separator for all values whatever their base.
+     * There is no maximum length for the alphabet, but it must be at least 2 characters long,
+     * and it must not contain whitespace or a repeated character, or the sign indicators '+' and
+     * '-', or the decimal separator '.'. 
      *
      * ```ts
      * // duodecimal (base 12)
@@ -280,6 +288,11 @@ export namespace BigNumber {
    * See `FORMAT` and `toFormat`.
    */
   export interface Format {
+
+    /**
+     * The string to prepend.
+     */
+    prefix?: string;
 
     /**
      * The decimal separator.
@@ -310,6 +323,11 @@ export namespace BigNumber {
      * The grouping size of the fraction part.
      */
     fractionGroupSize?: number;
+
+    /**
+     * The string to append.
+     */
+    suffix?: string;
   }
 
   export type Instance = BigNumber;
@@ -644,6 +662,7 @@ export declare class BigNumber {
    * @param n The exponent, an integer.
    * @param [m] The modulus.
    */
+  exponentiatedBy(n: BigNumber.Value, m?: BigNumber.Value): BigNumber;
   exponentiatedBy(n: number, m?: BigNumber.Value): BigNumber;
 
   /**
@@ -677,6 +696,7 @@ export declare class BigNumber {
    * @param n The exponent, an integer.
    * @param [m] The modulus.
    */
+  pow(n: BigNumber.Value, m?: BigNumber.Value): BigNumber;
   pow(n: number, m?: BigNumber.Value): BigNumber;
 
   /**
@@ -1259,7 +1279,8 @@ export declare class BigNumber {
    * @param [decimalPlaces] Decimal places, integer, 0 to 1e+9.
    * @param [roundingMode] Rounding mode, integer, 0 to 8.
    */
-  toExponential(decimalPlaces?: number, roundingMode?: BigNumber.RoundingMode): string;
+  toExponential(decimalPlaces: number, roundingMode?: BigNumber.RoundingMode): string;
+  toExponential(): string;
 
   /**
    * Returns a string representing the value of this BigNumber in normal (fixed-point) notation
@@ -1296,63 +1317,77 @@ export declare class BigNumber {
    * @param [decimalPlaces] Decimal places, integer, 0 to 1e+9.
    * @param [roundingMode] Rounding mode, integer, 0 to 8.
    */
-  toFixed(decimalPlaces?: number, roundingMode?: BigNumber.RoundingMode): string;
+  toFixed(decimalPlaces: number, roundingMode?: BigNumber.RoundingMode): string;
+  toFixed(): string;
 
   /**
    * Returns a string representing the value of this BigNumber in normal (fixed-point) notation
    * rounded to `decimalPlaces` decimal places using rounding mode `roundingMode`, and formatted
-   * according to the properties of the `FORMAT` object.
+   * according to the properties of the `format` or `FORMAT` object.
    *
-   * The properties of the `FORMAT` object are shown in the examples below.
+   * The formatting object may contain some or all of the properties shown in the examples below.
    *
    * If `decimalPlaces` is omitted or is `null` or `undefined`, then the return value is not
    * rounded to a fixed number of decimal places.
    *
    * If `roundingMode` is omitted or is `null` or `undefined`, `ROUNDING_MODE` is used.
    *
-   * Throws if `decimalPlaces` or `roundingMode` is invalid.
+   * If `format` is omitted or is `null` or `undefined`, `FORMAT` is used.
+   *
+   * Throws if `decimalPlaces`, `roundingMode`, or `format` is invalid.
    *
    * ```ts
-   * format = {
-   *     decimalSeparator: '.',
-   *     groupSeparator: ',',
-   *     groupSize: 3,
-   *     secondaryGroupSize: 0,
-   *     fractionGroupSeparator: ' ',
-   *     fractionGroupSize: 0
+   * fmt = {
+   *   decimalSeparator: '.',
+   *   groupSeparator: ',',
+   *   groupSize: 3,
+   *   secondaryGroupSize: 0,
+   *   fractionGroupSeparator: ' ',
+   *   fractionGroupSize: 0
    * }
-   * BigNumber.config({ FORMAT: format })
    *
    * x = new BigNumber('123456789.123456789')
-   * x.toFormat()                    // '123,456,789.123456789'
-   * x.toFormat(1)                   // '123,456,789.1'
    *
-   * format.groupSeparator = ' '
-   * format.fractionGroupSize = 5
-   * x.toFormat()                    // '123 456 789.12345 6789'
+   * // Set the global formatting options
+   * BigNumber.config({ FORMAT: fmt })
    *
-   * BigNumber.config({
-   *     FORMAT: {
-   *         decimalSeparator: ',',
-   *         groupSeparator: '.',
-   *         groupSize: 3,
-   *         secondaryGroupSize: 2
-   *     }
-   * })
+   * x.toFormat()                              // '123,456,789.123456789'
+   * x.toFormat(3)                             // '123,456,789.123'
    *
-   * x.toFormat(6)                   // '12.34.56.789,123'
+   * // If a reference to the object assigned to FORMAT has been retained,
+   * // the format properties can be changed directly
+   * fmt.groupSeparator = ' '
+   * fmt.fractionGroupSize = 5
+   * x.toFormat()                              // '123 456 789.12345 6789'
+   *
+   * // Alternatively, pass the formatting options as an argument
+   * fmt = {
+   *   decimalSeparator: ',',
+   *   groupSeparator: '.',
+   *   groupSize: 3,
+   *   secondaryGroupSize: 2
+   * }
+   *
+   * x.toFormat()                              // '123 456 789.12345 6789'
+   * x.toFormat(fmt)                           // '12.34.56.789,123456789'
+   * x.toFormat(2, fmt)                        // '12.34.56.789,12'
+   * x.toFormat(3, BigNumber.ROUND_UP, fmt)    // '12.34.56.789,124'
    * ```
    *
    * @param [decimalPlaces] Decimal places, integer, 0 to 1e+9.
    * @param [roundingMode] Rounding mode, integer, 0 to 8.
+   * @param [format] Formatting options object. See `BigNumber.Format`.
    */
-  toFormat(decimalPlaces?: number, roundingMode?: BigNumber.RoundingMode): string;
+  toFormat(decimalPlaces: number, roundingMode: BigNumber.RoundingMode, format?: BigNumber.Format): string;
+  toFormat(decimalPlaces: number, roundingMode?: BigNumber.RoundingMode): string;
+  toFormat(decimalPlaces?: number): string;
+  toFormat(decimalPlaces: number, format: BigNumber.Format): string;
+  toFormat(format: BigNumber.Format): string;
 
   /**
-   * Returns a string array representing the value of this BigNumber as a simple fraction with an
-   * integer numerator and an integer denominator. The denominator will be a positive non-zero value
-   * less than or equal to `max_denominator`.
-   *
+   * Returns an array of two BigNumbers representing the value of this BigNumber as a simple
+   * fraction with an integer numerator and an integer denominator.
+   * The denominator will be a positive non-zero value less than or equal to `max_denominator`.
    * If a maximum denominator, `max_denominator`, is not specified, or is `null` or `undefined`, the
    * denominator will be the lowest value necessary to represent the number exactly.
    *
@@ -1373,7 +1408,7 @@ export declare class BigNumber {
    *
    * @param [max_denominator] The maximum denominator, integer > 0, or Infinity.
    */
-  toFraction(max_denominator?: BigNumber.Value): BigNumber[];
+  toFraction(max_denominator?: BigNumber.Value): [BigNumber, BigNumber];
 
   /**
    * As `valueOf`.
@@ -1430,7 +1465,8 @@ export declare class BigNumber {
    * @param [significantDigits] Significant digits, integer, 1 to 1e+9.
    * @param [roundingMode] Rounding mode, integer 0 to 8.
    */
-  toPrecision(significantDigits?: number, roundingMode?: BigNumber.RoundingMode): string;
+  toPrecision(significantDigits: number, roundingMode?: BigNumber.RoundingMode): string;
+  toPrecision(): string;
 
   /**
    * Returns a string representing the value of this BigNumber in base `base`, or base 10 if `base`
@@ -1565,13 +1601,10 @@ export declare class BigNumber {
    *
    * @param value The value to test.
    */
-  static isBigNumber(value: any): boolean;
+  static isBigNumber(value: any): value is BigNumber;
 
   /**
-   *
    * Returns a BigNumber whose value is the maximum of the arguments.
-   *
-   * Accepts either an argument list or an array of values.
    *
    * The return value is always exact and unrounded.
    *
@@ -1580,7 +1613,7 @@ export declare class BigNumber {
    * BigNumber.maximum(4e9, x, '123456789.9')      // '4000000000'
    *
    * arr = [12, '13', new BigNumber(14)]
-   * BigNumber.maximum(arr)                        // '14'
+   * BigNumber.maximum.apply(null, arr)            // '14'
    * ```
    *
    * @param n A numeric value.
@@ -1590,8 +1623,6 @@ export declare class BigNumber {
   /**
    * Returns a BigNumber whose value is the maximum of the arguments.
    *
-   * Accepts either an argument list or an array of values.
-   *
    * The return value is always exact and unrounded.
    *
    * ```ts
@@ -1599,7 +1630,7 @@ export declare class BigNumber {
    * BigNumber.max(4e9, x, '123456789.9')      // '4000000000'
    *
    * arr = [12, '13', new BigNumber(14)]
-   * BigNumber.max(arr)                        // '14'
+   * BigNumber.max.apply(null, arr)            // '14'
    * ```
    *
    * @param n A numeric value.
@@ -1609,8 +1640,6 @@ export declare class BigNumber {
   /**
    * Returns a BigNumber whose value is the minimum of the arguments.
    *
-   * Accepts either an argument list or an array of values.
-   *
    * The return value is always exact and unrounded.
    *
    * ```ts
@@ -1618,7 +1647,7 @@ export declare class BigNumber {
    * BigNumber.minimum(4e9, x, '123456789.9')          // '123456789.9'
    *
    * arr = [2, new BigNumber(-14), '-15.9999', -12]
-   * BigNumber.minimum(arr)                            // '-15.9999'
+   * BigNumber.minimum.apply(null, arr)                // '-15.9999'
    * ```
    *
    * @param n A numeric value.
@@ -1628,8 +1657,6 @@ export declare class BigNumber {
   /**
    * Returns a BigNumber whose value is the minimum of the arguments.
    *
-   * Accepts either an argument list or an array of values.
-   *
    * The return value is always exact and unrounded.
    *
    * ```ts
@@ -1637,7 +1664,7 @@ export declare class BigNumber {
    * BigNumber.min(4e9, x, '123456789.9')             // '123456789.9'
    *
    * arr = [2, new BigNumber(-14), '-15.9999', -12]
-   * BigNumber.min(arr)                               // '-15.9999'
+   * BigNumber.min.apply(null, arr)                   // '-15.9999'
    * ```
    *
    * @param n A numeric value.
@@ -1655,6 +1682,13 @@ export declare class BigNumber {
    * either `Math.random` (fastest), `crypto.getRandomValues` (Web Cryptography API in recent
    * browsers) or `crypto.randomBytes` (Node.js).
    *
+   * To be able to set `CRYPTO` to true when using Node.js, the `crypto` object must be available
+   * globally:
+   *
+   * ```ts
+   * global.crypto = require('crypto')
+   * ```
+   *
    * If `CRYPTO` is true, i.e. one of the `crypto` methods is to be used, the value of a returned
    * BigNumber should be cryptographically secure and statistically indistinguishable from a random
    * value.
@@ -1670,6 +1704,23 @@ export declare class BigNumber {
    * @param [decimalPlaces] Decimal places, integer, 0 to 1e+9.
    */
   static random(decimalPlaces?: number): BigNumber;
+
+  /**
+   * Returns a BigNumber whose value is the sum of the arguments.
+   *
+   * The return value is always exact and unrounded.
+   *
+   * ```ts
+   * x = new BigNumber('3257869345.0378653')
+   * BigNumber.sum(4e9, x, '123456789.9')      // '7381326134.9378653'
+   *
+   * arr = [2, new BigNumber(14), '15.9999', 12]
+   * BigNumber.sum.apply(null, arr)            // '43.9999'
+   * ```
+   *
+   * @param n A numeric value.
+   */
+  static sum(...n: BigNumber.Value[]): BigNumber;
 
   /**
    * Configures the settings that apply to this BigNumber constructor.
@@ -1769,7 +1820,7 @@ export declare class BigNumber {
   /**
    * To aid in debugging, if a `BigNumber.DEBUG` property is `true` then an error will be thrown
    * on an invalid `BigNumber.Value`.
-   * 
+   *
    * ```ts
    * // No error, and BigNumber NaN is returned.
    * new BigNumber('blurgh')    // 'NaN'
@@ -1778,20 +1829,20 @@ export declare class BigNumber {
    * new BigNumber('blurgh')    // '[BigNumber Error] Not a number'
    * new BigNumber(9, 2)        // '[BigNumber Error] Not a base 2 number'
    * ```
-   * 
+   *
    * An error will also be thrown if a `BigNumber.Value` is of type number with more than 15
    * significant digits, as calling `toString` or `valueOf` on such numbers may not result
    * in the intended value.
-   * 
+   *
    * ```ts
    * console.log(823456789123456.3)       //  823456789123456.2
    * // No error, and the returned BigNumber does not have the same value as the number literal.
    * new BigNumber(823456789123456.3)     // '823456789123456.2'
    * BigNumber.DEBUG = true
-   * new BigNumber(823456789123456.3)     
+   * new BigNumber(823456789123456.3)
    * // '[BigNumber Error] Number primitive has more than 15 significant digits'
    * ```
-   * 
+   *
    */
   static DEBUG?: boolean;
 }

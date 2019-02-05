@@ -1,50 +1,36 @@
 import document from "document";
 import { display } from "display";
-import { inspect } from '../common/utils';
 import { me as device } from "device";
 import { me } from 'appbit'
 import * as m from './msgCommons'
 import * as messaging from "messaging";
-
+import clock from "clock";
+import { Context } from "./controller/context";
+import { MsgManager } from "./controller/msgManager";
 
 var debug = true;
-var sdkv2 = true;
+var fitbitSdk = 2;
+
+var context = new Context()
+
+let clockElement = document.getElementById("clock");
+clock.granularity = 'minutes';
 
 if (debug) {
   display.autoOff = false;
   display.on = true;
 }
 
-if (sdkv2) {
+if (fitbitSdk > 1) {
   if (me.appTimeoutEnabled) {
     me.appTimeoutEnabled = false;
   }
 }
 
-// m.initCompanionMessaging();
+clock.ontick = function (evt) {
+  clockElement.text = ("0" + evt.date.getHours()).slice(-2) + ":" +
+  ("0" + evt.date.getMinutes()).slice(-2)
+};
 
-
-
-
-testTimeout()
-
-
-function testTimeout() {
-  console.log("testTimeout")
-  setTimeout(() => {
-    console.log("tick Timeout")
-    // changeToAlarmScreen()
-  }, 2000)
-  setInterval(() => {console.log("tick Interval")}, 1000)
-}
-
-function changeToAlarmScreen() {
-  console.log("changing to alarm screen")
-
-  let al = document.getElementById("alarmScreen")
-  let tr = document.getElementById("trackingScreen")
-
-
-  al.style.display = "inline"
-  tr.style.display = "none"
-}
+let msgManager = new MsgManager(context)
+msgManager.startCompanionCommChannel()

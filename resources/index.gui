@@ -1,4 +1,5 @@
 <svg class="screen">
+
   <svg id="trackingScreen" class="container" fill="black">
 
     <use id="btn-br" href="#combo-button-lower-right" fill="fb-peach">
@@ -8,9 +9,10 @@
     </use>
 
     <svg class="text-container">
-      <text y="10%+12" font-size="35" fill="white">Connecting.</text>
-      <text font-size="120" font-family="Seville-Condensed" fill="white">23:59</text><text x="$" font-size="50" font-family="Seville-Regular" fill="white">am</text>
-      <text y="100%-12" font-size="35" fill="white">Bell + time</text>
+      <text id="status" y="10%+12" font-size="35" fill="white">Connecting...</text>
+      <text id="clock" font-size="120" font-family="Seville-Condensed" fill="white">00:00</text>
+      <!-- <text x="$" font-size="50" font-family="Seville-Regular" fill="white">am</text> -->
+      <text id="alarmTime" y="100%-12" font-size="35" fill="white">🔕</text>
     </svg>
 
   </svg>
@@ -24,7 +26,7 @@
     </use>
 
     <use id="btn-br" href="#combo-button-lower-right" fill="fb-peach">
-      <set href="combo-button-icon" attributeName="href" to="icon.png"/>
+      <set href="combo-button-icon" attributeName="href" to="play.png"/>
       <set href="combo-button-icon-press" attributeName="href" to="play_press.png"/>
       <set href="combo-button-stroke" attributeName="display" to="inline"/>
     </use>

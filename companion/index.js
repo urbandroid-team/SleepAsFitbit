@@ -1,50 +1,64 @@
 import * as messaging from "messaging";
 import { me } from "companion";
+import { MsgQueue } from "../common/msgQueue";
 
-const POLLING_INTERVAL = 1000
-var pollingTimer
+const POLLING_INTERVAL = 2000
+var sleepCommTimer
+let queueToSleep = new MsgQueue()
 
-initializeWatchMessaging();
-startPolling();
+startWatchCommChannel();
+startSleepCommChannel();
 
-function startPolling() {
-  console.log("start polling")
-  pollingTimer = setInterval(function(){sendMessageToPhone("poll", "0")}, POLLING_INTERVAL)
+function startSleepCommChannel() {
+  console.log("startSleepCommChannel")
+  sleepCommTimer = setInterval(() => {
+    // queueToSleep.logQueue()
+    if (queueToSleep.getMsgCount() > 0) {
+      let nextMsg = queueToSleep.getNextMessage()
+      sendMessageToSleep(nextMsg[0], nextMsg[1])
+    } else {
+      sendMessageToSleep('poll', '0')
+    }
+  }, POLLING_INTERVAL);
 }
 
-function stopPolling() {
-  clearInterval(pollingTimer)
+function stopSleepCommChannel() {
+  clearInterval(sleepCommTimer)
 }
 
 function sendMessageToWatch(message) {
-  console.log("sendMessageToWatch")
-  console.log(message)
+  console.log("sendMessageToWatch: " + message)
   if (messaging.peerSocket.readyState === messaging.peerSocket.OPEN) {
     console.log("sendMessageToWatch peerSocket open")
       messaging.peerSocket.send(message);
+      // TODO vyresit error stav - preposilani
   }
 }
 
-function sendMessageToPhone(command, data) {
-  // console.log("sendMessageToPhone")
-
-  fetch('http://localhost:1764/' + command + '?data=' + data)
+function sendMessageToSleep(command, data) {
+  console.log("sendMessageToSleep")
+  // console.log("sendMessageToSleep: " + command)
+  let url = 'http://localhost:1764/' + command + '?data=' + data
+  // console.log('url ' + url)
+  fetch(url)
   .then(function(response) { return response.text(); })
   .then(function(msg) {
-    // console.log('Companion: sendMessageToPhone successful, collecting incoming mail...');
-    // console.log(msg);
-
-    // to prevent unnecessary messaging over bt, we throw away empty messages
-    if (msg.length > 2) { sendMessageToWatch(msg) }
+    console.log('sendMessageToSleep success, collecting incoming mail: ' + msg);
+    let msgArray = JSON.parse(msg)
+    msgArray.forEach(message => {
+      sendMessageToWatch(message)
+      // console.log("Element " + element['name'])
+      // console.log("Element " + element['data'])
+    });
   })
   .catch(function(error) {
     // this most probably means server on phone is not started
     // TODO: what to do? Probably show something on the watch, like "start tracking on the phone"
-    // console.error(error)
+    console.error("sendMessageToSleep err " + error)
   });
 }
 
-function initializeWatchMessaging(){
+function startWatchCommChannel(){
   messaging.peerSocket.onopen = () => {
   }
 
@@ -53,7 +67,8 @@ function initializeWatchMessaging(){
   }
 
   messaging.peerSocket.onmessage = (evt) => {
-    console.log("Received from watch: " + JSON.stringify(evt.data));
-    sendMessageToPhone(evt.data.command, evt.data.data)
+    console.log("Received from watch");
+    // console.log("Received from watch: " + JSON.stringify(evt.data));
+    queueToSleep.addToQueue(evt.data.command, evt.data.data)
   }
 }

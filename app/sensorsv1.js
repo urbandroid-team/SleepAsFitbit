@@ -6,7 +6,6 @@ import { me } from "appbit";
 import * as d from './dataCommons'
 
 export class Acc {
-
   constructor() {
     this.DATA_PERIOD = 10 * 1000
 
@@ -66,7 +65,6 @@ export class Acc {
 }
 
 export class Hr {
-
   constructor() {
     this.HR_RESTART_PERIOD = 5 * 60 * 1000;
 

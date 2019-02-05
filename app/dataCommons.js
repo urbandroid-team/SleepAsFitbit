@@ -1,3 +1,5 @@
+import * as scientific from "scientific";
+
 // used for accelerometer DATA
 export function computeMaxDiffFromArray(xArr, yArr, zArr) {
   var result = [];
@@ -7,7 +9,7 @@ export function computeMaxDiffFromArray(xArr, yArr, zArr) {
     xDiff = Math.abs(Number((xArr[i + 1] - xArr[i])));
     yDiff = Math.abs(Number((yArr[i + 1] - yArr[i])));
     zDiff = Math.abs(Number((zArr[i + 1] - zArr[i])));
-    result.push(xDiff + yDiff + zDiff);
+    result.push((xDiff + yDiff + zDiff).toFixed(4));
   }
   return result;
 }
@@ -15,9 +17,9 @@ export function computeMaxDiffFromArray(xArr, yArr, zArr) {
 // used for accelerometer NEW_DATA
 export function computeMaxRawFromArray(xArr, yArr, zArr) {
   var res = xArr.map(function (x, i) {
-    return sqrt((x * x) + (yArr[i] * yArr[i]) + (zArr[i] * zArr[i]));
+    return Math.sqrt((x * x) + (yArr[i] * yArr[i]) + (zArr[i] * zArr[i]));
   })
-  return max(res);
+  return scientific.max(res).toFixed(4);
 }
 
 // Used for heart rates
@@ -33,5 +35,5 @@ export function computeMaxDiff(x,y,z,lastX,lastY,lastZ) {
 
 // used for accelerometer NEW_DATA
 export function computeMaxRaw(x,y,z) {
-  return Math.sqrt((x * x) + (y * y) + (z * z));
+  return scientific.sqrt((x * x) + (y * y) + (z * z));
 }
