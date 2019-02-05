@@ -1,15 +1,8 @@
 import { vibration } from "haptics";
 
-let instance = null
-
-// Singleton
 export class VibrationPlayer {
 
   constructor() {
-    if (instance) {
-      return instance;
-    }
-    this.instance = this
     this.playing = false
   }
 
@@ -39,7 +32,6 @@ export class VibrationPlayer {
         vibration.start(pattern)
       }, 1000);
     }
-
   }
 
   stop() {
