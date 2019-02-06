@@ -1,6 +1,12 @@
 import document from "document";
+import clock from 'clock';
 
 export class UIManager {
+  alarmScreen:any
+  trackingScreen:any
+  alarmTime:any
+  status:any
+
   constructor() {
     this.alarmScreen = document.getElementById("alarmScreen")
     this.trackingScreen = document.getElementById("trackingScreen")
@@ -10,41 +16,41 @@ export class UIManager {
 
   changeToAlarmScreen() {
     console.log("UI: alarm screen")
-    alarmScreen.style.display = "inline"
-    trackingScreen.style.display = "none"
+    this.alarmScreen.style.display = "inline"
+    this.trackingScreen.style.display = "none"
   }
 
   changeToTrackingScreen() {
     console.log("UI: tracking screen")
-    alarmScreen.style.display = "none"
-    trackingScreen.style.display = "inline"
+    this.alarmScreen.style.display = "none"
+    this.trackingScreen.style.display = "inline"
   }
 
-  setAlarmTime(timestamp) {
+  setAlarmTime(timestamp:any) {
     console.log("UI: setting alarm")
     if (timestamp) {
-      alarmTime.text = "🔔" + timestamp
+      this.alarmTime.text = "🔔" + timestamp
     } else {
-      alarmTime.text = "🔕"
+      this.alarmTime.text = "🔕"
     }
 
   }
   clearAlarmTime() {
     console.log("UI: clearing alarm")
-    alarmTime.text = "No alarm"
+    this.alarmTime.text = "No alarm"
   }
 
   setStatusPause() {
     console.log("UI: status pause")
-    status.text = "Pause"
+    this.status.text = "Pause"
   }
   setStatusTracking() {
     console.log("UI: status tracking")
-    status.text = "Tracking..."
+    this.status.text = "Tracking..."
   }
 
   setStatusConnectionError() {
-    status.text = ""
+    this.status.text = ""
   }
 
   initializeClock() {

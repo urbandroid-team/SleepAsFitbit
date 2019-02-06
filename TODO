@@ -3,8 +3,14 @@ Model
 
 Controller
   - vstupy od senzoru?
-
+  - business logic
+  - bude si drzet context a na nem mit UI
 
 
 View
   - UI, vstupy od uzivatele
+
+
+
+  CONTEXT
+  - probublava celou appkou

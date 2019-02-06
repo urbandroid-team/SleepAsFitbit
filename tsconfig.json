@@ -1,0 +1,24 @@
+{
+  "compilerOptions": {
+    "target": "es6",
+    "module": "umd",
+    "lib": [
+      "es5",
+      "es2015.collection",
+      "es2015.iterable",
+      "es2015.promise"
+    ],
+    "allowJs": false,
+    "jsx": "react",
+    "sourceMap": false,
+    "esModuleInterop": true,
+    "strict": true,
+    "noImplicitAny": true
+  },
+  "files": [],
+  "include": [
+    "node_modules/fitbit-sdk-types/types",
+    "**/*.ts",
+    "**/*.tsx"
+  ]
+}

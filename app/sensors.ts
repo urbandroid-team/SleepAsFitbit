@@ -2,9 +2,10 @@
 
 import { Accelerometer } from "accelerometer"
 import { HeartRateSensor } from "heart-rate"
-import * as d from '../dataCommons'
+import * as d from 'dataCommons'
 
 export class Acc {
+  acc: Accelerometer
 
   constructor() {
     // 10 readings per second, 100 readings per batch
@@ -12,7 +13,7 @@ export class Acc {
     this.acc = new Accelerometer({ frequency: 10, batch: 100 });
   }
 
-  startSensor(receiver) {
+  startSensor(receiver: any) {
     this.acc.onreading = () => {
       receiver(
         d.computeMaxDiffFromArray(this.acc.readings.x, this.acc.readings.y, this.acc.readings.z),
@@ -29,21 +30,26 @@ export class Acc {
 }
 
 export class Hr {
+
+  static get HR_RESTART_PERIOD() { return 5 * 60 * 1000 }
+
+  hrm: HeartRateSensor
+  hrArr: any[]
+
   constructor() {
-    this.HR_RESTART_PERIOD = 5 * 60 * 1000
     this.hrm = new HeartRateSensor()
     this.hrArr = []
   }
 
-  startSensor(receiver) {
+  startSensor(receiver: any) {
     console.log("Started HR reading")
     this.hrm.onreading = () => {
-      this.hrArr = this.hrm.heartRate
+      this.hrArr.push(this.hrm.heartRate)
     }
 
     if (this.hrArr.length > 9) {
       this.stopSensor()
-      this.scheduleSensorRestart(this.HR_RESTART_PERIOD)
+      this.scheduleSensorRestart(Hr.HR_RESTART_PERIOD)
       receiver(d.computeMedianFromArray(this.hrArr))
       this.hrArr.length = 0
     }
@@ -55,13 +61,7 @@ export class Hr {
     this.hrm.stop()
   }
 
-  scheduleSensorRestart(delayMilliseconds) {
-    setTimeout(this.hrm.start(), delayMilliseconds)
+  scheduleSensorRestart(delayMilliseconds:number) {
+    setTimeout(() => { this.hrm.start() }, delayMilliseconds)
   }
-}
-
-export function stopAllSensors(sensorArr) {
-  sensorArr.forEach(sensor => {
-    if (sensor != null) { sensor.stopSensor() }
-  });
 }

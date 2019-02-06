@@ -1,13 +1,11 @@
 export class MsgQueue {
+  queue:any[]
+
   constructor() {
-    // if (instance) {
-    //   return instance;
-    // }
-    // this.instance = this
     this.queue = []
   }
 
-  addToQueue(command, data) {
+  addToQueue(command:string, data:any) {
     this.queue.push([command, data])
   }
 

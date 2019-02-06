@@ -1,12 +1,5 @@
-import { MsgQueue } from "../../common/msgQueue";
-// import * as messaging from "messaging";
-import * as messaging from "messaging";
-import { Hr, Acc, stopAllSensors } from './sensorsController'
-import { me } from 'appbit'
-import { AlarmManager } from "./alarmManager";
-import * as ui from '../view/uiManager'
-import { VibrationPlayer } from "./vibrationPlayer";
-import { Context } from "./context";
+import * as messaging from "messaging"
+import { Context } from "./context"
 
 export class MsgManager {
   // Static constants
@@ -31,11 +24,10 @@ export class MsgManager {
   static get FITBIT_MESSAGE_HINT() { return "hint" }
   static get FITBIT_MESSAGE_SUSPEND() { return "suspend" }
 
-  constructor(context) {
-    this.ctx = context
+  ctx:Context
 
-    this.queue = new MsgQueue()
-    this.batch_size = 12
+  constructor(context: Context) {
+    this.ctx = context
   }
 
   startCompanionCommChannel() {
@@ -57,16 +49,20 @@ export class MsgManager {
   }
 
   startOutMessagingTimer() {
-    startTracking(true)
+    let that = this
+    let queue = this.ctx.queue
+
+    this.ctx.businessController.startTracking(true)
+
     setInterval(function () {
-      if (this.queue.getMsgCount() > 0) {
-        let nextMsg = this.queue.getNextMessage()
-        this.sendToCompanion(nextMsg[0], nextMsg[1])
+      if (queue.getMsgCount() > 0) {
+        let nextMsg = queue.getNextMessage()
+        that.sendToCompanion(nextMsg[0], nextMsg[1])
       }
-    }, MESSAGING_INTERVAL)
+    }, MsgManager.MESSAGING_INTERVAL)
   }
 
-  sendToCompanion(command, data) {
+  sendToCompanion(command:string, data:any) {
     console.log(">>ToCompanion " + command + " " + data)
     try {
       if (messaging.peerSocket.readyState === messaging.peerSocket.OPEN) {
@@ -80,120 +76,47 @@ export class MsgManager {
     }
   }
 
-  handleIncomingMessageArray(msgArray) {
+  handleIncomingMessageArray(msgArray:any[]) {
     for (let msg of msgArray) {
       console.log("Received from companion: " + msg.name + ' ' + msg.data);
       this.handleIncomingMessage(msg)
     }
   }
 
-  handleIncomingMessage(msg) {
+  handleIncomingMessage(msg:any) {
     switch (msg.name) {
       case MsgManager.FITBIT_MESSAGE_START_TRACK:
-        (msg.data == "DO_HR_MONITORING") ? this.startTracking(true) : this.startTracking(false)
+        (msg.data == "DO_HR_MONITORING") ? this.ctx.businessController.startTracking(true) : this.ctx.businessController.startTracking(false)
         break
       case MsgManager.FITBIT_MESSAGE_STOP_TRACK:
-        this.stopTracking()
+        this.ctx.businessController.stopTracking()
         break
       case MsgManager.FITBIT_MESSAGE_RESUME:
-        this.resumeTracking()
+        this.ctx.businessController.resumeTracking()
         break
       case MsgManager.FITBIT_MESSAGE_PAUSE_TIME:
-        this.pauseTracking(msg.data)
+        this.ctx.businessController.pauseTracking(msg.data)
         break
         case MsgManager.FITBIT_MESSAGE_ALARM_START:
-        this.startAlarm(msg.data)
+        this.ctx.businessController.startAlarm(msg.data)
         break
       case MsgManager.FITBIT_MESSAGE_ALARM_STOP:
-        this.stopAlarm()
+        this.ctx.businessController.stopAlarm()
         break
       case MsgManager.FITBIT_MESSAGE_ALARM_TIME:
-        this.scheduleAlarm(msg.data)
+        this.ctx.businessController.scheduleAlarm(msg.data)
         break
       case MsgManager.FITBIT_MESSAGE_BATCH_SIZE:
         // TODO tohle nestaci pri sensor batchingu - je potreba vytvorit novy Acc a nejak dumpnout data z toho stareho
-        this.batch_size = msg.data
+        this.ctx.businessController.setBatchSize(msg.data)
         break
       case MsgManager.FITBIT_MESSAGE_HINT:
-        this.doHint(msg.data)
+        this.ctx.businessController.doHint(msg.data)
         break
       case MsgManager.FITBIT_MESSAGE_SUSPEND:
         // I'm not listening to this!
         break
     }
   }
-
-  // Specific message handling below
-
-  startTracking(hrEnabled) {
-    if (!this.ctx.proposeTrackingStart()) {
-        console.log("startTracking - already tracking")
-        return
-    }
-
-    console.log("startTracking")
-    this.queue.addToQueue(MsgManager.FITBIT_MESSAGE_START_TRACK)
-
-    acc = new Acc()
-    var accArr = []
-    var accRawArr = []
-    acc.startSensor((acc, accRaw) => {
-      accArr.push.apply(accArr, acc)
-      accRawArr = accRawArr.concat(accRaw)
-      if (accArr.length > batch_size) {
-        this.queue.addToQueue(MsgManager.FITBIT_MESSAGE_DATA, this.formatOutgoingAccData(accArr, accRawArr))
-        accArr = []
-        accRawArr = []
-      }
-    })
-
-    if (hrEnabled && me.permissions.granted("access_heart_rate")) {
-      hr = new Hr()
-      hr.startSensor((hr) => {
-        this.queue.addToQueue(MsgManager.FITBIT_MESSAGE_HR_DATA, hr)
-      })
-    }
-  }
-
-  formatOutgoingAccData(maxDataArr, maxRawDataArr) {
-    return [maxDataArr.join(':'), maxRawDataArr.join(':')].join(';')
-  }
-
-  stopTracking() {
-    this.ctx.proposeTrackingStop()
-    stopAllSensors([acc, hr])
-    this.queue.clearQueue()
-    me.exit()
-  }
-
-  pauseTracking(timestamp) {
-    if (timestamp > 0) {
-      this.ctx.proposeTrackingPause()
-    } else {
-      this.resumeTracking()
-    }
-  }
-
-  resumeTracking() {
-    this.ctx.proposeTrackingResume()
-  }
-
-  startAlarm(vibrationDelay) {
-    new AlarmManager().startAlarm(vibrationDelay)
-  }
-
-  stopAlarm() {
-    new AlarmManager().stopAlarm()
-  }
-
-  scheduleAlarm(timestamp) {
-    console.log("ScheduleAlarm timestamp: " + timestamp)
-    new AlarmManager().scheduleAlarm(timestamp)
-  }
-
-  doHint(repeat) {
-    new VibrationPlayer().doHint(repeat)
-  }
-
 
 }
