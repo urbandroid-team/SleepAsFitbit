@@ -1,8 +1,6 @@
 import { display } from "display";
 import { me } from 'appbit'
 import { Context } from "./controller/context";
-import { MsgManager } from "./controller/msgManager";
-import { UIManager } from "./view/uiManager";
 
 var debug = true;
 var fitbitSdk = 2;

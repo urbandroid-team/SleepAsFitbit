@@ -86,11 +86,11 @@ export class BusinessController {
     }
   }
 
-  scheduleAlarm(timestamp: number) {
+  scheduleAlarm(h:number, m:number, timestamp: number) {
     console.log("ScheduleAlarm timestamp: " + timestamp)
     this.ctx.alarm.alarmScheduled = true
     this.ctx.alarmManager.scheduleAlarm(timestamp)
-    this.ctx.ui.setAlarmTime(timestamp)
+    this.ctx.ui.setAlarmTime(h, m)
   }
 
   doHint(repeat: number) {

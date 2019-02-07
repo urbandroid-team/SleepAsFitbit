@@ -1,7 +1,8 @@
-import * as scientific from "scientific";
+// import { scientific } from 'scientific'
+import * as scientific from 'scientific'
 
 // used for accelerometer DATA
-export function computeMaxDiffFromArray(xArr, yArr, zArr) {
+export function computeMaxDiffFromArray(xArr: any, yArr: any, zArr: any) {
   var result = [];
   let xDiff; let yDiff; let zDiff;
 
@@ -15,25 +16,25 @@ export function computeMaxDiffFromArray(xArr, yArr, zArr) {
 }
 
 // used for accelerometer NEW_DATA
-export function computeMaxRawFromArray(xArr, yArr, zArr) {
-  var res = xArr.map(function (x, i) {
+export function computeMaxRawFromArray(xArr: any, yArr: any, zArr: any): string {
+  var res = xArr.map(function (x:number, i:number) {
     return Math.sqrt((x * x) + (yArr[i] * yArr[i]) + (zArr[i] * zArr[i]));
   })
-  return scientific.max(res).toFixed(4);
+  return scientific.max(res).toFixed(4)
 }
 
 // Used for heart rates
-export function computeMedianFromArray(arr) {
+export function computeMedianFromArray(arr:any[]) {
   arr.sort();
   return arr[Math.round(arr.length / 2) - 1];
 }
 
 // used for accelerometer DATA
-export function computeMaxDiff(x,y,z,lastX,lastY,lastZ) {
+export function computeMaxDiff(x: number, y: number, z: number, lastX: number, lastY: number, lastZ: number) {
   return Math.abs(x - lastX) + Math.abs(y - lastY) + Math.abs(z - lastZ);
 }
 
 // used for accelerometer NEW_DATA
-export function computeMaxRaw(x,y,z) {
-  return scientific.sqrt((x * x) + (y * y) + (z * z));
+export function computeMaxRaw(x: number ,y: number, z: number) {
+  return scientific.sqrt(new Float32Array((x * x) + (y * y) + (z * z)));
 }

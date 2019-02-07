@@ -3,7 +3,7 @@ import { me } from "companion";
 import { MsgQueue } from "../common/msgQueue";
 
 const POLLING_INTERVAL = 2000
-var sleepCommTimer
+var sleepCommTimer:any
 let queueToSleep = new MsgQueue()
 
 startWatchCommChannel();
@@ -26,7 +26,7 @@ function stopSleepCommChannel() {
   clearInterval(sleepCommTimer)
 }
 
-function sendMessageToWatch(message) {
+function sendMessageToWatch(message:any) {
   console.log("sendMessageToWatch: " + message)
   if (messaging.peerSocket.readyState === messaging.peerSocket.OPEN) {
     console.log("sendMessageToWatch peerSocket open")
@@ -35,7 +35,7 @@ function sendMessageToWatch(message) {
   }
 }
 
-function sendMessageToSleep(command, data) {
+function sendMessageToSleep(command:string, data:any) {
   console.log("sendMessageToSleep")
   // console.log("sendMessageToSleep: " + command)
   let url = 'http://localhost:1764/' + command + '?data=' + data
@@ -45,10 +45,9 @@ function sendMessageToSleep(command, data) {
   .then(function(msg) {
     console.log('sendMessageToSleep success, collecting incoming mail: ' + msg);
     let msgArray = JSON.parse(msg)
-    msgArray.forEach(message => {
+    msgArray.forEach((message:any) => {
       sendMessageToWatch(message)
-      // console.log("Element " + element['name'])
-      // console.log("Element " + element['data'])
+      console.log("Msg: " + message['name'] + " " + message['data'])
     });
   })
   .catch(function(error) {

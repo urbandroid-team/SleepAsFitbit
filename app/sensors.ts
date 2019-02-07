@@ -2,7 +2,7 @@
 
 import { Accelerometer } from "accelerometer"
 import { HeartRateSensor } from "heart-rate"
-import * as d from 'dataCommons'
+import * as d from './dataCommons'
 
 export class Acc {
   acc: Accelerometer

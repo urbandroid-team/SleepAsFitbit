@@ -1,5 +1,6 @@
 import * as messaging from "messaging"
 import { Context } from "./context"
+import { AlarmManager } from "./alarmManager";
 
 export class MsgManager {
   // Static constants
@@ -43,8 +44,7 @@ export class MsgManager {
 
     messaging.peerSocket.onmessage = (evt) => {
       console.log("received message")
-      let parsedMsg = JSON.parse(evt.data)
-      this.handleIncomingMessageArray(parsedMsg)
+      this.handleIncomingMessage(evt.data)
     }
   }
 
@@ -76,14 +76,16 @@ export class MsgManager {
     }
   }
 
-  handleIncomingMessageArray(msgArray:any[]) {
-    for (let msg of msgArray) {
-      console.log("Received from companion: " + msg.name + ' ' + msg.data);
-      this.handleIncomingMessage(msg)
-    }
-  }
+  // handleIncomingMessageArray(msgArray:any[]) {
+  //   for (let msg of msgArray) {
+  //     console.log("Received from companion: " + msg.name + ' ' + msg.data);
+  //     this.handleIncomingMessage(msg)
+  //   }
+  // }
 
   handleIncomingMessage(msg:any) {
+    console.log("MsgManager received: " + msg.name)
+
     switch (msg.name) {
       case MsgManager.FITBIT_MESSAGE_START_TRACK:
         (msg.data == "DO_HR_MONITORING") ? this.ctx.businessController.startTracking(true) : this.ctx.businessController.startTracking(false)
@@ -104,7 +106,8 @@ export class MsgManager {
         this.ctx.businessController.stopAlarm()
         break
       case MsgManager.FITBIT_MESSAGE_ALARM_TIME:
-        this.ctx.businessController.scheduleAlarm(msg.data)
+        let time = msg.data.split(':')
+        this.ctx.businessController.scheduleAlarm(time[0], time[1], time[2])
         break
       case MsgManager.FITBIT_MESSAGE_BATCH_SIZE:
         // TODO tohle nestaci pri sensor batchingu - je potreba vytvorit novy Acc a nejak dumpnout data z toho stareho

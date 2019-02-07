@@ -5,12 +5,14 @@ export class UIManager {
   alarmScreen:any
   trackingScreen:any
   alarmTime:any
+  alarmImg:any
   status:any
 
   constructor() {
     this.alarmScreen = document.getElementById("alarmScreen")
     this.trackingScreen = document.getElementById("trackingScreen")
     this.alarmTime = document.getElementById("alarmTime")
+    this.alarmImg = document.getElementById("alarmImg")
     this.status = document.getElementById('status')
   }
 
@@ -26,12 +28,16 @@ export class UIManager {
     this.trackingScreen.style.display = "inline"
   }
 
-  setAlarmTime(timestamp:any) {
+  setAlarmTime(h:number, m:number) {
     console.log("UI: setting alarm")
-    if (timestamp) {
-      this.alarmTime.text = "🔔" + timestamp
+
+    if (h && m) {
+      // TODO this works wrongly - incorrectly padding
+      this.alarmTime.text = this.pad(h,2) + ":" + this.pad(m,2)
+      this.alarmImg.href = "alarm.png"
     } else {
-      this.alarmTime.text = "🔕"
+      this.alarmImg.href = "dismiss.png"
+      this.alarmTime.text = ""
     }
 
   }
@@ -50,10 +56,12 @@ export class UIManager {
   }
 
   setStatusConnectionError() {
+    console.log("UI: status connection error")
     this.status.text = ""
   }
 
   initializeClock() {
+    console.log("UI: initialize clock")
     let clockElement = document.getElementById("clock");
     clock.granularity = 'minutes';
 
@@ -61,6 +69,12 @@ export class UIManager {
       clockElement.text = ("0" + evt.date.getHours()).slice(-2) + ":" +
         ("0" + evt.date.getMinutes()).slice(-2)
     };
+  }
+
+  pad(number:number, size:number):string {
+    var s = String(number);
+    while (s.length < (size || 2)) { s = "0" + s; }
+    return s;
   }
 
 
