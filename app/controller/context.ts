@@ -3,11 +3,9 @@ import { Alarm } from "../model/alarm";
 import { BusinessController } from "./businessController";
 import { MsgQueue } from "../../common/msgQueue";
 import { UIManager } from "../view/uiManager";
-import { Acc, Hr } from "../sensors";
 import { SensorsController } from "./sensorsController";
 import { AlarmManager } from "./alarmManager";
 import { VibrationPlayer } from "./vibrationPlayer";
-import { MsgManager } from "./msgManager";
 
 export class Context {
 
@@ -16,24 +14,18 @@ export class Context {
   private _alarmManager: AlarmManager
   private _ui: UIManager
   private _vibrationPlayer: VibrationPlayer
-  private _acc: Acc
-  private _hr: Hr
   private _sensorsController: SensorsController
-  private _messageManager: MsgManager
 
   private _alarm: Alarm
   private _tracking: Tracking
 
   constructor() {
     this._businessController = new BusinessController(this)
-    this._queue = new MsgQueue()
+    this._queue = new MsgQueue("toCompanion")
     this._alarmManager = new AlarmManager(this)
-    this._ui = new UIManager()
+    this._ui = new UIManager(this)
     this._vibrationPlayer = new VibrationPlayer()
-    this._acc = new Acc()
-    this._hr = new Hr()
-    this._sensorsController = new SensorsController(this)
-    this._messageManager = new MsgManager(this)
+    this._sensorsController = new SensorsController()
 
     // state classes
     this._alarm = new Alarm()
@@ -45,10 +37,7 @@ export class Context {
   get alarmManager(): AlarmManager { return this._alarmManager }
   get ui(): UIManager { return this._ui }
   get vibrationPlayer(): VibrationPlayer { return this._vibrationPlayer }
-  get acc(): Acc { return this._acc }
-  get hr(): Hr { return this._hr }
   get sensorsController(): SensorsController { return this._sensorsController }
-  get messageManager(): MsgManager { return this._messageManager }
 
   get tracking(): Tracking { return this._tracking }
   get alarm(): Alarm { return this._alarm }

@@ -1,21 +1,28 @@
-.sensor-label {
-  font-family: System-Regular;
-  fill: white;
-  text-anchor: middle;
-  text-length: 32;
+/* Upper row */
+#statusAlarmTime {
+  display: none;
+  text-length: 7;
 }
-
-.sensor-data {
-  font-family: System-Light;
-  fill: yellow;
-  text-anchor: middle;
-  text-length: 32;
-}
-
-#alarmScreen {
+#statusAlarmImg {
   display: none;
 }
-.text-container {
-  /* width: 90%; */
-  /* x: 6; */
+#status {
+}
+
+/* Middle row */
+#clock {
+  text-length: 7;
+}
+
+/* Lower row */
+#alarmImg {
+}
+#alarmTime {
+  text-length: 7;
+}
+
+/* BUTTONS */
+#trackingBtns {
+}
+#alarmBtns {
 }

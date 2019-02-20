@@ -1,6 +1,7 @@
 import { Context } from "./context";
 import { MsgManager } from "./msgManager";
 import { me } from "appbit";
+import { Message } from "../model/message";
 
 // A facade class that is responsible for controling the flow of the app
 
@@ -24,44 +25,58 @@ export class BusinessController {
       this.ctx.ui.setStatusTracking()
     }
 
-    this.ctx.queue.addToQueue(MsgManager.FITBIT_MESSAGE_START_TRACK, "")
+    this.ctx.queue.addToQueue(new Message(MsgManager.FITBIT_MESSAGE_START_TRACK, ""))
 
-    var acc = this.ctx.acc
-    var accArr:any[] = []
-    var accRawArr:any[] = []
-    acc.startSensor((acc:any, accRaw:any) => {
+    // start acc on sensors controller
+    var accArr: any[] = []
+    var accRawArr: any[] = []
+    this.ctx.sensorsController.startAcc((acc: any, accRaw: any) => {
       accArr.push.apply(accArr, acc)
       accRawArr = accRawArr.concat(accRaw)
       if (accArr.length > this.ctx.tracking.batchSize) {
-        this.ctx.queue.addToQueue(MsgManager.FITBIT_MESSAGE_DATA, this.formatOutgoingAccData(accArr, accRawArr))
+        this.ctx.queue.addToQueue(new Message(MsgManager.FITBIT_MESSAGE_DATA, this.formatOutgoingAccData(accArr, accRawArr)))
         accArr = []
         accRawArr = []
       }
     })
 
+    // start hr on sensors controller
     if (hrEnabled && me.permissions.granted("access_heart_rate")) {
-      this.ctx.hr.startSensor((hr:any) => {
-        this.ctx.queue.addToQueue(MsgManager.FITBIT_MESSAGE_HR_DATA, hr)
+      this.ctx.sensorsController.startHr((hr: any) => {
+        this.ctx.queue.addToQueue(new Message(MsgManager.FITBIT_MESSAGE_HR_DATA, hr))
       })
     }
   }
 
-  formatOutgoingAccData(maxDataArr:any, maxRawDataArr:any) {
+  private formatOutgoingAccData(maxDataArr:any, maxRawDataArr:any) {
     return [maxDataArr.join(':'), maxRawDataArr.join(':')].join(';')
   }
 
   stopTracking() {
     if (this.ctx.tracking.tracking) {
-      this.ctx.sensorsController.stopAllSensors([this.ctx.acc, this.ctx.hr])
+      this.ctx.sensorsController.stopAllSensors([this.ctx.sensorsController.acc, this.ctx.sensorsController.hr])
       this.ctx.queue.clearQueue()
       me.exit()
     }
   }
 
+  pauseTrackingFromWatch() {
+    let timestamp = Date.now() + 5 * 60000
+    this.pauseTracking(timestamp)
+    this.ctx.queue.addToQueue(new Message(MsgManager.FITBIT_MESSAGE_PAUSE, timestamp))
+  }
+
   pauseTracking(timestamp: number) {
     if (timestamp > 0) {
       this.ctx.ui.setStatusPause()
+    } else {
+      this.resumeTracking()
     }
+  }
+
+  resumeTrackingFromWatch() {
+    this.resumeTracking()
+    this.ctx.queue.addToQueue(new Message(MsgManager.FITBIT_MESSAGE_RESUME, ""))
   }
 
   resumeTracking() {
@@ -84,6 +99,16 @@ export class BusinessController {
       this.ctx.alarmManager.stopAlarm()
       this.ctx.ui.changeToTrackingScreen()
     }
+  }
+
+  dismissAlarmFromWatch() {
+    // this.stopAlarm()
+    this.ctx.queue.addToQueue(new Message(MsgManager.FITBIT_MESSAGE_ALARM_DISMISS, ""))
+  }
+
+  snoozeAlarmFromWatch() {
+    // this.stopAlarm()
+    this.ctx.queue.addToQueue(new Message(MsgManager.FITBIT_MESSAGE_ALARM_SNOOZE, ""))
   }
 
   scheduleAlarm(h:number, m:number, timestamp: number) {

@@ -1,39 +1,118 @@
 import document from "document";
 import clock from 'clock';
+import { Context } from "../controller/context";
 
 export class UIManager {
+  static get RES_BTN_PAUSE() { return "pause.png" }
+  static get RES_BTN_PLAY() { return "play.png" }
+
+  ctx: Context
+
   alarmScreen:any
   trackingScreen:any
   alarmTime:any
   alarmImg:any
   status:any
+  statusAlarmImg:any
+  statusAlarmTime:any
+  background:any
+  alarmBtnWrapper:any
+  trackingBtnWrapper: any
+  trackingBtnBR: any
+  alarmBtnTR: any
+  alarmBtnBR: any
+  clock: any
 
-  constructor() {
-    this.alarmScreen = document.getElementById("alarmScreen")
-    this.trackingScreen = document.getElementById("trackingScreen")
-    this.alarmTime = document.getElementById("alarmTime")
-    this.alarmImg = document.getElementById("alarmImg")
+  constructor(context: Context) {
+    this.ctx = context
+  }
+
+  initialize() {
+    this.background = document.getElementById('background')
+
+    // Buttons
+    this.alarmBtnWrapper = document.getElementById('alarmBtns')
+    this.trackingBtnWrapper = document.getElementById('trackingBtns')
+
+    this.trackingBtnBR = document.getElementById('tracking-btn-br')
+    this.alarmBtnTR = document.getElementById('alarm-btn-tr')
+    this.alarmBtnBR = document.getElementById('alarm-btn-br')
+
+    // Upper row
     this.status = document.getElementById('status')
+    this.statusAlarmImg = document.getElementById('statusAlarmImg')
+    this.statusAlarmTime = document.getElementById('statusAlarmTime')
+
+    // Middle row
+    this.clock = document.getElementById("clock");
+
+    // Lower row
+    this.alarmImg = document.getElementById("alarmImg")
+    this.alarmTime = document.getElementById("alarmTime")
+
+    this.registerButtonActions()
+  }
+
+  registerButtonActions() {
+    console.log("UI: RegisterButtonActions")
+
+    let that = this
+    this.trackingBtnBR.onclick = (evt:any) => {
+      if (that.ctx.tracking.trackingPaused) {
+        that.ctx.tracking.trackingPaused = false
+        that.ctx.businessController.resumeTrackingFromWatch()
+      } else {
+        that.ctx.tracking.trackingPaused = true
+        that.ctx.businessController.pauseTrackingFromWatch()
+      }
+    }
+    this.alarmBtnTR.onclick = (evt:any) => {
+      this.ctx.businessController.dismissAlarmFromWatch()
+    }
+    this.alarmBtnBR.onclick = (evt:any) => {
+      this.ctx.businessController.snoozeAlarmFromWatch()
+    }
   }
 
   changeToAlarmScreen() {
     console.log("UI: alarm screen")
-    this.alarmScreen.style.display = "inline"
-    this.trackingScreen.style.display = "none"
+
+    this.background.style.fill = 'white'
+
+    this.alarmBtnWrapper.style.display = "inline"
+    this.trackingBtnWrapper.style.display = "none"
+
+    this.status.style.display = "none"
+    this.statusAlarmImg.style.display = "inline"
+    this.statusAlarmTime.style.display = "inline"
+
+    this.alarmImg.style.display = "none"
+    this.alarmTime.style.display = "none"
   }
 
   changeToTrackingScreen() {
     console.log("UI: tracking screen")
-    this.alarmScreen.style.display = "none"
-    this.trackingScreen.style.display = "inline"
+
+    this.background.style.fill = 'black'
+
+    this.alarmBtnWrapper.style.display = "none"
+    this.trackingBtnWrapper.style.display = "inline"
+
+    this.status.style.display = "inline"
+    this.statusAlarmImg.style.display = "none"
+    this.statusAlarmTime.style.display = "none"
+
+    this.alarmImg.style.display = "inline"
+    this.alarmTime.style.display = "inline"
+
   }
 
   setAlarmTime(h:number, m:number) {
     console.log("UI: setting alarm")
 
     if (h && m) {
-      // TODO this works wrongly - incorrectly padding
-      this.alarmTime.text = this.pad(h,2) + ":" + this.pad(m,2)
+      let time = this.pad(h, 2) + ":" + this.pad(m, 2)
+      this.alarmTime.text = time
       this.alarmImg.href = "alarm.png"
     } else {
       this.alarmImg.href = "dismiss.png"
@@ -43,16 +122,20 @@ export class UIManager {
   }
   clearAlarmTime() {
     console.log("UI: clearing alarm")
-    this.alarmTime.text = "No alarm"
+    this.alarmTime.text = ""
+    this.alarmImg.href = "dismiss.png"
   }
 
   setStatusPause() {
     console.log("UI: status pause")
-    this.status.text = "Pause"
+    this.status.text = "Paused.."
+    this.changeComboBtnIcons(this.trackingBtnBR, UIManager.RES_BTN_PLAY, UIManager.RES_BTN_PLAY)
   }
+
   setStatusTracking() {
     console.log("UI: status tracking")
     this.status.text = "Tracking..."
+    this.changeComboBtnIcons(this.trackingBtnBR, UIManager.RES_BTN_PAUSE, UIManager.RES_BTN_PAUSE)
   }
 
   setStatusConnectionError() {
@@ -62,9 +145,9 @@ export class UIManager {
 
   initializeClock() {
     console.log("UI: initialize clock")
-    let clockElement = document.getElementById("clock");
     clock.granularity = 'minutes';
 
+    let clockElement = this.clock
     clock.ontick = function (evt) {
       clockElement.text = ("0" + evt.date.getHours()).slice(-2) + ":" +
         ("0" + evt.date.getMinutes()).slice(-2)
@@ -77,5 +160,9 @@ export class UIManager {
     return s;
   }
 
+  changeComboBtnIcons(button:any, image:string, pressedImage:string) {
+    button.getElementById('combo-button-icon').image = image
+    button.getElementById("combo-button-icon-press").image = pressedImage
+  }
 
 }

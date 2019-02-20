@@ -1,6 +1,7 @@
 import * as messaging from "messaging"
 import { Context } from "./context"
 import { AlarmManager } from "./alarmManager";
+import { Message } from "../model/message";
 
 export class MsgManager {
   // Static constants
@@ -31,7 +32,7 @@ export class MsgManager {
     this.ctx = context
   }
 
-  startCompanionCommChannel() {
+  public startCompanionCommChannel() {
     console.log(">>ToCompanion channel init")
     // console.log("Max msg size=" + messaging.peerSocket.MAX_MESSAGE_SIZE);
     if (messaging.peerSocket.readyState === messaging.peerSocket.OPEN) {
@@ -43,12 +44,12 @@ export class MsgManager {
     }
 
     messaging.peerSocket.onmessage = (evt) => {
-      console.log("received message")
-      this.handleIncomingMessage(evt.data)
+      // console.log("received message " + Message.deserialize(evt.data).command)
+      this.handleIncomingMessage(Message.deserialize(evt.data))
     }
   }
 
-  startOutMessagingTimer() {
+  private startOutMessagingTimer() {
     let that = this
     let queue = this.ctx.queue
 
@@ -56,17 +57,18 @@ export class MsgManager {
 
     setInterval(function () {
       if (queue.getMsgCount() > 0) {
-        let nextMsg = queue.getNextMessage()
-        that.sendToCompanion(nextMsg[0], nextMsg[1])
+        let nextMsg = queue.peekNextMessage()
+        that.sendToCompanion(nextMsg)
       }
     }, MsgManager.MESSAGING_INTERVAL)
   }
 
-  sendToCompanion(command:string, data:any) {
-    console.log(">>ToCompanion " + command + " " + data)
+  private sendToCompanion(msg:Message) {
+    console.log(">>ToCompanion " + msg.command + " " + msg.data)
     try {
       if (messaging.peerSocket.readyState === messaging.peerSocket.OPEN) {
-        messaging.peerSocket.send({ command: command, data: data })
+        messaging.peerSocket.send(msg.serialize())
+        this.ctx.queue.removeNextMessage()
       } else {
         console.log(">>ToCompanion socket closed, msg not sent.")
       }
@@ -76,17 +78,10 @@ export class MsgManager {
     }
   }
 
-  // handleIncomingMessageArray(msgArray:any[]) {
-  //   for (let msg of msgArray) {
-  //     console.log("Received from companion: " + msg.name + ' ' + msg.data);
-  //     this.handleIncomingMessage(msg)
-  //   }
-  // }
+  private handleIncomingMessage(msg:Message) {
+    console.log("MsgManager received: " + msg.serialize())
 
-  handleIncomingMessage(msg:any) {
-    console.log("MsgManager received: " + msg.name)
-
-    switch (msg.name) {
+    switch (msg.command) {
       case MsgManager.FITBIT_MESSAGE_START_TRACK:
         (msg.data == "DO_HR_MONITORING") ? this.ctx.businessController.startTracking(true) : this.ctx.businessController.startTracking(false)
         break

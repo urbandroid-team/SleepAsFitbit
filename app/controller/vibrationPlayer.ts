@@ -3,6 +3,7 @@ import { vibration, VibrationPatternName } from "haptics";
 export class VibrationPlayer {
 
   currently_playing:boolean
+  vibrationTimer:any
 
   constructor() {
     this.currently_playing = false
@@ -31,7 +32,7 @@ export class VibrationPlayer {
       }, 1000);
     } else if (repeat < 0) {
       // repeat indefinitely
-      setInterval(() => {
+      this.vibrationTimer = setInterval(() => {
         vibration.start(pattern)
       }, 1000);
     } else {
@@ -40,6 +41,7 @@ export class VibrationPlayer {
   }
 
   stop() {
+    clearTimeout(this.vibrationTimer)
     vibration.stop()
     this.currently_playing = false
   }

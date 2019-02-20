@@ -1,19 +1,20 @@
-import { Context } from "./context";
+import { Acc, Hr } from "../sensors";
 
 export class SensorsController {
+  acc:Acc
+  hr:Hr
 
-  ctx:Context
-
-  constructor(context: Context) {
-    this.ctx = context
+  constructor() {
+    this.acc = new Acc
+    this.hr = new Hr
   }
 
   startAcc(receiver: any) {
-    this.ctx.acc.startSensor(receiver)
+    this.acc.startSensor(receiver)
   }
 
   startHr(receiver: any) {
-    this.ctx.hr.startSensor(receiver)
+    this.hr.startSensor(receiver)
   }
 
   stopAllSensors(sensorArr:any[]) {

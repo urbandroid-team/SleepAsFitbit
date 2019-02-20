@@ -1,73 +1,98 @@
 import * as messaging from "messaging";
-import { me } from "companion";
 import { MsgQueue } from "../common/msgQueue";
+import { Message } from "../app/model/message";
 
-const POLLING_INTERVAL = 2000
-var sleepCommTimer:any
-let queueToSleep = new MsgQueue()
+const POLLING_INTERVAL = 1000
+const TO_WATCH_MESSAGING_INTERVAL = 2000
 
-startWatchCommChannel();
-startSleepCommChannel();
+let toSleepQueue = new MsgQueue("toSleep")
+let toSleepTimer:any
 
-function startSleepCommChannel() {
-  console.log("startSleepCommChannel")
-  sleepCommTimer = setInterval(() => {
-    // queueToSleep.logQueue()
-    if (queueToSleep.getMsgCount() > 0) {
-      let nextMsg = queueToSleep.getNextMessage()
-      sendMessageToSleep(nextMsg[0], nextMsg[1])
+let toWatchQueue = new MsgQueue("toWatch")
+let toWatchTimer:any
+
+// TODO missing adding to toSleepQueue
+
+startSleepPollingTimer(toSleepQueue, toSleepTimer)
+initializeToWatchChannel()
+
+function startSleepPollingTimer(queue:MsgQueue, timer: any) {
+  timer = setInterval(() => {
+    // console.log(">> msg timer to Sleep TICK")
+    if (queue.getMsgCount() > 0) {
+      queue.logQueue()
+      sendMessageToSleep(queue.getNextMessage())
     } else {
-      sendMessageToSleep('poll', '0')
+      sendMessageToSleep(new Message('poll', '0'))
     }
   }, POLLING_INTERVAL);
 }
 
-function stopSleepCommChannel() {
-  clearInterval(sleepCommTimer)
-}
-
-function sendMessageToWatch(message:any) {
-  console.log("sendMessageToWatch: " + message)
-  if (messaging.peerSocket.readyState === messaging.peerSocket.OPEN) {
-    console.log("sendMessageToWatch peerSocket open")
-      messaging.peerSocket.send(message);
-      // TODO vyresit error stav - preposilani
-  }
-}
-
-function sendMessageToSleep(command:string, data:any) {
-  console.log("sendMessageToSleep")
-  // console.log("sendMessageToSleep: " + command)
-  let url = 'http://localhost:1764/' + command + '?data=' + data
-  // console.log('url ' + url)
+function sendMessageToSleep(msg:Message) {
+  let url = 'http://localhost:1764/' + msg.command + '?data=' + msg.data
+  // console.log("sendMessageToSleep " + url)
   fetch(url)
-  .then(function(response) { return response.text(); })
-  .then(function(msg) {
-    console.log('sendMessageToSleep success, collecting incoming mail: ' + msg);
-    let msgArray = JSON.parse(msg)
-    msgArray.forEach((message:any) => {
-      sendMessageToWatch(message)
-      console.log("Msg: " + message['name'] + " " + message['data'])
+    .then(response => {
+      // console.log("sendMessageToSleep response")
+      return response.text();
+    })
+    .then(fromSleepMsg => {
+      // console.log("sendMessageToSleep fromSleepMsg")
+      processMessageFromSleep(fromSleepMsg)
+    })
+    .catch(error => {
+      // this most probably means server on phone is not started
+      // TODO: what to do? Probably show something on the watch, like "start tracking on the phone"
+      console.error("sendMessageToSleep err " + error)
     });
-  })
-  .catch(function(error) {
-    // this most probably means server on phone is not started
-    // TODO: what to do? Probably show something on the watch, like "start tracking on the phone"
-    console.error("sendMessageToSleep err " + error)
-  });
 }
 
-function startWatchCommChannel(){
-  messaging.peerSocket.onopen = () => {
+function processMessageFromSleep(unparsedMsg:any) {
+  // console.log("unparsedMsg " + unparsedMsg)
+  // console.log("unparsedMsg length " + unparsedMsg.length)
+  let msgArray = JSON.parse(unparsedMsg)
+  // console.log("parsedMsgArray length " + msgArray.length)
+  if (msgArray.length > 0) {
+    msgArray.forEach((msg: any) => {
+      console.log("Adding to queue " + msg['name'] + " " + msg['data'])
+      toWatchQueue.addToQueue(new Message(msg['name'], msg['data']))
+    });
   }
+}
 
-  messaging.peerSocket.onerror = (err) => {
-    console.error(`Connection error: ${err.code} - ${err.message}`);
+function initializeToWatchChannel() {
+  if (messaging.peerSocket.readyState === messaging.peerSocket.OPEN) {
+    startToWatchTimer(toWatchQueue, toWatchTimer)
+  } else {
+    messaging.peerSocket.onopen = () => {
+      startToWatchTimer(toWatchQueue, toWatchTimer)
+    }
   }
 
   messaging.peerSocket.onmessage = (evt) => {
-    console.log("Received from watch");
-    // console.log("Received from watch: " + JSON.stringify(evt.data));
-    queueToSleep.addToQueue(evt.data.command, evt.data.data)
+    let msg = Message.deserialize(evt.data)
+    console.log("Received from watch " + msg.command);
+    // evt.data should be type Message. How to check?
+    toSleepQueue.addToQueue(msg)
+  }
+}
+
+function startToWatchTimer(queue:MsgQueue, timer: any) {
+  timer = setInterval(() => {
+    // console.log("sending to watch TICK")
+    let nextMsg = queue.peekNextMessage()
+    if (nextMsg) {
+      queue.logQueue()
+      sendMessageToWatch(nextMsg, queue)
+    }
+  }, TO_WATCH_MESSAGING_INTERVAL)
+}
+
+function sendMessageToWatch(msg:Message, queue:MsgQueue) {
+  if (messaging.peerSocket.readyState === messaging.peerSocket.OPEN) {
+    messaging.peerSocket.send(msg.serialize());
+    queue.removeNextMessage()
+  } else {
+    console.error("ToWatch send message error: " + msg)
   }
 }

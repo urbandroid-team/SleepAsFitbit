@@ -14,7 +14,9 @@ export class Acc {
   }
 
   startSensor(receiver: any) {
+    console.log("Accelerometer started")
     this.acc.onreading = () => {
+      console.log("Accelerometer onreading")
       receiver(
         d.computeMaxDiffFromArray(this.acc.readings.x, this.acc.readings.y, this.acc.readings.z),
         d.computeMaxRawFromArray(this.acc.readings.x, this.acc.readings.y, this.acc.readings.z)

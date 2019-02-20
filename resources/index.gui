@@ -1,53 +1,47 @@
-<svg viewport-fill="black" class="screen" x="0" y="0" width="100%" height="100%">
+<svg class="screen" x="0" y="0" width="100%" height="100%">
 
-  <svg id="trackingScreen" class="container" x="6" y="0" width="100%" height="100%">
+    <rect id="background" fill="black" x="0" y="0" width="100%" height="100%" />
 
-    <svg class="text-container" id="text-status" y="0" x="0">
-      <text id="status" font-size="35" fill="grey" y="35">Connecting...</text>
-    </svg>
+    <section x="6" y="0" width="100%" height="100%">
 
-    <svg class="text-container" id="text-clock" y="35">
-      <text id="clock" font-size="120" y="120" font-family="Seville-Condensed" fill="grey">00:00</text>
-    </svg>
+      <svg class="text-container" id="text-status" y="0" x="0">
+        <text id="status" font-size="35" fill="grey" y="35">Connecting...</text>
+        <image id="statusAlarmImg" y="5" width="40" height="40" href="alarm.png" fill="grey" />
+        <text id="statusAlarmTime" y="40" x="45" font-size="40" fill="grey" >ALARM</text>
+      </svg>
 
-    <svg class="text-container" id="text-alarm" y="100%-40">
-      <image id="alarmImg" y="0" width="35" height="35" href="dismiss.png" fill="grey" />
-      <text id="alarmTime" y="30" x="45" font-size="35" fill="grey"></text>
-    </svg>
+      <svg class="text-container" id="text-clock" y="35">
+        <text id="clock" font-size="120" y="120" font-family="Seville-Condensed" fill="grey">00:00</text>
+      </svg>
 
-      <!-- <text x="$" font-size="50" font-family="Seville-Regular" fill="white">am</text> -->
+      <svg class="text-container" id="text-alarm" y="100%-40">
+        <image id="alarmImg" y="0" width="35" height="35" href="dismiss.png" fill="grey" />
+        <text id="alarmTime" y="30" x="45" font-size="35" fill="grey"></text>
+      </svg>
 
-    <use id="btn-br" href="#combo-button-lower-right" fill="fb-peach">
-      <set href="combo-button-icon" attributeName="href" to="dismiss.png"/>
-      <!-- TODO create pressed button -->
-      <set href="combo-button-icon-press" attributeName="href" to="play_press.png"/>
-      <set href="combo-button-stroke" attributeName="display" to="inline"/>
-    </use>
+      <g id="trackingBtns">
 
+        <use id="tracking-btn-br" href="#combo-button-lower-right" fill="fb-peach">
+          <set href="combo-button-icon" attributeName="href" to="pause.png"/>
+          <set href="combo-button-icon-press" attributeName="href" to="pause.png"/>
+          <set href="combo-button-stroke" attributeName="display" to="inline"/>
+        </use>
+      </g>
 
-  </svg>
+      <g id="alarmBtns">
+        <use id="alarm-btn-tr" href="#combo-button-upper-right" fill="fb-red">
+          <set href="combo-button-icon" attributeName="href" to="dismiss.png"/>
+          <set href="combo-button-icon-press" attributeName="href" to="dismiss.png"/>
+          <set href="combo-button-stroke" attributeName="display" to="inline"/>
+        </use>
 
-  <svg id="alarmScreen" fill="white">
+        <use id="alarm-btn-br" href="#combo-button-lower-right" fill="fb-peach">
+          <set href="combo-button-icon" attributeName="href" to="snooze.png"/>
+          <set href="combo-button-icon-press" attributeName="href" to="snooze.png"/>
+          <set href="combo-button-stroke" attributeName="display" to="inline"/>
+        </use>
+      </g>
 
-    <svg class="text-container" id="text-status" y="0" x="0">
-      <image id="alarmImg" y="0" width="120" height="120" href="alarm.png" fill="grey" />
-      <text id="alarmTime" font-size="120" fill="grey" y="120">ALARM TIME</text>
-    </svg>
-
-    <use id="btn-tr" href="#combo-button-upper-right" fill="fb-red">
-      <set href="combo-button-icon" attributeName="href" to="dismiss.png"/>
-      <!-- TODO create pressed button -->
-      <set href="combo-button-icon-press" attributeName="href" to="dismiss_press.png"/>
-      <set href="combo-button-stroke" attributeName="display" to="inline"/>
-    </use>
-
-    <use id="btn-br" href="#combo-button-lower-right" fill="fb-peach">
-      <set href="combo-button-icon" attributeName="href" to="snooze.png"/>
-      <!-- TODO create pressed button -->
-      <set href="combo-button-icon-press" attributeName="href" to="snooze_press.png"/>
-      <set href="combo-button-stroke" attributeName="display" to="inline"/>
-    </use>
-
-  </svg>
+    </section>
 
 </svg>
