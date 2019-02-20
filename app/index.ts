@@ -3,7 +3,7 @@ import { me } from 'appbit'
 import { Context } from "./controller/context";
 import { MsgManager } from "./controller/msgManager";
 
-var debug = true;
+var debug = false;
 var fitbitSdk = 2;
 
 var ctx = new Context()
