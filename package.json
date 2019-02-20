@@ -11,7 +11,8 @@
       "run_background"
     ],
     "buildTargets": [
-      "higgs"
+      "higgs",
+      "meson"
     ],
     "i18n": {
       "en": {
