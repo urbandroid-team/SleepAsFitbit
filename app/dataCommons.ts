@@ -10,7 +10,7 @@ export function computeMaxDiffFromArray(xArr: any, yArr: any, zArr: any) {
     xDiff = Math.abs(Number((xArr[i + 1] - xArr[i])));
     yDiff = Math.abs(Number((yArr[i + 1] - yArr[i])));
     zDiff = Math.abs(Number((zArr[i + 1] - zArr[i])));
-    result.push((xDiff + yDiff + zDiff).toFixed(4));
+    result.push((xDiff + yDiff + zDiff).toFixed(2));
   }
   return result;
 }
@@ -20,7 +20,7 @@ export function computeMaxRawFromArray(xArr: any, yArr: any, zArr: any): string 
   var res = xArr.map(function (x:number, i:number) {
     return Math.sqrt((x * x) + (yArr[i] * yArr[i]) + (zArr[i] * zArr[i]));
   })
-  return scientific.max(res).toFixed(4)
+  return scientific.max(res).toFixed(2)
 }
 
 // Used for heart rates
