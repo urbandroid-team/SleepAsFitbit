@@ -1,7 +1,8 @@
 import * as messaging from "messaging"
 import { Context } from "./context"
-import { AlarmManager } from "./alarmManager";
 import { Message } from "../model/message";
+import { MsgQueue } from "../../common/msgQueue";
+import { memory } from "system";
 
 export class MsgManager {
   // Static constants
@@ -59,8 +60,18 @@ export class MsgManager {
       if (queue.getMsgCount() > 0) {
         let nextMsg = queue.peekNextMessage()
         that.sendToCompanion(nextMsg)
+        that.ensureQueueMemoryConstraints(queue)
       }
     }, MsgManager.MESSAGING_INTERVAL)
+  }
+
+  private ensureQueueMemoryConstraints(queue:MsgQueue) {
+    if ((memory.js.used / memory.js.total) > 0.7) {
+      queue.removeNextMessage()
+    }
+    if ((memory.js.used / memory.js.total) > 0.8) {
+      queue.clearQueue()
+    }
   }
 
   private sendToCompanion(msg:Message) {
