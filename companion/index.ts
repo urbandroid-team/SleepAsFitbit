@@ -1,9 +1,12 @@
 import * as messaging from "messaging";
 import { MsgQueue } from "../common/msgQueue";
 import { Message } from "../app/model/message";
+import { me } from "companion";
 
 const POLLING_INTERVAL = 1000
 const TO_WATCH_MESSAGING_INTERVAL = 2000
+const MINUTE_IN_MS = 60 * 1000
+
 
 let toSleepQueue = new MsgQueue("toSleep")
 let toSleepTimer:any
@@ -11,10 +14,9 @@ let toSleepTimer:any
 let toWatchQueue = new MsgQueue("toWatch")
 let toWatchTimer:any
 
-// TODO missing adding to toSleepQueue
-
 startSleepPollingTimer(toSleepQueue, toSleepTimer)
 initializeToWatchChannel()
+me.wakeInterval = 5 * MINUTE_IN_MS
 
 function startSleepPollingTimer(queue:MsgQueue, timer: any) {
   timer = setInterval(() => {
@@ -72,7 +74,6 @@ function initializeToWatchChannel() {
   messaging.peerSocket.onmessage = (evt) => {
     let msg = Message.deserialize(evt.data)
     console.log("Received from watch " + msg.command);
-    // evt.data should be type Message. How to check?
     toSleepQueue.addToQueue(msg)
   }
 }
