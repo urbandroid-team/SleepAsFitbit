@@ -16,7 +16,20 @@ let toWatchTimer:any
 
 startSleepPollingTimer(toSleepQueue, toSleepTimer)
 initializeToWatchChannel()
-me.wakeInterval = 5 * MINUTE_IN_MS
+
+// TODO when should we cancel the wake interval??
+// me.wakeInterval = 5 * MINUTE_IN_MS
+me.wakeInterval = undefined
+console.log(me.wakeInterval)
+
+// me.onunload = () => {
+//   console.log("Warning, companion unloading")
+// }
+
+// function cancelWakeInterval() {
+//   console.log("Cancelling wakeInterval")
+//   me.wakeInterval = undefined
+// }
 
 function startSleepPollingTimer(queue:MsgQueue, timer: any) {
   timer = setInterval(() => {
@@ -55,11 +68,27 @@ function processMessageFromSleep(unparsedMsg:any) {
   let msgArray = JSON.parse(unparsedMsg)
   // console.log("parsedMsgArray length " + msgArray.length)
   if (msgArray.length > 0) {
-    msgArray.forEach((msg: any) => {
+    let msgs = filterOutStopIfStartPresent(msgArray)
+
+    msgs.forEach((msg: any) => {
       console.log("Adding to queue " + msg['name'] + " " + msg['data'])
       toWatchQueue.addToQueue(new Message(msg['name'], msg['data']))
     });
   }
+}
+
+function filterOutStopIfStartPresent(msgs:any[]) {
+  var startPresent:boolean = msgs.filter(msg => {
+    return msg['name'] === 'start'
+  }).length > 0
+
+  if (startPresent) {
+    return msgs.filter(msg => {
+      return msg['name'] !== 'stop'
+    })
+  }
+
+  return msgs
 }
 
 function initializeToWatchChannel() {
