@@ -69,7 +69,7 @@ export class BusinessController {
   pauseTracking(timestamp: number) {
     if (timestamp > 0) {
       this.ctx.ui.setStatusPause()
-    } else {
+    } else if (this.ctx.tracking.trackingPaused) {
       this.resumeTracking()
     }
   }
@@ -80,6 +80,7 @@ export class BusinessController {
   }
 
   resumeTracking() {
+    this.ctx.tracking.trackingPaused = false
     this.ctx.ui.setStatusTracking()
   }
 
