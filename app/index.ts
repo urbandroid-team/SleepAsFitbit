@@ -1,7 +1,6 @@
 import { display } from "display";
 import { me } from 'appbit'
 import { Context } from "./controller/context";
-import { MsgManager } from "./controller/msgManager";
 
 var debug = false;
 var fitbitSdk = 2;
@@ -23,4 +22,5 @@ if (fitbitSdk > 1) {
   }
 }
 
-new MsgManager(ctx).startCompanionCommChannel()
+// new MsgManager(ctx).startCompanionCommChannel()
+ctx.msgManager.startCompanionCommChannel()

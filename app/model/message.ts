@@ -25,4 +25,13 @@ export class Message {
   static deserialize(array:any[]) {
     return new Message(array[0], array[1])
   }
+
+  toString() {
+    return this.command + '*' + this.data
+  }
+
+  static fromString(str: string): Message {
+    let ar = str.split("*")
+    return (new Message(ar[0], ar[1]))
+  }
 }

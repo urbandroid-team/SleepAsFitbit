@@ -1,8 +1,9 @@
 import * as messaging from "messaging"
-import { Context } from "./context"
-import { Message } from "../model/message";
-import { MsgQueue } from "../../common/msgQueue";
+import { Context } from "../context"
+import { Message } from "../../model/message";
+import { MsgQueue } from "../../../common/msgQueue";
 import { memory } from "system";
+import { FileTransferAdapter } from "./fileTransferAdapter";
 
 export class MsgManager {
   // Static constants
@@ -28,26 +29,22 @@ export class MsgManager {
   static get FITBIT_MESSAGE_SUSPEND() { return "suspend" }
 
   ctx:Context
+  msgAdapter: FileTransferAdapter
 
   constructor(context: Context) {
     this.ctx = context
+    this.msgAdapter = new FileTransferAdapter
   }
 
   public startCompanionCommChannel() {
     console.log(">>ToCompanion channel init")
-    // console.log("Max msg size=" + messaging.peerSocket.MAX_MESSAGE_SIZE);
-    if (messaging.peerSocket.readyState === messaging.peerSocket.OPEN) {
-      this.startOutMessagingTimer()
-    } else {
-      messaging.peerSocket.onopen = () => {
-        this.startOutMessagingTimer()
-      }
-    }
 
-    messaging.peerSocket.onmessage = (evt) => {
-      // console.log("received message " + Message.deserialize(evt.data).command)
-      this.handleIncomingMessage(Message.deserialize(evt.data))
-    }
+    // this.startOutMessagingTimer()
+    this.msgAdapter.init((msg:Message) => {
+      this.handleIncomingMessage(msg)
+    })
+    this.ctx.businessController.startTracking(true)
+    this.msgAdapter.send(new Message(MsgManager.FITBIT_MESSAGE_START_TRACK, true))
   }
 
   private startOutMessagingTimer() {
@@ -89,7 +86,7 @@ export class MsgManager {
     }
   }
 
-  private handleIncomingMessage(msg:Message) {
+  private handleIncomingMessage(msg: Message) {
     console.log("MsgManager received: " + msg.serialize())
 
     switch (msg.command) {
@@ -116,7 +113,6 @@ export class MsgManager {
         this.ctx.businessController.scheduleAlarm(time[0], time[1], time[2])
         break
       case MsgManager.FITBIT_MESSAGE_BATCH_SIZE:
-        // TODO tohle nestaci pri sensor batchingu - je potreba vytvorit novy Acc a nejak dumpnout data z toho stareho
         this.ctx.businessController.setBatchSize(msg.data)
         break
       case MsgManager.FITBIT_MESSAGE_HINT:
@@ -127,5 +123,6 @@ export class MsgManager {
         break
     }
   }
+
 
 }

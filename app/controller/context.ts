@@ -6,6 +6,7 @@ import { UIManager } from "../view/uiManager";
 import { SensorsController } from "./sensorsController";
 import { AlarmManager } from "./alarmManager";
 import { VibrationPlayer } from "./vibrationPlayer";
+import { MsgManager } from "./messaging/msgManager";
 
 export class Context {
 
@@ -15,6 +16,7 @@ export class Context {
   private _ui: UIManager
   private _vibrationPlayer: VibrationPlayer
   private _sensorsController: SensorsController
+  private _msgManager: MsgManager
 
   private _alarm: Alarm
   private _tracking: Tracking
@@ -26,6 +28,7 @@ export class Context {
     this._ui = new UIManager(this)
     this._vibrationPlayer = new VibrationPlayer()
     this._sensorsController = new SensorsController(this)
+    this._msgManager = new MsgManager(this)
 
     // state classes
     this._alarm = new Alarm()
@@ -38,6 +41,7 @@ export class Context {
   get ui(): UIManager { return this._ui }
   get vibrationPlayer(): VibrationPlayer { return this._vibrationPlayer }
   get sensorsController(): SensorsController { return this._sensorsController }
+  get msgManager(): MsgManager { return this._msgManager }
 
   get tracking(): Tracking { return this._tracking }
   get alarm(): Alarm { return this._alarm }

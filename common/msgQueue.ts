@@ -9,11 +9,6 @@ export class MsgQueue {
     this.name = name
   }
 
-  // obsolete, not using Message
-  // addToQueue(command:string, data:any) {
-  //   this.queue.push([command, data])
-  // }
-
   addToQueue(message:Message) {
     this.queue.push(message)
   }

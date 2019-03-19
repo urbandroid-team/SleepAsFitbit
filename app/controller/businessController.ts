@@ -1,5 +1,5 @@
 import { Context } from "./context";
-import { MsgManager } from "./msgManager";
+import { MsgManager } from "./messaging/msgManager";
 import { me } from "appbit";
 import { Message } from "../model/message";
 
@@ -7,6 +7,8 @@ import { Message } from "../model/message";
 
 export class BusinessController {
   ctx:Context
+  batch_acc: any[] = []
+  batch_acc_raw: any[] = []
 
   constructor(context:Context) {
     this.ctx = context
@@ -25,25 +27,23 @@ export class BusinessController {
       this.ctx.ui.setStatusTracking()
     }
 
-    this.ctx.queue.addToQueue(new Message(MsgManager.FITBIT_MESSAGE_START_TRACK, ""))
+    this.ctx.msgManager.msgAdapter.send(new Message(MsgManager.FITBIT_MESSAGE_START_TRACK, ""))
 
     // start acc on sensors controller
-    var accArr: any[] = []
-    var accRawArr: any[] = []
     this.ctx.sensorsController.startAcc((acc: any, accRaw: any) => {
-      accArr.push.apply(accArr, acc)
-      accRawArr = accRawArr.concat(accRaw)
-      if (accArr.length > this.ctx.tracking.batchSize) {
-        this.ctx.queue.addToQueue(new Message(MsgManager.FITBIT_MESSAGE_DATA, this.formatOutgoingAccData(accArr, accRawArr)))
-        accArr = []
-        accRawArr = []
+      this.batch_acc = this.batch_acc.concat(acc)
+      this.batch_acc_raw = this.batch_acc_raw.concat(accRaw)
+      if (this.batch_acc.length >= this.ctx.tracking.batchSize) {
+        this.ctx.msgManager.msgAdapter.send(new Message(MsgManager.FITBIT_MESSAGE_DATA, this.formatOutgoingAccData(this.batch_acc, this.batch_acc_raw)))
+        this.batch_acc = []
+        this.batch_acc_raw = []
       }
     })
 
     // start hr on sensors controller
     if (hrEnabled && me.permissions.granted("access_heart_rate")) {
       this.ctx.sensorsController.startHr((hr: any) => {
-        this.ctx.queue.addToQueue(new Message(MsgManager.FITBIT_MESSAGE_HR_DATA, hr))
+        this.ctx.msgManager.msgAdapter.send(new Message(MsgManager.FITBIT_MESSAGE_HR_DATA, hr))
       })
     }
   }
@@ -63,7 +63,7 @@ export class BusinessController {
   pauseTrackingFromWatch() {
     let timestamp = Date.now() + 5 * 60000
     this.pauseTracking(timestamp)
-    this.ctx.queue.addToQueue(new Message(MsgManager.FITBIT_MESSAGE_PAUSE, timestamp))
+    this.ctx.msgManager.msgAdapter.send(new Message(MsgManager.FITBIT_MESSAGE_PAUSE, timestamp))
   }
 
   pauseTracking(timestamp: number) {
@@ -76,7 +76,7 @@ export class BusinessController {
 
   resumeTrackingFromWatch() {
     this.resumeTracking()
-    this.ctx.queue.addToQueue(new Message(MsgManager.FITBIT_MESSAGE_RESUME, ""))
+    this.ctx.msgManager.msgAdapter.send(new Message(MsgManager.FITBIT_MESSAGE_RESUME, ""))
   }
 
   resumeTracking() {
@@ -104,12 +104,12 @@ export class BusinessController {
 
   dismissAlarmFromWatch() {
     // this.stopAlarm()
-    this.ctx.queue.addToQueue(new Message(MsgManager.FITBIT_MESSAGE_ALARM_DISMISS, ""))
+    this.ctx.msgManager.msgAdapter.send(new Message(MsgManager.FITBIT_MESSAGE_ALARM_DISMISS, ""))
   }
 
   snoozeAlarmFromWatch() {
     // this.stopAlarm()
-    this.ctx.queue.addToQueue(new Message(MsgManager.FITBIT_MESSAGE_ALARM_SNOOZE, ""))
+    this.ctx.msgManager.msgAdapter.send(new Message(MsgManager.FITBIT_MESSAGE_ALARM_SNOOZE, ""))
   }
 
   scheduleAlarm(h:number, m:number, timestamp: number) {
