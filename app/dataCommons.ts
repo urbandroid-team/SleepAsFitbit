@@ -1,26 +1,27 @@
-// import { scientific } from 'scientific'
 import * as scientific from 'scientific'
 
 // used for accelerometer DATA
-export function computeMaxDiffFromArray(xArr: any, yArr: any, zArr: any) {
-  var result = [];
-  let xDiff; let yDiff; let zDiff;
-
-  for (var i = 0; i < xArr.length - 1; i++) {
-    xDiff = Math.abs(Number((xArr[i + 1] - xArr[i])));
-    yDiff = Math.abs(Number((yArr[i + 1] - yArr[i])));
-    zDiff = Math.abs(Number((zArr[i + 1] - zArr[i])));
-    result.push((xDiff + yDiff + zDiff).toFixed(2));
-  }
-  return result;
+// for each 10 second sensor data array
+export function computeMaxDiffFromArray(xArr:Float32Array, yArr:Float32Array, zArr:Float32Array): number {
+  return scientific.max(
+    xArr.map((v, i, arr) => {
+      if (i == xArr.length-1) {
+        return 0
+      }
+      let xDiff = Math.abs(Number((xArr[i + 1] - xArr[i])));
+      let yDiff = Math.abs(Number((yArr[i + 1] - yArr[i])));
+      let zDiff = Math.abs(Number((zArr[i + 1] - zArr[i])));
+      return (xDiff + yDiff + zDiff)
+    })
+  )
 }
 
 // used for accelerometer NEW_DATA
-export function computeMaxRawFromArray(xArr: any, yArr: any, zArr: any): string {
+export function computeMaxRawFromArray(xArr: Float32Array, yArr: Float32Array, zArr: Float32Array): number {
   var res = xArr.map(function (x:number, i:number) {
     return Math.sqrt((x * x) + (yArr[i] * yArr[i]) + (zArr[i] * zArr[i]));
   })
-  return scientific.max(res).toFixed(2)
+  return scientific.max(res)
 }
 
 // Used for heart rates
