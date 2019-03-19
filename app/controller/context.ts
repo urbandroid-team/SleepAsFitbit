@@ -25,7 +25,7 @@ export class Context {
     this._alarmManager = new AlarmManager(this)
     this._ui = new UIManager(this)
     this._vibrationPlayer = new VibrationPlayer()
-    this._sensorsController = new SensorsController()
+    this._sensorsController = new SensorsController(this)
 
     // state classes
     this._alarm = new Alarm()

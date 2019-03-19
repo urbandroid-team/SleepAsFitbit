@@ -1,12 +1,15 @@
 import { Acc, Hr } from "../sensors";
+import { Context } from "./context";
 
 export class SensorsController {
   acc:Acc
   hr:Hr
+  ctx: Context
 
-  constructor() {
+  constructor(ctx: Context) {
     this.acc = new Acc
     this.hr = new Hr
+    this.ctx = ctx
   }
 
   startAcc(receiver: any) {
@@ -24,10 +27,7 @@ export class SensorsController {
   }
 
   setBatchSize(size:number) {
-    // TODO not implemented
-    console.log("setBatchSize to be implemented")
-    // TODO should set
-    // this.ctx.getTracking().batchSize = size
+    this.ctx.tracking.batchSize = size
   }
 }
 
