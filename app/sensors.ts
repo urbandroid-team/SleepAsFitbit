@@ -6,11 +6,12 @@ import * as d from './dataCommons'
 
 export class Acc {
   acc: Accelerometer
+  readingsPerBatch:number = 100
 
   constructor() {
     // 10 readings per second, 100 readings per batch
     // the callback will be called once every batch/frequency seconds
-    this.acc = new Accelerometer({ frequency: 10, batch: 100 });
+    this.acc = new Accelerometer({ frequency: 10, batch: this.readingsPerBatch });
   }
 
   startSensor(receiver: any) {
