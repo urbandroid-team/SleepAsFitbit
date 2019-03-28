@@ -1,13 +1,10 @@
-import * as messaging from "messaging"
 import { Context } from "../context"
 import { Message } from "../../model/message";
-import { MsgQueue } from "../../../common/msgQueue";
-import { memory } from "system";
 import { FileTransferAdapter } from "./fileTransferAdapter";
 
 export class MsgManager {
   // Static constants
-  static get MESSAGING_INTERVAL() { return 1000 }
+  // static get MESSAGING_INTERVAL() { return 1000 }
 
   // from watch or to Sleep
   static get FITBIT_MESSAGE_START_TRACK() { return "start" }
@@ -47,44 +44,44 @@ export class MsgManager {
     this.msgAdapter.send(new Message(MsgManager.FITBIT_MESSAGE_START_TRACK, true))
   }
 
-  private startOutMessagingTimer() {
-    let that = this
-    let queue = this.ctx.queue
+  // private startOutMessagingTimer() {
+  //   let that = this
+  //   let queue = this.ctx.queue
 
-    this.ctx.businessController.startTracking(true)
+  //   this.ctx.businessController.startTracking(true)
 
-    setInterval(function () {
-      if (queue.getMsgCount() > 0) {
-        let nextMsg = queue.peekNextMessage()
-        that.sendToCompanion(nextMsg)
-        that.ensureQueueMemoryConstraints(queue)
-      }
-    }, MsgManager.MESSAGING_INTERVAL)
-  }
+  //   setInterval(function () {
+  //     if (queue.getMsgCount() > 0) {
+  //       let nextMsg = queue.peekNextMessage()
+  //       that.sendToCompanion(nextMsg)
+  //       that.ensureQueueMemoryConstraints(queue)
+  //     }
+  //   }, MsgManager.MESSAGING_INTERVAL)
+  // }
 
-  private ensureQueueMemoryConstraints(queue:MsgQueue) {
-    if ((memory.js.used / memory.js.total) > 0.7) {
-      queue.removeNextMessage()
-    }
-    if ((memory.js.used / memory.js.total) > 0.8) {
-      queue.clearQueue()
-    }
-  }
+  // private ensureQueueMemoryConstraints(queue:MsgQueue) {
+  //   if ((memory.js.used / memory.js.total) > 0.7) {
+  //     queue.removeNextMessage()
+  //   }
+  //   if ((memory.js.used / memory.js.total) > 0.8) {
+  //     queue.clearQueue()
+  //   }
+  // }
 
-  private sendToCompanion(msg:Message) {
-    console.log(">>ToCompanion " + msg.command + " " + msg.data)
-    try {
-      if (messaging.peerSocket.readyState === messaging.peerSocket.OPEN) {
-        messaging.peerSocket.send(msg.serialize())
-        this.ctx.queue.removeNextMessage()
-      } else {
-        console.log(">>ToCompanion socket closed, msg not sent.")
-      }
-    }
-    catch (err) {
-      console.log(err)
-    }
-  }
+  // private sendToCompanion(msg:Message) {
+  //   console.log(">>ToCompanion " + msg.command + " " + msg.data)
+  //   try {
+  //     if (messaging.peerSocket.readyState === messaging.peerSocket.OPEN) {
+  //       messaging.peerSocket.send(msg.serialize())
+  //       this.ctx.queue.removeNextMessage()
+  //     } else {
+  //       console.log(">>ToCompanion socket closed, msg not sent.")
+  //     }
+  //   }
+  //   catch (err) {
+  //     console.log(err)
+  //   }
+  // }
 
   private handleIncomingMessage(msg: Message) {
     console.log("MsgManager received: " + msg.serialize())

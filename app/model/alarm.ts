@@ -1,4 +1,9 @@
+
 export class Alarm {
+
+  constructor() {
+  }
+
   private _alarm_in_progress: boolean = false
   private _alarm_snoozed: boolean = false
   private _alarm_scheduled: boolean = false

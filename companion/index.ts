@@ -1,24 +1,18 @@
 import { MsgQueue } from "../common/msgQueue";
 import { Message } from "../app/model/message";
-import { me } from "companion";
 import { FileTransferAdapter } from "./messaging/fileTransferAdapter";
-
+import { me } from 'companion'
 
 const POLLING_INTERVAL = 1000
-const TO_WATCH_MESSAGING_INTERVAL = 2000
-const MINUTE_IN_MS = 60 * 1000
 
 let toSleepQueue = new MsgQueue("toSleep")
 let toSleepTimer:any
 
-let toWatchQueue = new MsgQueue("toWatch")
-let toWatchTimer:any
 
 let msgAdapter = new FileTransferAdapter
 
 console.log("Companion started")
 startSleepPollingTimer(toSleepQueue, toSleepTimer)
-
 
 msgAdapter.init((msg: Message) => {
   toSleepQueue.addToQueue(msg)
@@ -26,10 +20,15 @@ msgAdapter.init((msg: Message) => {
 
 // TODO when should we cancel the wake interval??
 // me.wakeInterval = 5 * MINUTE_IN_MS
-me.wakeInterval = undefined
-console.log(me.wakeInterval)
+
+me.addEventListener('unload', function() {
+  toSleepQueue.addToQueue(new Message("Companion unloaded", null))
+})
 
 function startSleepPollingTimer(queue:MsgQueue, timer: any) {
+
+  toSleepQueue.addToQueue(new Message("Companion started", "peerApp " + me.launchReasons.peerAppLaunched + " fileTransfer " + me.launchReasons.fileTransfer + " wokenUp " + me.launchReasons.wokenUp))
+
   timer = setInterval(() => {
     // console.log(">> msg timer to Sleep TICK")
     if (queue.getMsgCount() > 0) {
@@ -45,15 +44,15 @@ function sendMessageToSleep(msg:Message) {
   let url = 'http://localhost:1764/' + msg.command + '?data=' + msg.data
   // console.log("sendMessageToSleep " + url)
   fetch(url)
-    .then(response => {
+    .then((response:any) => {
       // console.log("sendMessageToSleep response")
       return response.text();
     })
-    .then(fromSleepMsg => {
+    .then((fromSleepMsg:any) => {
       // console.log("sendMessageToSleep fromSleepMsg")
       processMessageFromSleep(fromSleepMsg)
     })
-    .catch(error => {
+    .catch((error:any) => {
       // this most probably means server on phone is not started
       // TODO: what to do? Probably show something on the watch, like "start tracking on the phone"
       console.error("sendMessageToSleep err " + error)

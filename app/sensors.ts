@@ -5,19 +5,23 @@ import { HeartRateSensor } from "heart-rate"
 import * as d from './dataCommons'
 
 export class Acc {
+
+  // @ts-ignore
   acc: Accelerometer
+
   readingsPerBatch:number = 100
 
   constructor() {
     // 10 readings per second, 100 readings per batch
     // the callback will be called once every batch/frequency seconds
+
+    // @ts-ignore
     this.acc = new Accelerometer({ frequency: 10, batch: this.readingsPerBatch });
   }
 
   startSensor(receiver: any) {
     console.log("Accelerometer started")
     this.acc.onreading = () => {
-      console.log("Accelerometer onreading")
       receiver(
         d.computeMaxDiffFromArray(this.acc.readings.x, this.acc.readings.y, this.acc.readings.z),
         d.computeMaxRawFromArray(this.acc.readings.x, this.acc.readings.y, this.acc.readings.z)
@@ -36,10 +40,12 @@ export class Hr {
 
   static get HR_RESTART_PERIOD() { return 5 * 60 * 1000 }
 
+  // @ts-ignore
   hrm: HeartRateSensor
   hrArr: any[]
 
   constructor() {
+    // @ts-ignore
     this.hrm = new HeartRateSensor()
     this.hrArr = []
   }

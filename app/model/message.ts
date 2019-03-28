@@ -1,3 +1,4 @@
+
 export class Message {
   private _command: string
   private _data: any
@@ -6,7 +7,6 @@ export class Message {
     if (command) {
       this._command = command
     }
-
     if (data) {
       this._data = data
     }

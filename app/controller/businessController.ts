@@ -7,8 +7,8 @@ import { Message } from "../model/message";
 
 export class BusinessController {
   ctx:Context
-  batch_acc: any[] = []
-  batch_acc_raw: any[] = []
+  batch_acc: number[] = []
+  batch_acc_raw: number[] = []
 
   constructor(context:Context) {
     this.ctx = context
@@ -30,20 +30,29 @@ export class BusinessController {
     this.ctx.msgManager.msgAdapter.send(new Message(MsgManager.FITBIT_MESSAGE_START_TRACK, ""))
 
     // start acc on sensors controller
-    this.ctx.sensorsController.startAcc((acc: any, accRaw: any) => {
-      this.batch_acc = this.batch_acc.concat(acc)
-      this.batch_acc_raw = this.batch_acc_raw.concat(accRaw)
-      if (this.batch_acc.length >= this.ctx.tracking.batchSize) {
-        this.ctx.msgManager.msgAdapter.send(new Message(MsgManager.FITBIT_MESSAGE_DATA, this.formatOutgoingAccData(this.batch_acc, this.batch_acc_raw)))
-        this.batch_acc = []
-        this.batch_acc_raw = []
+    this.ctx.sensorsController.startAcc((acc: number, accRaw: number) => {
+      try {
+        this.batch_acc = this.batch_acc.concat(acc)
+        this.batch_acc_raw = this.batch_acc_raw.concat(accRaw)
+        if (this.batch_acc.length >= this.ctx.tracking.batchSize) {
+          this.ctx.msgManager.msgAdapter.send(new Message(MsgManager.FITBIT_MESSAGE_DATA, this.formatOutgoingAccData(this.batch_acc, this.batch_acc_raw)))
+          this.batch_acc = []
+          this.batch_acc_raw = []
+        }
+      } catch (error) {
+        this.ctx.msgManager.msgAdapter.send(new Message("error in acc cb", error))
       }
     })
 
     // start hr on sensors controller
     if (hrEnabled && me.permissions.granted("access_heart_rate")) {
+
       this.ctx.sensorsController.startHr((hr: any) => {
-        this.ctx.msgManager.msgAdapter.send(new Message(MsgManager.FITBIT_MESSAGE_HR_DATA, hr))
+        try {
+          this.ctx.msgManager.msgAdapter.send(new Message(MsgManager.FITBIT_MESSAGE_HR_DATA, hr))
+        } catch (error) {
+          this.ctx.msgManager.msgAdapter.send(new Message("error in hr cb", error))
+        }
       })
     }
   }
@@ -56,8 +65,8 @@ export class BusinessController {
     if (this.ctx.tracking.tracking) {
       this.ctx.sensorsController.stopAllSensors([this.ctx.sensorsController.acc, this.ctx.sensorsController.hr])
       this.ctx.queue.clearQueue()
-      me.exit()
     }
+    me.exit()
   }
 
   pauseTrackingFromWatch() {

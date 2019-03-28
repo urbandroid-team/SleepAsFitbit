@@ -1,5 +1,8 @@
 export class Tracking {
 
+  constructor() {
+  }
+
   private _tracking:boolean = false
   private _hr_tracking:boolean = false
   private _tracking_paused:boolean = false

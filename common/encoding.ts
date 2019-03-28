@@ -1,7 +1,5 @@
 export class TextEncoder {
-  constructor() {
 
-  }
   encoding = 'utf-8';
 
   encode = function (str:string) {

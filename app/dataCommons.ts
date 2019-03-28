@@ -30,12 +30,12 @@ export function computeMedianFromArray(arr:any[]) {
   return arr[Math.round(arr.length / 2) - 1];
 }
 
-// used for accelerometer DATA
-export function computeMaxDiff(x: number, y: number, z: number, lastX: number, lastY: number, lastZ: number) {
-  return Math.abs(x - lastX) + Math.abs(y - lastY) + Math.abs(z - lastZ);
-}
+// // used for accelerometer DATA
+// export function computeMaxDiff(x: number, y: number, z: number, lastX: number, lastY: number, lastZ: number) {
+//   return Math.abs(x - lastX) + Math.abs(y - lastY) + Math.abs(z - lastZ);
+// }
 
-// used for accelerometer NEW_DATA
-export function computeMaxRaw(x: number ,y: number, z: number) {
-  return scientific.sqrt(new Float32Array((x * x) + (y * y) + (z * z)));
-}
+// // used for accelerometer NEW_DATA
+// export function computeMaxRaw(x: number ,y: number, z: number) {
+//   return scientific.sqrt(new Float32Array((x * x) + (y * y) + (z * z)));
+// }

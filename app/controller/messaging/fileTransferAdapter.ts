@@ -5,6 +5,9 @@ import { TextDecoder, TextEncoder } from "../../../common/encoding";
 
 export class FileTransferAdapter {
 
+  constructor() {
+  }
+
   public init(msgReceivedCallback:any) {
     var self = this
     inbox.addEventListener("newfile", function () {
@@ -21,9 +24,6 @@ export class FileTransferAdapter {
     let fileName;
     while (fileName = inbox.nextFile()) {
       msgReceivedCallback(Message.fromString(new TextDecoder().decodeFromArrayBuffer(readFileSync(fileName))))
-      // this.handleIncomingMessage()
-      // let ar = new TextDecoder().decodeFromArrayBuffer(readFileSync(fileName))
-      // this.handleIncomingMessage(new Message(ar.split('*')[0], ar.split('*')[1]))
     }
   }
 

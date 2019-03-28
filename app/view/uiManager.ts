@@ -23,12 +23,24 @@ export class UIManager {
   alarmBtnBR: any
   clock: any
 
+  runningPage: any
+  exitPage: any
+  btnExitYes: any
+  btnExitNo: any
+
   constructor(context: Context) {
     this.ctx = context
   }
 
   initialize() {
     this.background = document.getElementById('background')
+    this.runningPage = document.getElementById('runningPage')
+    this.exitPage = document.getElementById('exitPage')
+    this.exitPage.style.display="none"
+
+    // Exit dialog
+    this.btnExitYes = document.getElementById("btn-yes")
+    this.btnExitNo = document.getElementById("btn-no")
 
     // Buttons
     this.alarmBtnWrapper = document.getElementById('alarmBtns')
@@ -57,7 +69,7 @@ export class UIManager {
     console.log("UI: RegisterButtonActions")
 
     let that = this
-    this.trackingBtnBR.onclick = (evt:any) => {
+    this.trackingBtnBR.onclick = () => {
       if (that.ctx.tracking.trackingPaused) {
         that.ctx.tracking.trackingPaused = false
         that.ctx.businessController.resumeTrackingFromWatch()
@@ -66,11 +78,33 @@ export class UIManager {
         that.ctx.businessController.pauseTrackingFromWatch()
       }
     }
-    this.alarmBtnTR.onclick = (evt:any) => {
+    this.alarmBtnTR.onclick = () => {
       this.ctx.businessController.dismissAlarmFromWatch()
     }
-    this.alarmBtnBR.onclick = (evt:any) => {
+    this.alarmBtnBR.onclick = () => {
       this.ctx.businessController.snoozeAlarmFromWatch()
+    }
+    this.btnExitYes.onclick = () => { this.ctx.businessController.stopTracking() }
+    this.btnExitNo.onclick = () => {
+      this.runningPage.style.display="inline"
+      this.exitPage.style.display="none"
+    }
+
+    document.onkeypress = function (e) {
+      e.preventDefault();
+      if (e.key == "up" && that.exitPage.style.display == "inline") {
+        that.ctx.businessController.stopTracking()
+      }
+      if (e.key === "back" || e.key === "down") {
+        if (that.exitPage.style.display === "inline") {
+          that.runningPage.style.display = "inline";
+          that.exitPage.style.display = "none";
+        } else {
+          that.runningPage.style.display = "none";
+          that.exitPage.style.display = "inline";
+        }
+      }
+
     }
   }
 

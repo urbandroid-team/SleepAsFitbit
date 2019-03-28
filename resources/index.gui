@@ -2,7 +2,7 @@
 
     <rect id="background" fill="black" x="0" y="0" width="100%" height="100%" />
 
-    <section x="6" y="0" width="100%" height="100%">
+    <svg id="runningPage" x="6" y="0" width="100%" height="100%">
 
       <svg class="text-container" id="text-status" y="0" x="0">
         <text id="status" font-size="35" fill="grey" y="35">Connecting...</text>
@@ -20,7 +20,6 @@
       </svg>
 
       <g id="trackingBtns">
-
         <use id="tracking-btn-br" href="#combo-button-lower-right" fill="fb-peach">
           <set href="combo-button-icon" attributeName="href" to="pause.png"/>
           <set href="combo-button-icon-press" attributeName="href" to="pause.png"/>
@@ -42,6 +41,18 @@
         </use>
       </g>
 
-    </section>
+    </svg>
+
+    <svg id="exitPage">
+      <text y="110" x="50%" id="Title" font-family="System-Regular" fill="yellow" font-size="40" font-weight="bold" text-anchor="middle">Exit: Are you sure?</text>
+      <svg y="$">
+        <use id="btn-yes" href="#square-button-toggle" x="50%" fill="fb-green">
+          <set href="#text" attributeName="text-buffer" to="Yes" />
+        </use>
+        <use id="btn-no" href="#square-button-toggle" value="1" fill="fb-red">
+          <set href="#text" attributeName="text-buffer" to="No" />
+        </use>
+      </svg>
+    </svg>
 
 </svg>
