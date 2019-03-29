@@ -54,13 +54,15 @@ export class Hr {
     console.log("Started HR reading")
     this.hrm.onreading = () => {
       this.hrArr.push(this.hrm.heartRate)
-    }
 
-    if (this.hrArr.length > 9) {
-      this.stopSensor()
-      this.scheduleSensorRestart(Hr.HR_RESTART_PERIOD)
-      receiver(d.computeMedianFromArray(this.hrArr))
-      this.hrArr.length = 0
+      if (this.hrArr.length > 9) {
+        console.log("HR got 10 values, hrArr size: " + this.hrArr.length)
+        this.stopSensor()
+        this.scheduleSensorRestart( 5*60*1000 )
+        receiver(d.computeMedianFromArray(this.hrArr))
+        this.hrArr.length = 0
+      }
+
     }
 
     this.hrm.start()
