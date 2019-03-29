@@ -88,7 +88,7 @@ export class MsgManager {
 
     switch (msg.command) {
       case MsgManager.FITBIT_MESSAGE_START_TRACK:
-        (msg.data == "DO_HR_MONITORING") ? this.ctx.businessController.startTracking(true) : this.ctx.businessController.startTracking(false)
+        this.ctx.businessController.startTracking(msg.data)
         break
       case MsgManager.FITBIT_MESSAGE_STOP_TRACK:
         this.ctx.businessController.stopTracking()
