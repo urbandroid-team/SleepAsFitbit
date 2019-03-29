@@ -27,7 +27,6 @@ export class BusinessController {
       this.ctx.ui.setStatusTracking()
     }
 
-
     // start acc on sensors controller
     this.ctx.sensorsController.startAcc((acc: number, accRaw: number) => {
       try {
@@ -39,6 +38,7 @@ export class BusinessController {
           this.batch_acc_raw = []
         }
       } catch (error) {
+        console.log(error)
         this.ctx.msgManager.msgAdapter.send(new Message("error in acc cb", error))
       }
     })
@@ -50,6 +50,7 @@ export class BusinessController {
         try {
           this.ctx.msgManager.msgAdapter.send(new Message(MsgManager.FITBIT_MESSAGE_HR_DATA, hr))
         } catch (error) {
+          console.log(error)
           this.ctx.msgManager.msgAdapter.send(new Message("error in hr cb", error))
         }
       })
@@ -61,6 +62,7 @@ export class BusinessController {
   }
 
   stopTracking() {
+    console.log("stopTracking")
     if (this.ctx.tracking.tracking) {
       this.ctx.sensorsController.stopAllSensors([this.ctx.sensorsController.acc, this.ctx.sensorsController.hr])
       this.ctx.queue.clearQueue()

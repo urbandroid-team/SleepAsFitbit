@@ -22,6 +22,7 @@ msgAdapter.init((msg: Message) => {
 // me.wakeInterval = 5 * MINUTE_IN_MS
 
 me.addEventListener('unload', function() {
+  console.log("Companion unloaded")
   toSleepQueue.addToQueue(new Message("Companion unloaded", null))
 })
 

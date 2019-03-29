@@ -38,8 +38,6 @@ export class Acc {
 
 export class Hr {
 
-  static get HR_RESTART_PERIOD() { return 5 * 60 * 1000 }
-
   // @ts-ignore
   hrm: HeartRateSensor
   hrArr: any[]
@@ -53,6 +51,7 @@ export class Hr {
   startSensor(receiver: any) {
     console.log("Started HR reading")
     this.hrm.onreading = () => {
+      console.log("HR onReading " + this.hrm.heartRate)
       this.hrArr.push(this.hrm.heartRate)
 
       if (this.hrArr.length > 9) {
@@ -69,6 +68,7 @@ export class Hr {
   }
 
   stopSensor() {
+    console.log("HR stopping sensor")
     this.hrm.stop()
   }
 
