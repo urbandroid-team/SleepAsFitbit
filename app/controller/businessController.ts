@@ -27,7 +27,6 @@ export class BusinessController {
       this.ctx.ui.setStatusTracking()
     }
 
-    this.ctx.msgManager.msgAdapter.send(new Message(MsgManager.FITBIT_MESSAGE_START_TRACK, ""))
 
     // start acc on sensors controller
     this.ctx.sensorsController.startAcc((acc: number, accRaw: number) => {
