@@ -40,7 +40,8 @@ export class MsgManager {
     this.msgAdapter.init((msg:Message) => {
       this.handleIncomingMessage(msg)
     })
-    this.ctx.businessController.startTracking(true)
+    // For debugging purposes
+    // this.ctx.businessController.startTracking(true)
     this.msgAdapter.send(new Message(MsgManager.FITBIT_MESSAGE_START_TRACK, true))
   }
 
