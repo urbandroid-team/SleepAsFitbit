@@ -17,11 +17,15 @@ export class FileTransferAdapter {
   }
 
   private async processAllFiles(msgReceivedCallback: any) {
-    let file;
-    while ((file = await inbox.pop())) {
-      const payload = await file.text();
-      console.log('companion received from watch');
-      msgReceivedCallback(Message.fromString(payload))
+    try {
+      let file;
+      while ((file = await inbox.pop())) {
+        const payload = await file.text();
+        console.log('companion received from watch');
+        msgReceivedCallback(Message.fromString(payload))
+      }
+    } catch (error) {
+      console.log(error)
     }
   }
 
