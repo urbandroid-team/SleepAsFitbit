@@ -1,6 +1,7 @@
 import { Context } from "../context"
 import { Message } from "../../model/message";
-import { FileTransferAdapter } from "./fileTransferAdapter";
+// import { FileTransferAdapter } from "./fileTransferAdapter";
+import { MessagingAdapter } from "./messagingAdapter";
 
 export class MsgManager {
   // Static constants
@@ -26,11 +27,12 @@ export class MsgManager {
   static get FITBIT_MESSAGE_SUSPEND() { return "suspend" }
 
   ctx:Context
-  msgAdapter: FileTransferAdapter
+  // msgAdapter: FileTransferAdapter
+  msgAdapter: any
 
   constructor(context: Context) {
     this.ctx = context
-    this.msgAdapter = new FileTransferAdapter
+    this.msgAdapter = new MessagingAdapter
   }
 
   public startCompanionCommChannel() {

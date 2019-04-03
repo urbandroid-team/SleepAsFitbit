@@ -28,5 +28,8 @@
   },
   "scripts": {
     "build": "fitbit-build"
+  },
+  "dependencies": {
+    "fitbit-asap": "^1.1.1"
   }
 }

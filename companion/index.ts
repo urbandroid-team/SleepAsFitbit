@@ -2,14 +2,15 @@ import { MsgQueue } from "../common/msgQueue";
 import { Message } from "../app/model/message";
 import { FileTransferAdapter } from "./messaging/fileTransferAdapter";
 import { me } from 'companion'
+import { MessagingAdapter } from "./messaging/messagingAdapter";
 
 const POLLING_INTERVAL = 1000
 
 let toSleepQueue = new MsgQueue("toSleep")
 let toSleepTimer:any
 
-
-let msgAdapter = new FileTransferAdapter
+// let msgAdapter = new FileTransferAdapter
+let msgAdapter = new MessagingAdapter
 
 console.log("Companion started")
 startSleepPollingTimer(toSleepQueue, toSleepTimer)
