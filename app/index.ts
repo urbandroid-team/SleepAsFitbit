@@ -32,12 +32,11 @@ try {
     console.log(mem)
   }, 10000);
 
-  memory.monitor.onmemorypressurechange = (e) => {
-    let data = this.pressure
-    console.log("mem pressure: " + data)
+  memory.monitor.onmemorypressurechange = function (a) {
+    let data = memory.monitor.pressure
+    console.log("memoryPressureChange:" + data);
     ctx.msgManager.msgAdapter.send(new Message("Mem pressure", data))
   }
-
 
 } catch (error) {
   console.log(error)
