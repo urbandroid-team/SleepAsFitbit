@@ -44,35 +44,35 @@ export class Hr {
 
   constructor() {
     // @ts-ignore
-    this.hrm = new HeartRateSensor()
+    this.hrm = new HeartRateSensor({ frequency: 1 })
     this.hrArr = []
   }
 
   startSensor(receiver: any) {
-    console.log("Started HR reading")
-    this.hrm.onreading = () => {
-      console.log("HR onReading " + this.hrm.heartRate)
-      this.hrArr.push(this.hrm.heartRate)
+    // console.log("Started HR reading")
+    // this.hrm.onreading = () => {
+    //   console.log("HR onReading " + this.hrm.heartRate)
+    //   this.hrArr.push(this.hrm.heartRate)
 
-      if (this.hrArr.length > 9) {
-        console.log("HR got 10 values, hrArr size: " + this.hrArr.length)
-        this.stopSensor()
-        this.scheduleSensorRestart( 5*60*1000 )
-        receiver(d.computeMedianFromArray(this.hrArr))
-        this.hrArr.length = 0
-      }
+    //   if (this.hrArr.length > 9) {
+    //     console.log("HR got 10 values, hrArr size: " + this.hrArr.length)
+    //     this.stopSensor()
+    //     this.scheduleSensorRestart( 5*60*1000 )
+    //     receiver(d.computeMedianFromArray(this.hrArr))
+    //     this.hrArr.length = 0
+    //   }
 
-    }
+    // }
 
-    this.hrm.start()
+    // this.hrm.start()
   }
 
   stopSensor() {
-    console.log("HR stopping sensor")
-    this.hrm.stop()
+    // console.log("HR stopping sensor")
+    // this.hrm.stop()
   }
 
   scheduleSensorRestart(delayMilliseconds:number) {
-    setTimeout(() => { this.hrm.start() }, delayMilliseconds)
+    // setTimeout(() => { this.hrm.start() }, delayMilliseconds)
   }
 }
