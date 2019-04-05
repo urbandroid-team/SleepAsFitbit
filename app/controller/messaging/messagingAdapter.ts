@@ -17,11 +17,14 @@ export class MessagingAdapter {
   public init(msgReceivedCallback: any) {
     let self = this
 
-    start_worker();
+    peerSocket.addEventListener("open", function () {
+       self.send_next();
+    });
 
-//    peerSocket.addEventListener("open", function () {
-//     self.send_next();
-//    });
+// Do we have closed?
+    peerSocket.addEventListener("closed", function () {
+       self.stopWorker();
+    });
 
     peerSocket.addEventListener("message", function (event) {
       let msg = event.data;
@@ -39,9 +42,6 @@ export class MessagingAdapter {
       } else {
         self.debug && console.log("Dequeue - got ack for " + data._asap_id)
         self.dequeue(msg.id);
-        // we have ask for last message, lets send next ASAP and reschedule
-        start_worker();
-        send_next()
       }
     });
   }
@@ -53,14 +53,23 @@ export class MessagingAdapter {
   private enqueue(msg: QueueMessage) {
     this.debug && console.log("MSG: enqueue " + msg);
     this.queue.push(msg);
+    if (this.queue.length == 1) {
+        send_next()
+    }
   }
 
+  // maybe we can just shift() as we always get the first message acked - no need to search - but maybe does not matter
   private dequeue(id:number) {
     for (var i = 0; i < this.queue.length; i++ ) {
-      let msg = this.queue[i]
+      let msg = queue[i]
       if (msg.id === id) {
         this.debug && console.log("MSG: remove " + msg)
-        this.queue.splice(i, 1);
+        queue.splice(i, 1);
+        if (queue.length == 0) {
+          stopWorker();
+        } else {
+          sendNext()
+        }
         break;
       }
     }
@@ -91,13 +100,12 @@ export class MessagingAdapter {
       } catch (error) {
         this.debug && console.log(error);
       }
+      start_worker()
     }
   }
 
   private start_worker() {
-    if (worker_timer) {
-      clearInterval(worker_timer)
-    }
+    stopWorker();
 
     let self = this
     this.worker_timer = setInterval(function () {
@@ -105,6 +113,13 @@ export class MessagingAdapter {
     }, 5000);
 
   }
+
+  private stop_worker() {
+    if (worker_timer) {
+      clearInterval(worker_timer)
+    }
+  }
+
 
 }
 
