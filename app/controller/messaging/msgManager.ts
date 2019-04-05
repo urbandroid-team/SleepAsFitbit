@@ -1,6 +1,7 @@
 import { Context } from "../context"
 import { Message } from "../../model/message";
-// import { FileTransferAdapter } from "./fileTransferAdapter";
+import { FileTransferAdapter } from "./fileTransferAdapter";
+import { MockAdapter } from "./mockAdapter";
 import { MessagingAdapter } from "./messagingAdapter";
 
 export class MsgManager {
@@ -32,6 +33,7 @@ export class MsgManager {
 
   constructor(context: Context) {
     this.ctx = context
+    // this.msgAdapter = new MessagingAdapter
     this.msgAdapter = new MessagingAdapter
   }
 
@@ -39,9 +41,16 @@ export class MsgManager {
     console.log(">>ToCompanion channel init")
 
     // this.startOutMessagingTimer()
-    this.msgAdapter.init((msg:Message) => {
-      this.handleIncomingMessage(msg)
-    })
+
+
+    // give the companion time to start
+    setTimeout(() => {
+      this.msgAdapter.init((msg:Message) => {
+        this.handleIncomingMessage(msg)
+      })
+    }, 2000)
+
+
     // For debugging purposes
     // this.ctx.businessController.startTracking(true)
     this.msgAdapter.send(new Message(MsgManager.FITBIT_MESSAGE_START_TRACK, true))

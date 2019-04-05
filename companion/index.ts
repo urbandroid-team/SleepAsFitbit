@@ -3,14 +3,16 @@ import { Message } from "../app/model/message";
 import { FileTransferAdapter } from "./messaging/fileTransferAdapter";
 import { me } from 'companion'
 import { MessagingAdapter } from "./messaging/messagingAdapter";
+import { MockAdapter } from "./messaging/mockAdapter";
 
 const POLLING_INTERVAL = 1000
 
 let toSleepQueue = new MsgQueue("toSleep")
 let toSleepTimer:any
+var debug = true
 
-// let msgAdapter = new FileTransferAdapter
 let msgAdapter = new MessagingAdapter
+// let msgAdapter = new MessagingAdapter
 
 console.log("Companion started")
 startSleepPollingTimer(toSleepQueue, toSleepTimer)
@@ -57,7 +59,7 @@ function sendMessageToSleep(msg:Message) {
     .catch((error:any) => {
       // this most probably means server on phone is not started
       // TODO: what to do? Probably show something on the watch, like "start tracking on the phone"
-      console.error("sendMessageToSleep err " + error)
+      !debug && console.error("sendMessageToSleep err " + error)
     });
 }
 
