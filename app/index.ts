@@ -30,7 +30,7 @@ try {
     let mem = "M " + memory.js.used + " peak " + memory.js.peak
     ctx.msgManager.msgAdapter.send(new Message("Mem", mem))
     console.log(mem)
-  }, 10000);
+  }, 20000);
 
   memory.monitor.onmemorypressurechange = function (a) {
     let data = memory.monitor.pressure
@@ -41,4 +41,18 @@ try {
 } catch (error) {
   console.log(error)
   ctx.msgManager.msgAdapter.send(new Message("error", error))
+}
+
+measureTicks()
+
+function measureTicks() {
+  var interval = 100;
+  var last = Date.now();
+  var timer = setInterval(function () {
+    var delta = Date.now() - last - interval;
+    if (delta > 100) {
+      console.error("eventloop_blocked " + delta);
+    }
+    last = Date.now();
+  }, interval);
 }
