@@ -16,20 +16,22 @@ View
   - probublava celou appkou
 
 
-
-
-
-
   TODODODO
   [snad poreseno?] vyresit error stavy messagingu companion > watch
   [pozdeji] msgmanager na context, queue uvnitr nej
 
   [x] acc, hr movnout mimo kontext
   [x] dodelat UI na alarmu
- 
 
-  [] exit button acc to https://community.fitbit.com/t5/SDK-Development/Physical-Button-Exit-App/m-p/2375320
+  [x] exit button acc to https://community.fitbit.com/t5/SDK-Development/Physical-Button-Exit-App/m-p/2375320
 
   [x] make buttons clickable
 
-  [] dodelat ui na teleefonu
+  [x] dodelat ui na teleefonu
+
+
+  DEBUGGING
+
+
+[x] peek pop, popback
+[]

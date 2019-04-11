@@ -1,15 +1,16 @@
 import { Message } from "../../model/message";
 import { peerSocket } from "messaging";
+import { QueueMessage } from "./queueMessage";
 
 export class MessagingAdapter {
 
   debug = true;
   last_send_message_id = -1;
   last_received_message_id = -1;
-  resend_timer:any = null;
-  queue:any[] = []
+  resend_timer: any = null;
+  queue: any[] = []
 
-  worker_timer:any = null;
+  worker_timer: any = null;
 
   constructor() {
   }
@@ -18,57 +19,58 @@ export class MessagingAdapter {
     let self = this
 
     peerSocket.addEventListener("open", function () {
-       self.send_next();
+      self.send_next();
     });
 
-// Do we have closed?
-    peerSocket.addEventListener("closed", function () {
-       self.stopWorker();
+    // Do we have closed?
+    peerSocket.addEventListener("close", function () {
+      self.stop_worker();
     });
 
     peerSocket.addEventListener("message", function (event) {
-      let msg = event.data;
-      if (!msg.ack) {
-        if (msg.id > self.last_received_message_id) {
-          msgReceivedCallback(Message.fromString(msg.body));
-          self.last_received_message_id = msg.id;
+      let qMsg = event.data;
+      console.log(JSON.stringify(qMsg))
+      if (!qMsg.ack) {
+        if (qMsg.id > self.last_received_message_id) {
+          msgReceivedCallback(new Message(qMsg.body.command, qMsg.body.data));
+          self.last_received_message_id = qMsg.id;
         }
         try {
           // send acked back
-          peerSocket.send(QueueMessage(msg.id));
+          peerSocket.send(new QueueMessage(qMsg.id));
         } catch (error) {
           self.debug && console.log(error);
         }
       } else {
-        self.debug && console.log("Dequeue - got ack for " + data._asap_id)
-        self.dequeue(msg.id);
+        self.debug && console.log("Dequeue - got ack for " + qMsg.id)
+        self.dequeue(qMsg.id);
       }
     });
   }
 
   public send(msg: Message) {
-    enequeue(QueueMessage(this.get_next_id(), msg))
+    this.enqueue(new QueueMessage(this.get_next_id(), msg))
   }
 
-  private enqueue(msg: QueueMessage) {
-    this.debug && console.log("MSG: enqueue " + msg);
-    this.queue.push(msg);
+  private enqueue(qMsg: QueueMessage) {
+    this.debug && console.log("MSG: enqueue " + qMsg);
+    this.queue.push(qMsg);
     if (this.queue.length == 1) {
-        send_next()
+        this.send_next()
     }
   }
 
   // maybe we can just shift() as we always get the first message acked - no need to search - but maybe does not matter
   private dequeue(id:number) {
     for (var i = 0; i < this.queue.length; i++ ) {
-      let msg = queue[i]
-      if (msg.id === id) {
-        this.debug && console.log("MSG: remove " + msg)
-        queue.splice(i, 1);
-        if (queue.length == 0) {
-          stopWorker();
+      let qMsg = this.queue[i]
+      if (qMsg.id === id) {
+        this.debug && console.log("QMSG: remove " + qMsg)
+        this.queue.shift();
+        if (this.queue.length == 0) {
+          this.stop_worker();
         } else {
-          sendNext()
+          this.send_next()
         }
         break;
       }
@@ -84,28 +86,28 @@ export class MessagingAdapter {
 
   private send_next() {
     this.debug && console.log("buffer:" + peerSocket.bufferedAmount)
-    if (queue.length > 0) {
-      let msg = queue.peek();
+    if (this.queue.length > 0) {
+      let qMsg:QueueMessage = this.queue[0];
 
       // clear expired messages first
-      if (msg.expired()) {
-        queue.shift()
-        send_next();
+      if (qMsg.expired()) {
+        this.queue.shift()
+        this.send_next();
         return;
       }
 
-      this.debug && console.log("MSG: sending " + msg)
+      this.debug && console.log("MSG: sending " + qMsg)
       try {
-        peerSocket.send(msg);
+        peerSocket.send(qMsg);
       } catch (error) {
         this.debug && console.log(error);
       }
-      start_worker()
+      this.start_worker()
     }
   }
 
   private start_worker() {
-    stopWorker();
+    this.stop_worker();
 
     let self = this
     this.worker_timer = setInterval(function () {
@@ -115,11 +117,10 @@ export class MessagingAdapter {
   }
 
   private stop_worker() {
-    if (worker_timer) {
-      clearInterval(worker_timer)
+    if (this.worker_timer) {
+      clearInterval(this.worker_timer)
     }
   }
-
 
 }
 

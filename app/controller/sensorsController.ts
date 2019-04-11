@@ -20,8 +20,8 @@ export class SensorsController {
     this.hr.startSensor(receiver)
   }
 
-  stopAllSensors(sensorArr:any[]) {
-    sensorArr.forEach(sensor => {
+  stopAllSensors() {
+    [this.acc, this.hr].forEach(sensor => {
       if (sensor != null) { sensor.stopSensor() }
     });
   }

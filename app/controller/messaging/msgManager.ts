@@ -28,12 +28,10 @@ export class MsgManager {
   static get FITBIT_MESSAGE_SUSPEND() { return "suspend" }
 
   ctx:Context
-  // msgAdapter: FileTransferAdapter
-  msgAdapter: any
+  msgAdapter: FileTransferAdapter | MessagingAdapter | MockAdapter
 
   constructor(context: Context) {
     this.ctx = context
-    // this.msgAdapter = new MessagingAdapter
     this.msgAdapter = new MessagingAdapter
   }
 
@@ -54,6 +52,10 @@ export class MsgManager {
     // For debugging purposes
     // this.ctx.businessController.startTracking(true)
     this.msgAdapter.send(new Message(MsgManager.FITBIT_MESSAGE_START_TRACK, true))
+  }
+
+  public sendStopTracking() {
+    this.msgAdapter.send(new Message(MsgManager.FITBIT_MESSAGE_STOP_TRACK, undefined))
   }
 
   // private startOutMessagingTimer() {

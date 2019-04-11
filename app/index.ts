@@ -26,14 +26,14 @@ try {
 
   ctx.msgManager.startCompanionCommChannel()
 
-  let memLogTimer = setInterval(() => {
-    let mem = "M " + memory.js.used + " peak " + memory.js.peak
-    ctx.msgManager.msgAdapter.send(new Message("Mem", mem))
-    console.log(mem)
-  }, 20000);
+  // let memLogTimer = setInterval(() => {
+  //   let mem = "M " + memory.js.used + " peak " + memory.js.peak
+  //   ctx.msgManager.msgAdapter.send(new Message("Mem", mem))
+  //   console.log(mem)
+  // }, 20000);
 
   memory.monitor.onmemorypressurechange = function (a) {
-    let data = memory.monitor.pressure
+    let data = memory.monitor.pressure + " " + "M " + memory.js.used + " peak " + memory.js.peak
     console.log("memoryPressureChange:" + data);
     ctx.msgManager.msgAdapter.send(new Message("Mem pressure", data))
   }
@@ -42,8 +42,6 @@ try {
   console.log(error)
   ctx.msgManager.msgAdapter.send(new Message("error", error))
 }
-
-measureTicks()
 
 function measureTicks() {
   var interval = 100;

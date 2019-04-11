@@ -5,7 +5,7 @@
     "appDisplayName": "Sleep as Android",
     "iconFile": "resources/icon.png",
     "wipeColor": "#4caf50",
-    "version": "0.6",
+    "version": "0.7",
     "requestedPermissions": [
       "access_heart_rate",
       "access_internet",
@@ -30,6 +30,5 @@
     "build": "fitbit-build"
   },
   "dependencies": {
-    "fitbit-asap": "^1.1.1"
   }
 }

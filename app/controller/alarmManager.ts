@@ -42,14 +42,14 @@ export class AlarmManager {
     console.log(TAG + "alarm stopped");
   }
 
-  scheduleAlarm(timestamp: number) {
-    console.log(TAG + "scheduleAlarm for " + timestamp);
+  // scheduleAlarm(timestamp: number) {
+  //   console.log(TAG + "scheduleAlarm for " + timestamp);
 
-    let timeout = timestamp - (Date.now())
-    clearTimeout(this.alarmScheduledTimeout)
-    this.alarmScheduledTimeout = setTimeout(() => {
-      this.ctx.businessController.startAlarm(0)
-    }, timeout)
-  }
+  //   let timeout = timestamp - (Date.now())
+  //   clearTimeout(this.alarmScheduledTimeout)
+  //   this.alarmScheduledTimeout = setTimeout(() => {
+  //     this.ctx.businessController.startAlarm(0)
+  //   }, timeout)
+  // }
 
 }

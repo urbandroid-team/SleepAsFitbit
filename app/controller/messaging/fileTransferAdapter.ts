@@ -24,6 +24,8 @@ export class FileTransferAdapter {
     let fileName;
     while (fileName = inbox.nextFile()) {
       msgReceivedCallback(Message.fromString(new TextDecoder().decodeFromArrayBuffer(readFileSync(fileName))))
+      // TODO delete the file after reading
+      // TODO don't do this in a while block but return the control to the app
     }
   }
 

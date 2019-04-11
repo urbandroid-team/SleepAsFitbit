@@ -4,6 +4,7 @@ export class Alarm {
   constructor() {
   }
 
+  // muze byt nekonzistence, radsi udelat jako enum
   private _alarm_in_progress: boolean = false
   private _alarm_snoozed: boolean = false
   private _alarm_scheduled: boolean = false

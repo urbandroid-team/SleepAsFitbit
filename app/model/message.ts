@@ -1,22 +1,12 @@
 
 export class Message {
-  private _command: string
-  private _data: any
+  command: string
+  data: any
 
   constructor(command:string, data:any) {
-    if (command) {
-      this._command = command
-    }
-    if (data) {
-      this._data = data
-    }
+    this.command = command
+    this.data = data
   }
-
-  get command(): string { return this._command; }
-  set command(command: string) { this._command = command; }
-
-  get data(): any { return this._data; }
-  set data(data: any) { this._data = data; }
 
   serialize() {
     return [this.command, this.data]
@@ -31,6 +21,9 @@ export class Message {
   }
 
   static fromString(str: string): Message {
+    console.log(str)
+    console.dir(str)
+    console.log(JSON.stringify(str))
     let ar = str.split("*")
     return (new Message(ar[0], ar[1]))
   }

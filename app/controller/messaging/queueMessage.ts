@@ -1,28 +1,28 @@
+import { Message } from "../../model/message";
 
 export class QueueMessage {
-  body: Any
-  id: Number
-  created: Number = Date.now()
-  timeout: Number = 60000
+  body:Message
+  id:number
+  created:number = Date.now()
+  timeout:number = 60000
   ack = false
 
-  constructor(id: Number) {
+  constructor(id: number, body?: Message) {
     this.id = id
-    ack = true
-  }
 
-
-  constructor(id: Number, body : Any) {
-    this.id = id
-    this.body = body
+    if (body) {
+      this.body = body
+    } else {
+      this.ack = true
+    }
   }
 
   expired() {
-    return timeout < 0 || (Date.now() >= created + timeout);
+    return this.timeout < 0 || (Date.now() >= this.created + this.timeout);
   }
 
   toString() {
-    return "Msg #" + id + " body '" + body + "' ack=" + ack;
+    return "Msg #" + this.id + " body '" + this.body + "' ack=" + this.ack;
   }
 
 }

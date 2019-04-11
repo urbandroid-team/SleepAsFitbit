@@ -1,13 +1,16 @@
 import { Message } from "../../app/model/message";
 import { peerSocket } from "messaging";
+import { QueueMessage } from "../../app/controller/messaging/queueMessage";
 
 export class MessagingAdapter {
 
   debug = true;
-  last_generated_message_id = -1;
+  last_send_message_id = -1;
   last_received_message_id = -1;
   resend_timer: any = null;
   queue: any[] = []
+
+  worker_timer: any = null;
 
   constructor() {
   }
@@ -15,132 +18,109 @@ export class MessagingAdapter {
   public init(msgReceivedCallback: any) {
     let self = this
 
-    this.set_last_generated_id_according_to_queue();
-
-    setTimeout(function () {
-      self.send_next();
-    }, 1000);
-
     peerSocket.addEventListener("open", function () {
       self.send_next();
     });
 
+    // Do we have closed?
+    peerSocket.addEventListener("close", function () {
+      self.stop_worker();
+    });
+
     peerSocket.addEventListener("message", function (event) {
-      let data = event.data;
-      if (data._asap_id) {
-        if (!data._asap_ack) {
-          if (data._asap_id > self.last_received_message_id) {
-            msgReceivedCallback(Message.fromString(data._asap_message));
-            self.last_received_message_id = data._asap_id;
-          }
-          try {
-            peerSocket.send({ _asap_ack: true, _asap_id: data._asap_id });
-          }
-          catch (error) {
-            self.debug && console.log(error);
-          }
-        } else {
-          self.debug && console.log("Dequeue - got ack for " + data._asap_id)
-          self.dequeue(data._asap_id);
-          self.clear_resend_timer();
-          self.send_next();
+      let qMsg = event.data;
+      console.log(JSON.stringify(qMsg))
+      if (!qMsg.ack) {
+        if (qMsg.id > self.last_received_message_id) {
+          msgReceivedCallback(new Message(qMsg.body.command, qMsg.body.data));
+          self.last_received_message_id = qMsg.id;
         }
+        try {
+          // send acked back
+          peerSocket.send(new QueueMessage(qMsg.id));
+        } catch (error) {
+          self.debug && console.log(error);
+        }
+      } else {
+        self.debug && console.log("Dequeue - got ack for " + qMsg.id)
+        self.dequeue(qMsg.id);
       }
     });
   }
 
   public send(msg: Message) {
-    this.doSend(msg.toString(), { timeout: "session" })
+    this.enqueue(new QueueMessage(this.get_next_id(), msg))
   }
 
-  private enqueue(data: any) {
-    this.debug && console.log("Enqueue Message ID #" + data._asap_id);
-    this.queue.push(data);
+  private enqueue(qMsg: QueueMessage) {
+    this.debug && console.log("MSG: enqueue " + qMsg);
+    this.queue.push(qMsg);
+    if (this.queue.length == 1) {
+      this.send_next()
+    }
   }
 
+  // maybe we can just shift() as we always get the first message acked - no need to search - but maybe does not matter
   private dequeue(id: number) {
     for (var i = 0; i < this.queue.length; i++) {
-      if (this.queue[i]._asap_id === id) {
-        this.debug && console.log("remove " + this.queue[i]._asap_message)
-        this.queue.splice(i, 1);
+      let qMsg = this.queue[i]
+      if (qMsg.id === id) {
+        this.debug && console.log("QMSG: remove " + qMsg)
+        this.queue.shift();
+        if (this.queue.length == 0) {
+          this.stop_worker();
+        } else {
+          this.send_next()
+        }
         break;
       }
     }
   }
 
-  private doSend(message: string, options: any) {
-    let now = Date.now();
-    options = options || {};
-    options.timeout = options.timeout || 2592000000;
-    let data = {
-      _asap_id: this.get_next_id(),
-      _asap_created: now,
-      _asap_timeout: options.timeout,
-      _asap_message: message,
-      _asap_ack: false
-    };
-    this.enqueue(data);
-    if (this.queue.length == 1) {
-      this.send_next();
-    }
-  }
-
   private get_next_id() {
-    if (this.last_generated_message_id < 0) {
-      this.last_generated_message_id = Math.floor(Math.random() * 10000000000);
+    if (this.last_send_message_id < 0) {
+      this.last_send_message_id = Date.now() * 1000;
     }
-    return ++this.last_generated_message_id;
+    return ++this.last_send_message_id;
   }
 
   private send_next() {
     this.debug && console.log("buffer:" + peerSocket.bufferedAmount)
-    if (this.resend_timer == null) {
-      if (this.queue.length > 0) {
-        try {
-          if (this.is_message_expired(this.queue[0])) {
-            return;
-          }
-          this.debug && console.log(peerSocket.readyState)
-          this.debug && console.log("Trying to send " + this.queue[0]._asap_id + " " + this.queue[0]._asap_message)
-          peerSocket.send(this.queue[0]);
-          this.set_resend_timer();
-        }
-        catch (error) {
-          this.debug && console.log(error);
-          this.set_resend_timer();
-        }
+    if (this.queue.length > 0) {
+      let qMsg: QueueMessage = this.queue[0];
+
+      // clear expired messages first
+      if (qMsg.expired()) {
+        this.queue.shift()
+        this.send_next();
+        return;
       }
+
+      this.debug && console.log("MSG: sending " + qMsg)
+      try {
+        peerSocket.send(qMsg);
+      } catch (error) {
+        this.debug && console.log(error);
+      }
+      this.start_worker()
     }
   }
 
-  private is_message_expired(message: any) {
-    if (!isNaN(message._asap_timeout)) {
-      return (Date.now() >= message._asap_created + message._asap_timeout);
-    }
-    return false;
-  }
+  private start_worker() {
+    this.stop_worker();
 
-  private set_resend_timer() {
     let self = this
-    this.resend_timer = setTimeout(function () {
-      self.clear_resend_timer()
+    this.worker_timer = setInterval(function () {
       self.send_next();
     }, 5000);
+
   }
 
-  private clear_resend_timer() {
-    if (this.resend_timer) {
-      clearTimeout(this.resend_timer);
-      this.resend_timer = null;
+  private stop_worker() {
+    if (this.worker_timer) {
+      clearInterval(this.worker_timer)
     }
-  };
-
-  private set_last_generated_id_according_to_queue() {
-    let last_message = this.queue.slice(-1)[0];
-    if (last_message && last_message._asap_id) {
-      this.last_generated_message_id = last_message._asap_id + 1;
-    }
-  };
+  }
 
 }
 

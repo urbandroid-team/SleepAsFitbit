@@ -30,8 +30,8 @@ export class BusinessController {
     // start acc on sensors controller
     this.ctx.sensorsController.startAcc((acc: number, accRaw: number) => {
       try {
-        this.batch_acc = this.batch_acc.concat(acc)
-        this.batch_acc_raw = this.batch_acc_raw.concat(accRaw)
+        this.batch_acc = this.batch_acc.concat(acc) // delat push aby se nevolal GC
+        this.batch_acc_raw = this.batch_acc_raw.concat(accRaw) // push ...
         if (this.batch_acc.length >= this.ctx.tracking.batchSize) {
           this.ctx.msgManager.msgAdapter.send(new Message(MsgManager.FITBIT_MESSAGE_DATA, this.formatOutgoingAccData(this.batch_acc, this.batch_acc_raw)))
           this.batch_acc = []
@@ -64,8 +64,9 @@ export class BusinessController {
   stopTracking() {
     console.log("stopTracking")
     if (this.ctx.tracking.tracking) {
-      this.ctx.sensorsController.stopAllSensors([this.ctx.sensorsController.acc, this.ctx.sensorsController.hr])
+      this.ctx.sensorsController.stopAllSensors()
       this.ctx.queue.clearQueue()
+      this.ctx.msgManager.sendStopTracking()
     }
     me.exit()
   }
@@ -98,10 +99,8 @@ export class BusinessController {
     this.ctx.alarm.alarmInProgress = true
     this.ctx.alarmManager.startAlarm(vibrationDelay)
 
-    let ui = this.ctx.ui
-    ui.changeToAlarmScreen()
-    ui.clearAlarmTime()
-
+    this.ctx.ui.changeToAlarmScreen()
+    this.ctx.ui.clearAlarmTime()
   }
 
   stopAlarm() {
@@ -125,7 +124,7 @@ export class BusinessController {
   scheduleAlarm(h:number, m:number, timestamp: number) {
     console.log("ScheduleAlarm timestamp: " + timestamp)
     this.ctx.alarm.alarmScheduled = true
-    this.ctx.alarmManager.scheduleAlarm(timestamp)
+    // this.ctx.alarmManager.scheduleAlarm(timestamp)
     this.ctx.ui.setAlarmTime(h, m)
   }
 
