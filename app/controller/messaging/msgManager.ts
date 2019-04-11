@@ -29,6 +29,7 @@ export class MsgManager {
 
   ctx:Context
   msgAdapter: FileTransferAdapter | MessagingAdapter | MockAdapter
+  debug = false;
 
   constructor(context: Context) {
     this.ctx = context
@@ -50,7 +51,9 @@ export class MsgManager {
 
 
     // For debugging purposes
-    // this.ctx.businessController.startTracking(true)
+    if (this.debug) {
+      this.ctx.businessController.startTracking(true)
+    }
     this.msgAdapter.send(new Message(MsgManager.FITBIT_MESSAGE_START_TRACK, true))
   }
 

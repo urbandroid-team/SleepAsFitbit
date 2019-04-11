@@ -7,9 +7,11 @@ import { MockAdapter } from "./messaging/mockAdapter";
 
 const POLLING_INTERVAL = 1000
 
+let mockSleep = false;
+
 let toSleepQueue = new MsgQueue("toSleep")
 let toSleepTimer:any
-var debug = true
+var debug = false
 
 let msgAdapter = new MessagingAdapter
 // let msgAdapter = new MessagingAdapter
@@ -45,6 +47,11 @@ function startSleepPollingTimer(queue:MsgQueue, timer: any) {
 }
 
 function sendMessageToSleep(msg:Message) {
+  if (mockSleep) {
+    toSleepQueue.clearQueue()
+    return
+  }
+
   let url = 'http://localhost:1764/' + msg.command + '?data=' + msg.data
   // console.log("sendMessageToSleep " + url)
   fetch(url)
