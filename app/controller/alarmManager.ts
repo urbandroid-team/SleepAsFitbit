@@ -15,6 +15,7 @@ export class AlarmManager {
   }
 
   startAlarm(vibrationDelay: number) {
+
     console.log(TAG + "startAlarm, delay " + vibrationDelay);
 
     clearTimeout(this.alarmScheduledTimeout)

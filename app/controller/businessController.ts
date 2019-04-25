@@ -136,6 +136,12 @@ export class BusinessController {
     this.ctx.sensorsController.setBatchSize(size)
   }
 
+  reportMessageReceived() {
+    // TODO this is hacky potential source of ui bugs
+    // if (!this.ctx.alarm.alarmInProgress && !this.ctx.tracking.trackingPaused) {
+    //   this.ctx.ui.changeToTrackingScreen()
+    // }
+  }
 }
 
 

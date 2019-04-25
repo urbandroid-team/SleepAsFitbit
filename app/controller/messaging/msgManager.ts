@@ -45,6 +45,7 @@ export class MsgManager {
     // give the companion time to start
     setTimeout(() => {
       this.msgAdapter.init((msg:Message) => {
+        // this.ctx.businessController.reportMessageReceived()
         this.handleIncomingMessage(msg)
       })
     }, 2000)
@@ -60,45 +61,6 @@ export class MsgManager {
   public sendStopTracking() {
     this.msgAdapter.send(new Message(MsgManager.FITBIT_MESSAGE_STOP_TRACK, undefined))
   }
-
-  // private startOutMessagingTimer() {
-  //   let that = this
-  //   let queue = this.ctx.queue
-
-  //   this.ctx.businessController.startTracking(true)
-
-  //   setInterval(function () {
-  //     if (queue.getMsgCount() > 0) {
-  //       let nextMsg = queue.peekNextMessage()
-  //       that.sendToCompanion(nextMsg)
-  //       that.ensureQueueMemoryConstraints(queue)
-  //     }
-  //   }, MsgManager.MESSAGING_INTERVAL)
-  // }
-
-  // private ensureQueueMemoryConstraints(queue:MsgQueue) {
-  //   if ((memory.js.used / memory.js.total) > 0.7) {
-  //     queue.removeNextMessage()
-  //   }
-  //   if ((memory.js.used / memory.js.total) > 0.8) {
-  //     queue.clearQueue()
-  //   }
-  // }
-
-  // private sendToCompanion(msg:Message) {
-  //   console.log(">>ToCompanion " + msg.command + " " + msg.data)
-  //   try {
-  //     if (messaging.peerSocket.readyState === messaging.peerSocket.OPEN) {
-  //       messaging.peerSocket.send(msg.serialize())
-  //       this.ctx.queue.removeNextMessage()
-  //     } else {
-  //       console.log(">>ToCompanion socket closed, msg not sent.")
-  //     }
-  //   }
-  //   catch (err) {
-  //     console.log(err)
-  //   }
-  // }
 
   private handleIncomingMessage(msg: Message) {
     console.log("MsgManager received: " + msg.serialize())
