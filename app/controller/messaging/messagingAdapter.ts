@@ -52,7 +52,8 @@ export class MessagingAdapter {
   }
 
   public send(msg: Message) {
-    this.enqueue(new QueueMessage(this.get_next_id(), msg))
+    let m = memory.js.used + "/" + memory.js.peak
+    this.enqueue(new QueueMessage(this.get_next_id(), msg, m))
   }
 
   private enqueue(qMsg: QueueMessage) {

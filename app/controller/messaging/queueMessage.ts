@@ -1,4 +1,4 @@
-import { Message } from "../../model/message";
+import { Message } from "../../model/message"
 
 export class QueueMessage {
   body:Message
@@ -6,9 +6,11 @@ export class QueueMessage {
   created:number = Date.now()
   timeout:number = 60000
   ack = false
+  mem:string
 
-  constructor(id: number, body?: Message) {
+  constructor(id: number, body?: Message, memory?:string) {
     this.id = id
+    this.mem = memory
 
     if (body) {
       this.body = body
@@ -22,7 +24,7 @@ export class QueueMessage {
   }
 
   toString() {
-    return "Msg #" + this.id + " body '" + this.body + "' ack=" + this.ack;
+    return "Msg #" + this.id + " body '" + this.body + "' ack=" + this.ack + "' mem=" + this.mem;
   }
 
 }
