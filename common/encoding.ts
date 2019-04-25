@@ -3,8 +3,8 @@ export class TextEncoder {
   encoding = 'utf-8';
 
   encode = function (str:string) {
-    var binstr = unescape(encodeURIComponent(str)),
-      arr = new Uint8Array(binstr.length);
+    var binstr = unescape(encodeURIComponent(str))
+    var arr = new Uint8Array(binstr.length);
     const split = binstr.split('');
     for (let i = 0; i < split.length; i++) {
       arr[i] = split[i].charCodeAt(0);
