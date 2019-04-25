@@ -1,10 +1,17 @@
 import { Message } from "../../model/message";
 import { peerSocket } from "messaging";
 import { QueueMessage } from "./queueMessage";
+import { launchApp, memory } from "system";
+// @ts-ignore
+import fitlogger from "../../../node_modules/fitbit-logger/app"
+
 
 export class MessagingAdapter {
 
   debug = false;
+
+  resend_interval = 2 * 60 * 1000; // minutes in milliseconds
+
   last_send_message_id = -1;
   last_received_message_id = -1;
   resend_timer: any = null;
@@ -89,6 +96,9 @@ export class MessagingAdapter {
   }
 
   private send_next() {
+    fitlogger.log("send_next")
+
+
     this.debug && console.log("buffer:" + peerSocket.bufferedAmount)
     if (this.queue.length > 0) {
       let qMsg:QueueMessage = this.queue[0];

@@ -1,8 +1,10 @@
 import { display } from "display";
 import { me } from 'appbit'
 import { Context } from "./controller/context";
-import { memory } from "system";
+import { memory, launchApp } from "system";
 import { Message } from "./model/message";
+// @ts-ignore
+import fitlogger from "../node_modules/fitbit-logger/app";
 
   var debug = false;
   var fitbitSdk = 3;
@@ -10,6 +12,12 @@ import { Message } from "./model/message";
   var ctx = new Context()
 
 try {
+  fitlogger.init({
+    automaticInterval: 5000,
+    doConsoleLog: true,
+    prefix: 'Logger'
+  })
+
   ctx.ui.initialize()
   ctx.ui.changeToTrackingScreen()
   ctx.ui.initializeClock()

@@ -24,11 +24,12 @@
   "devDependencies": {
     "@fitbit/sdk": "~3.1.0",
     "@fitbit/sdk-cli": "^1.6.0",
-    "fitbit-sdk-types": "^4.1.1"
+    "fitbit-sdk-types": "^4.1.4"
   },
   "scripts": {
     "build": "fitbit-build"
   },
   "dependencies": {
+    "fitbit-logger": "0.0.6"
   }
 }
