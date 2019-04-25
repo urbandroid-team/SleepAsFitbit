@@ -5,7 +5,7 @@
     "appDisplayName": "Sleep as Android",
     "iconFile": "resources/icon.png",
     "wipeColor": "#4caf50",
-    "version": "0.8",
+    "version": "0.10",
     "requestedPermissions": [
       "access_heart_rate",
       "access_internet",
@@ -13,7 +13,8 @@
     ],
     "buildTargets": [
       "higgs",
-      "meson"
+      "meson",
+      "gemini"
     ],
     "i18n": {
       "en": {
