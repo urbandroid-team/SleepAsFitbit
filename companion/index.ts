@@ -4,6 +4,9 @@ import { FileTransferAdapter } from "./messaging/fileTransferAdapter";
 import { me } from 'companion'
 import { MessagingAdapter } from "./messaging/messagingAdapter";
 import { MockAdapter } from "./messaging/mockAdapter";
+//@ts-ignore
+import fitlogger from "../node_modules/fitbit-logger/companion";
+
 
 const POLLING_INTERVAL = 1000
 
@@ -19,12 +22,18 @@ let msgAdapter = new MessagingAdapter
 console.log("Companion started")
 startSleepPollingTimer(toSleepQueue, toSleepTimer)
 
+fitlogger.init({
+  doConsoleLog: true,
+  url: 'http://localhost:1764'
+})
+
+
 msgAdapter.init((msg: Message) => {
   toSleepQueue.addToQueue(msg)
 })
 
 // TODO when should we cancel the wake interval??
-// me.wakeInterval = 5 * MINUTE_IN_MS
+me.wakeInterval = 5 * 60 * 1000
 
 me.addEventListener('unload', function() {
   console.log("Companion unloaded")
