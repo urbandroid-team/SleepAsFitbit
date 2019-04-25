@@ -2,6 +2,7 @@ import { Context } from "./context";
 import { MsgManager } from "./messaging/msgManager";
 import { me } from "appbit";
 import { Message } from "../model/message";
+import { display } from "display";
 
 // A facade class that is responsible for controling the flow of the app
 
@@ -97,6 +98,7 @@ export class BusinessController {
 
   startAlarm(vibrationDelay: number) {
     this.ctx.alarm.alarmInProgress = true
+    display.poke()
     this.ctx.alarmManager.startAlarm(vibrationDelay)
 
     this.ctx.ui.changeToAlarmScreen()
