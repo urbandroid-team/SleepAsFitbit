@@ -19,11 +19,14 @@ export class MessagingAdapter {
 
   worker_timer: any = null;
 
+  msgAckedCallback: any = null
+
   constructor() {
   }
 
-  public init(msgReceivedCallback: any) {
+  public init(msgReceivedCallback: any, msgAckedCallback: any) {
     let self = this
+    this.msgAckedCallback = msgAckedCallback
 
     peerSocket.addEventListener("open", function () {
       self.send_next();
@@ -76,7 +79,8 @@ export class MessagingAdapter {
     for (var i = 0; i < this.queue.length; i++ ) {
       let qMsg = this.queue[i]
       if (qMsg.id === id) {
-        this.debug && console.log("QMSG: remove " + qMsg)
+        this.debug && console.log("QMSG: remove acked " + qMsg)
+        this.msgAckedCallback(qMsg.body)
         this.queue.shift();
         if (this.queue.length == 0) {
           this.stop_worker();

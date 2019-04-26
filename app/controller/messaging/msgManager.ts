@@ -3,6 +3,8 @@ import { Message } from "../../model/message";
 import { FileTransferAdapter } from "./fileTransferAdapter";
 import { MockAdapter } from "./mockAdapter";
 import { MessagingAdapter } from "./messagingAdapter";
+import { QueueMessage } from "./queueMessage";
+import { BusinessController } from "../businessController";
 
 export class MsgManager {
   // Static constants
@@ -44,10 +46,17 @@ export class MsgManager {
 
     // give the companion time to start
     setTimeout(() => {
-      this.msgAdapter.init((msg:Message) => {
+      this.msgAdapter.init(
+        (msg:Message) => {
         // this.ctx.businessController.reportMessageReceived()
         this.handleIncomingMessage(msg)
-      })
+      },
+        (msgAcked: Message) => {
+          console.log("Acked " + msgAcked.command)
+          if (msgAcked.command == MsgManager.FITBIT_MESSAGE_STOP_TRACK) {
+            this.ctx.businessController.exitApp()
+          }
+        })
     }, 2000)
 
 

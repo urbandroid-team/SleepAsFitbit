@@ -45,6 +45,8 @@ export class UIManager {
     // Buttons
     this.alarmBtnWrapper = document.getElementById('alarmBtns')
     this.trackingBtnWrapper = document.getElementById('trackingBtns')
+    this.trackingBtnWrapper.style.display = "none"
+
 
     this.trackingBtnBR = document.getElementById('tracking-btn-br')
     this.alarmBtnTR = document.getElementById('alarm-btn-tr')
@@ -84,7 +86,13 @@ export class UIManager {
     this.alarmBtnBR.onclick = () => {
       this.ctx.businessController.snoozeAlarmFromWatch()
     }
-    this.btnExitYes.onclick = () => { this.ctx.businessController.stopTracking() }
+    this.btnExitYes.onclick = () => {
+      if (this.ctx.tracking.tracking) {
+        this.ctx.businessController.stopTracking()
+      } else {
+        that.ctx.businessController.exitApp()
+      }
+    }
     this.btnExitNo.onclick = () => {
       this.runningPage.style.display="inline"
       this.exitPage.style.display="none"
@@ -93,8 +101,6 @@ export class UIManager {
     document.onkeypress = function (e) {
       e.preventDefault();
       if (e.key == "up" && that.exitPage.style.display == "inline") {
-        that.ctx.businessController.stopTracking()
-        that.ctx.businessController.exitApp()
       }
       if (e.key === "back" || e.key === "down") {
         if (that.exitPage.style.display === "inline") {
@@ -112,7 +118,7 @@ export class UIManager {
   changeToAlarmScreen() {
     console.log("UI: alarm screen")
 
-    this.background.style.fill = 'white'
+    this.background.style.fill = '#999'
 
     this.alarmBtnWrapper.style.display = "inline"
     this.trackingBtnWrapper.style.display = "none"

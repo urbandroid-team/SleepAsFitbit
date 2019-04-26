@@ -68,13 +68,19 @@ export class BusinessController {
       this.ctx.sensorsController.stopAllSensors()
       this.ctx.queue.clearQueue()
       this.ctx.msgManager.sendStopTracking()
-      this.exitApp()
+    } else {
+      console.log("stopTracking - ignored due to no tracking")
     }
-    console.log("stopTracking - ignored due to no tracking")
   }
 
-  exitApp() {
-    me.exit()
+  exitApp(delay:number = 0) {
+    if (delay > 0) {
+      setTimeout(() => {
+        me.exit()
+      }, delay);
+    } else {
+      me.exit()
+    }
   }
 
   pauseTrackingFromWatch() {
