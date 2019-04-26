@@ -63,12 +63,17 @@ export class BusinessController {
   }
 
   stopTracking() {
-    console.log("stopTracking")
     if (this.ctx.tracking.tracking) {
+      console.log("stopTracking")
       this.ctx.sensorsController.stopAllSensors()
       this.ctx.queue.clearQueue()
       this.ctx.msgManager.sendStopTracking()
+      this.exitApp()
     }
+    console.log("stopTracking - ignored due to no tracking")
+  }
+
+  exitApp() {
     me.exit()
   }
 

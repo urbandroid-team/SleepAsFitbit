@@ -94,6 +94,7 @@ export class UIManager {
       e.preventDefault();
       if (e.key == "up" && that.exitPage.style.display == "inline") {
         that.ctx.businessController.stopTracking()
+        that.ctx.businessController.exitApp()
       }
       if (e.key === "back" || e.key === "down") {
         if (that.exitPage.style.display === "inline") {
