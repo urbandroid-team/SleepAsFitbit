@@ -126,7 +126,7 @@ export class MessagingAdapter {
     let self = this
     this.worker_timer = setInterval(function () {
       self.send_next();
-    }, 5000);
+    }, 1500);
 
   }
 
