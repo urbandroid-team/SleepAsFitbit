@@ -6,6 +6,7 @@ import { MessagingAdapter } from "./messaging/messagingAdapter";
 import { MockAdapter } from "./messaging/mockAdapter";
 //@ts-ignore
 import fitlogger from "../node_modules/fitbit-logger/companion";
+import { app } from "peer";
 
 
 const POLLING_INTERVAL = 1000
@@ -22,33 +23,37 @@ let msgAdapter = new MessagingAdapter
 console.log("Companion started")
 startSleepPollingTimer(toSleepQueue, toSleepTimer)
 
-fitlogger.init({
-  doConsoleLog: true,
-  url: 'http://localhost:1764'
-})
+// fitlogger.init({
+//   doConsoleLog: true
+// })
 
 
 msgAdapter.init((msg: Message) => {
   toSleepQueue.addToQueue(msg)
 })
 
-// TODO when should we cancel the wake interval??
-me.wakeInterval = 5 * 60 * 1000
+console.log("app readystate: " + app.readyState)
+if (app.readyState == "stopped") {
+  me.wakeInterval = undefined
+} else {
+  me.wakeInterval = 5 * 60 * 1000
+}
 
 me.addEventListener('unload', function() {
+  sendMessageToSleep(new Message("companion unloaded", ""))
   console.log("Companion unloaded")
-  toSleepQueue.addToQueue(new Message("Companion unloaded", null))
 })
+
 
 function startSleepPollingTimer(queue:MsgQueue, timer: any) {
 
-  toSleepQueue.addToQueue(new Message("Companion started", "peerApp " + me.launchReasons.peerAppLaunched + " fileTransfer " + me.launchReasons.fileTransfer + " wokenUp " + me.launchReasons.wokenUp))
+  toSleepQueue.addToQueue(new Message("companion started", " peerApp " + me.launchReasons.peerAppLaunched + " fileTransfer " + me.launchReasons.fileTransfer + " wokenUp " + me.launchReasons.wokenUp))
 
   timer = setInterval(() => {
     // console.log(">> msg timer to Sleep TICK")
     if (queue.getMsgCount() > 0) {
       queue.logQueue()
-      sendMessageToSleep(queue.getNextMessage())
+      sendMessageToSleep(queue.peekNextMessage())
     } else {
       sendMessageToSleep(new Message('poll', '0'))
     }
@@ -61,11 +66,12 @@ function sendMessageToSleep(msg:Message) {
     return
   }
 
-  let url = 'http://localhost:1764/' + msg.command + '?data=' + msg.data
+  let url = 'http://localhost:1764/' + encodeURIComponent(msg.command) + '?data=' + encodeURIComponent(msg.data)
   // console.log("sendMessageToSleep " + url)
   fetch(url)
     .then((response:any) => {
       // console.log("sendMessageToSleep response")
+      toSleepQueue.removeNextMessage()
       return response.text();
     })
     .then((fromSleepMsg:any) => {
@@ -76,7 +82,9 @@ function sendMessageToSleep(msg:Message) {
       // this most probably means server on phone is not started
       // TODO: what to do? Probably show something on the watch, like "start tracking on the phone"
       !debug && console.error("sendMessageToSleep err " + error)
+      // TODO do not remove msg from queue, resend it
     });
+
 }
 
 function processMessageFromSleep(unparsedMsg:any) {
