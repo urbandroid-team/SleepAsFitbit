@@ -8,21 +8,24 @@ export class UIManager {
 
   ctx: Context
 
-  alarmScreen:any
-  trackingScreen:any
-  alarmTime:any
-  alarmImg:any
-  status:any
-  statusAlarmImg:any
-  statusAlarmTime:any
-  background:any
-  alarmBtnWrapper:any
+  alarmScreen: any
+  trackingScreen: any
+  alarmTime: any
+  alarmImg: any
+  status: any
+  statusAlarmImg: any
+  statusAlarmTime: any
+  background: any
+
+  beginTrackingBtn: any
+  alarmBtnWrapper: any
   trackingBtnWrapper: any
   trackingBtnBR: any
   alarmBtnTR: any
   alarmBtnBR: any
   clock: any
 
+  welcomePage: any
   runningPage: any
   exitPage: any
   btnExitYes: any
@@ -33,10 +36,14 @@ export class UIManager {
   }
 
   initialize() {
+    // Pages
+    this.welcomePage = document.getElementById('welcomePage')
     this.background = document.getElementById('background')
     this.runningPage = document.getElementById('runningPage')
     this.exitPage = document.getElementById('exitPage')
-    this.exitPage.style.display="none"
+
+    this.runningPage.style.display = "none"
+    this.exitPage.style.display= "none"
 
     // Exit dialog
     this.btnExitYes = document.getElementById("btn-yes")
@@ -47,10 +54,11 @@ export class UIManager {
     this.trackingBtnWrapper = document.getElementById('trackingBtns')
     this.trackingBtnWrapper.style.display = "none"
 
-
     this.trackingBtnBR = document.getElementById('tracking-btn-br')
     this.alarmBtnTR = document.getElementById('alarm-btn-tr')
     this.alarmBtnBR = document.getElementById('alarm-btn-br')
+
+    this.beginTrackingBtn = document.getElementById('beginTrackingBtn');
 
     // Upper row
     this.status = document.getElementById('status')
@@ -96,6 +104,10 @@ export class UIManager {
     this.btnExitNo.onclick = () => {
       this.runningPage.style.display="inline"
       this.exitPage.style.display="none"
+    }
+    this.beginTrackingBtn.onclick = () => {
+      this.welcomePage.style.display = "none";
+      this.runningPage.style.display = "inline"
     }
 
     document.onkeypress = function (e) {
