@@ -42,10 +42,21 @@
       </g>
     </svg>
 
+    <svg id="welcomePage">
+      <text id="startTitle" x="50%" y="50" height="100" font-family="System-Regular" fill="yellow" font-size="35" font-weight="bold" text-anchor="middle">Welcome!</text>
+      <textarea id="instructions" x="5" y="75" width="100%-10" height="450" font-family="System-Regular" fill="yellow" font-size="20" font-weight="bold" text-anchor="middle">
+      In the companion app, head to 'Settings > Wearables > Start Fitbit Server'. When that's up and running, return here and tap 'Go' to start tracking!</textarea>
+      <svg y="200" width="50%" height="100">
+        <use id="beginTrackingBtn" href="#square-button" x="50%" fill="fb-green">
+          <set href="#text" attributeName="text-buffer" to="Go" />
+        </use>
+      </svg>
+    </svg>
+
     <svg id="exitPage">
       <text y="110" x="50%" id="Title" font-family="System-Regular" fill="yellow" font-size="35" font-weight="bold" text-anchor="middle">Exit: Are you sure?</text>
       <svg y="$">
-        <use id="btn-yes" href="#square-button-toggle" x="50%" fill="fb-green">
+        <use id="btn-yes" href="#square-button-toggle"  x="50%" fill="fb-green">
           <set href="#text" attributeName="text-buffer" to="Yes" />
         </use>
         <use id="btn-no" href="#square-button-toggle" value="1" fill="fb-red">
