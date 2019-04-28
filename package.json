@@ -2,7 +2,7 @@
   "fitbit": {
     "appUUID": "90650cd6-76fa-40db-a747-240ac7da8a02",
     "appType": "app",
-    "appDisplayName": "Sleep as Android",
+    "appDisplayName": "Sleep",
     "iconFile": "resources/icon.png",
     "wipeColor": "#4caf50",
     "version": "0.10",
