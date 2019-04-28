@@ -40,11 +40,10 @@
           <set href="combo-button-stroke" attributeName="display" to="inline"/>
         </use>
       </g>
-
     </svg>
 
     <svg id="exitPage">
-      <text y="110" x="50%" id="Title" font-family="System-Regular" fill="yellow" font-size="40" font-weight="bold" text-anchor="middle">Exit: Are you sure?</text>
+      <text y="110" x="50%" id="Title" font-family="System-Regular" fill="yellow" font-size="35" font-weight="bold" text-anchor="middle">Exit: Are you sure?</text>
       <svg y="$">
         <use id="btn-yes" href="#square-button-toggle" x="50%" fill="fb-green">
           <set href="#text" attributeName="text-buffer" to="Yes" />
