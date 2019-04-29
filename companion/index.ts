@@ -27,10 +27,16 @@ startSleepPollingTimer(toSleepQueue, toSleepTimer)
 //   doConsoleLog: true
 // })
 
-
-msgAdapter.init((msg: Message) => {
-  toSleepQueue.addToQueue(msg)
-})
+msgAdapter.init(
+  (msg: Message) => {
+    toSleepQueue.addToQueue(msg)
+  },
+  (msgAcked: Message) => {
+    if (msgAcked.command == "ping") {
+      sendMessageToSleep(new Message("connected", ""))
+    }
+  }
+)
 
 console.log("app readystate: " + app.readyState)
 if (app.readyState == "stopped") {
