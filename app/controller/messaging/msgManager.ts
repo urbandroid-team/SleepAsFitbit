@@ -4,7 +4,6 @@ import { FileTransferAdapter } from "./fileTransferAdapter";
 import { MockAdapter } from "./mockAdapter";
 import { MessagingAdapter } from "./messagingAdapter";
 import { QueueMessage } from "./queueMessage";
-import { BusinessController } from "../businessController";
 
 export class MsgManager {
   // Static constants
@@ -28,6 +27,10 @@ export class MsgManager {
   static get FITBIT_MESSAGE_BATCH_SIZE() { return "batch_size" }
   static get FITBIT_MESSAGE_HINT() { return "hint" }
   static get FITBIT_MESSAGE_SUSPEND() { return "suspend" }
+  static get FITBIT_MESSAGE_CHECK_CONNECTED() { return "ping" }
+
+  // from watch
+  static get FITBIT_MESSAGE_CONFIRM_CONNECTED() { return "connected" }
 
   ctx:Context
   msgAdapter: FileTransferAdapter | MessagingAdapter | MockAdapter
@@ -40,9 +43,6 @@ export class MsgManager {
 
   public startCompanionCommChannel() {
     console.log(">>ToCompanion channel init")
-
-    // this.startOutMessagingTimer()
-
 
     // give the companion time to start
     setTimeout(() => {
@@ -67,6 +67,10 @@ export class MsgManager {
     this.msgAdapter.send(new Message(MsgManager.FITBIT_MESSAGE_START_TRACK, true))
   }
 
+  public stopMessaging() {
+    this.msgAdapter.stop()
+  }
+
   public sendStopTracking() {
     this.msgAdapter.send(new Message(MsgManager.FITBIT_MESSAGE_STOP_TRACK, undefined))
   }
@@ -80,6 +84,7 @@ export class MsgManager {
         break
       case MsgManager.FITBIT_MESSAGE_STOP_TRACK:
         this.ctx.businessController.stopTracking()
+        this.ctx.businessController.exitApp()
         break
       case MsgManager.FITBIT_MESSAGE_RESUME:
         this.ctx.businessController.resumeTracking()
@@ -105,6 +110,10 @@ export class MsgManager {
         break
       case MsgManager.FITBIT_MESSAGE_SUSPEND:
         // I'm not listening to this!
+        break
+      case MsgManager.FITBIT_MESSAGE_CHECK_CONNECTED:
+        // Maybe start tracking?
+        // Or just indicate connected if not tracking
         break
     }
   }
