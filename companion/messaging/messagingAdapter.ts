@@ -4,7 +4,8 @@ import { QueueMessage } from "../../app/controller/messaging/queueMessage";
 
 export class MessagingAdapter {
 
-  debug = false;
+  debug = true;
+
   last_send_message_id = -1;
   last_received_message_id = -1;
   resend_timer: any = null;
@@ -12,14 +13,18 @@ export class MessagingAdapter {
 
   worker_timer: any = null;
 
+  msgAckedCallback: any = null
+
+
   constructor() {
   }
 
-  public init(msgReceivedCallback: any) {
+  public init(msgReceivedCallback: any, msgAckedCallback: any) {
     let self = this
+    this.msgAckedCallback = msgAckedCallback
 
     peerSocket.addEventListener("open", function () {
-      self.send_next();
+      self.maybe_send_next();
     });
 
     // Do we have closed?
@@ -29,16 +34,16 @@ export class MessagingAdapter {
 
     peerSocket.addEventListener("message", function (event) {
       let qMsg = event.data;
-      console.log(JSON.stringify(qMsg))
+      // console.log(JSON.stringify(qMsg))
       if (!qMsg.ack) {
-        self.debug && console.log("App onmessage nonACK")
+        self.debug && console.log("Received " + qMsg.body.command)
         if (qMsg.id > self.last_received_message_id) {
           msgReceivedCallback(new Message(qMsg.body.command, qMsg.body.data));
           self.last_received_message_id = qMsg.id;
         }
         try {
           // send acked back
-          self.debug && console.log("App onmessage ACKing")
+          self.debug && console.log("Acking " + qMsg.body.command)
           peerSocket.send(new QueueMessage(qMsg.id));
         } catch (error) {
           self.debug && console.log(error);
@@ -58,21 +63,23 @@ export class MessagingAdapter {
     this.debug && console.log("MSG: enqueue " + qMsg);
     this.queue.push(qMsg);
     if (this.queue.length == 1) {
-      this.send_next()
+      this.maybe_send_next()
     }
   }
+
 
   // maybe we can just shift() as we always get the first message acked - no need to search - but maybe does not matter
   private dequeue(id: number) {
     for (var i = 0; i < this.queue.length; i++) {
       let qMsg = this.queue[i]
       if (qMsg.id === id) {
-        this.debug && console.log("QMSG: remove " + qMsg)
+        this.debug && console.log("QMSG: remove acked" + qMsg)
+        this.msgAckedCallback(qMsg.body)
         this.queue.shift();
         if (this.queue.length == 0) {
           this.stop_worker();
         } else {
-          this.send_next()
+          this.maybe_send_next()
         }
         break;
       }
@@ -86,6 +93,12 @@ export class MessagingAdapter {
     return ++this.last_send_message_id;
   }
 
+  private maybe_send_next() {
+    if (peerSocket.bufferedAmount < 100) {
+      this.send_next()
+    }
+  }
+
   private send_next() {
     this.debug && console.log("buffer:" + peerSocket.bufferedAmount)
     if (this.queue.length > 0) {
@@ -93,8 +106,9 @@ export class MessagingAdapter {
 
       // clear expired messages first
       if (qMsg.expired()) {
+        console.log("Msg expired " + qMsg.body.command)
         this.queue.shift()
-        this.send_next();
+        this.maybe_send_next();
         return;
       }
 
@@ -113,7 +127,8 @@ export class MessagingAdapter {
 
     let self = this
     this.worker_timer = setInterval(function () {
-      self.send_next();
+      console.log("Worker tick")
+      self.maybe_send_next();
     }, 1000);
 
   }
