@@ -68,8 +68,10 @@ export class BusinessController {
       this.ctx.sensorsController.stopAllSensors()
       this.ctx.queue.clearQueue()
       this.ctx.msgManager.sendStopTracking()
+      return true
     } else {
       console.log("stopTracking - ignored due to no tracking")
+      return false
     }
   }
 
@@ -155,6 +157,7 @@ export class BusinessController {
     //   this.ctx.ui.changeToTrackingScreen()
     // }
   }
+
 }
 
 

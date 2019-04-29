@@ -70,6 +70,9 @@ export class MessagingAdapter {
   public stop() {
     this.stop_worker()
     this.queue.length = 0
+    peerSocket.onmessage = () => {
+      // do nothing
+    }
   }
 
   private enqueue(qMsg: QueueMessage) {
