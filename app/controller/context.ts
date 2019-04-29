@@ -7,6 +7,7 @@ import { SensorsController } from "./sensorsController";
 import { AlarmManager } from "./alarmManager";
 import { VibrationPlayer } from "./vibrationPlayer";
 import { MsgManager } from "./messaging/msgManager";
+import { DebugManager } from "../debugManager";
 
 export class Context {
 
@@ -20,6 +21,8 @@ export class Context {
 
   alarm: Alarm
   tracking: Tracking
+
+  debugManager: DebugManager
   // private _businessController: BusinessController
   // private _queue: MsgQueue
   // private _alarmManager: AlarmManager
@@ -43,6 +46,8 @@ export class Context {
     // state classes
     this.alarm = new Alarm()
     this.tracking = new Tracking()
+
+    this.debugManager = new DebugManager(this)
   }
 
 //   get businessController():BusinessController { return this._businessController }

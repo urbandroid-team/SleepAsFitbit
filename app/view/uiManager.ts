@@ -89,6 +89,7 @@ export class UIManager {
     this.btnExitYes.onclick = () => {
       if (this.ctx.tracking.tracking) {
         this.ctx.businessController.stopTracking()
+        this.ctx.businessController.exitApp(10000)
       } else {
         that.ctx.businessController.exitApp()
       }
@@ -182,6 +183,11 @@ export class UIManager {
   setStatusConnectionError() {
     console.log("UI: status connection error")
     this.status.text = ""
+  }
+
+  setStatusPanic() {
+    console.log("UI: status panic")
+    this.status.text = "APP PANICKED"
   }
 
   initializeClock() {
