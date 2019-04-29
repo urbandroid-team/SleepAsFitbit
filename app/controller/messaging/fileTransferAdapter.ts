@@ -16,8 +16,16 @@ export class FileTransferAdapter {
     this.processAllFiles(msgReceivedCallback);
   }
 
+  public sendPlain(command: string, data: any) {
+    this.send(new Message(command, data))
+  }
+
   public send(msg: Message) {
     outbox.enqueue('msg' + Math.floor(Math.random() * 100000000) + '.txt', new TextEncoder().encode(msg.toString()))
+  }
+
+  public stop() {
+    // cant do anything
   }
 
   private processAllFiles(msgReceivedCallback:any) {

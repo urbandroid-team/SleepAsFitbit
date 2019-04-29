@@ -9,8 +9,16 @@ export class MockAdapter {
     console.log("MOCK Messaging init")
   }
 
+  public sendPlain(command: string, data: any) {
+    this.send(new Message(command, data))
+  }
+
   public send(msg: Message) {
     console.log("MOCK Sending msg: " + msg.toString())
+  }
+
+  public stop() {
+    console.log("MOCK Messaging stop")
   }
 
 }

@@ -8,9 +8,7 @@ import fitlogger from "../../../node_modules/fitbit-logger/app"
 
 export class MessagingAdapter {
 
-  debug = false;
-
-  resend_interval = 2 * 60 * 1000; // minutes in milliseconds
+  debug = true;
 
   last_send_message_id = -1;
   last_received_message_id = -1;
@@ -38,18 +36,17 @@ export class MessagingAdapter {
     });
 
     peerSocket.addEventListener("message", function (event) {
-      console.log("App onmessage event")
       let qMsg = event.data;
       console.log(JSON.stringify(qMsg))
       if (!qMsg.ack) {
-        self.debug && console.log("App onmessage nonACK")
+        self.debug && console.log("Received " + qMsg.body.command)
         if (qMsg.id > self.last_received_message_id) {
           msgReceivedCallback(new Message(qMsg.body.command, qMsg.body.data));
           self.last_received_message_id = qMsg.id;
         }
         try {
           // send acked back
-          self.debug && console.log("App onmessage ACKing")
+          self.debug && console.log("Acking " + qMsg.body.command)
           peerSocket.send(new QueueMessage(qMsg.id));
         } catch (error) {
           self.debug && console.log(error);
@@ -61,9 +58,18 @@ export class MessagingAdapter {
     });
   }
 
+  public sendPlain(command: string, data: any) {
+    this.send(new Message(command, data))
+  }
+
   public send(msg: Message) {
     let m = memory.js.used + "/" + memory.js.peak
     this.enqueue(new QueueMessage(this.get_next_id(), msg, m))
+  }
+
+  public stop() {
+    this.stop_worker()
+    this.queue.length = 0
   }
 
   private enqueue(qMsg: QueueMessage) {
