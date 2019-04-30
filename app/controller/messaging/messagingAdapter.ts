@@ -11,12 +11,13 @@ export class MessagingAdapter {
 
   last_send_message_id = -1;
   last_received_message_id = -1;
-  resend_timer: any = null;
   queue: any[] = []
 
   worker_timer: any = null;
 
   msgAckedCallback: any = null
+
+  resending_mode = false
 
   constructor() {
   }
@@ -88,12 +89,13 @@ export class MessagingAdapter {
       let qMsg = this.queue[i]
       if (qMsg.id === id) {
         this.debug && console.log("QMSG: remove acked " + qMsg)
+        this.resending_mode = false
         this.msgAckedCallback(qMsg.body)
         this.queue.shift();
         if (this.queue.length == 0) {
           this.stop_worker();
         } else {
-          this.send_next()
+          this.send_next() // beware, worker is also running and sending messages!
         }
         break;
       }
@@ -121,11 +123,12 @@ export class MessagingAdapter {
 
       this.debug && console.log("MSG: sending " + qMsg)
       try {
+        this.resending_mode = true
         peerSocket.send(qMsg);
       } catch (error) {
         this.debug && console.log(error);
       }
-      this.start_worker()
+      this.run_worker()
     }
   }
 
@@ -135,8 +138,26 @@ export class MessagingAdapter {
     let self = this
     this.worker_timer = setInterval(function () {
       self.send_next();
-    }, 1000);
+    }, 2000);
+  }
 
+  private run_worker() {
+    this.stop_worker()
+
+    let self = this
+    if (this.resending_mode) {
+      this.worker_timer = setTimeout(() => {
+        console.log("Worker in resending mode")
+        self.send_next()
+        this.run_worker()
+      }, 5000);
+    } else {
+      this.worker_timer = setTimeout(() => {
+        console.log("Worker in sending mode")
+        self.send_next()
+        this.run_worker()
+      }, 1000);
+    }
   }
 
   private stop_worker() {
