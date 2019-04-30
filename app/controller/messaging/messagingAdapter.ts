@@ -18,6 +18,7 @@ export class MessagingAdapter {
   msgAckedCallback: any = null
 
   resending_mode = false
+  sending_delay = 1000
 
   constructor() {
   }
@@ -146,17 +147,19 @@ export class MessagingAdapter {
 
     let self = this
     if (this.resending_mode) {
+      this.sending_delay = 2*this.sending_delay
       this.worker_timer = setTimeout(() => {
         console.log("Worker in resending mode")
         self.send_next()
         this.run_worker()
-      }, 5000);
+      }, this.sending_delay);
     } else {
+      this.sending_delay = 1000
       this.worker_timer = setTimeout(() => {
         console.log("Worker in sending mode")
         self.send_next()
         this.run_worker()
-      }, 1000);
+      }, this.sending_delay);
     }
   }
 
