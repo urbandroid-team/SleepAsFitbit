@@ -25,6 +25,8 @@ startSleepPollingTimer(toSleepQueue, toSleepTimer)
 //   doConsoleLog: true
 // })
 
+me.wakeInterval = 5 * 60 * 1000
+
 msgAdapter.init(
   (msg: Message) => {
     toSleepQueue.addToQueue(msg)
@@ -33,15 +35,13 @@ msgAdapter.init(
     if (msgAcked.command == "ping") {
       sendMessageToSleep(new Message("connected", ""))
     }
+    if (msgAcked.command == "stop") {
+      me.wakeInterval = undefined
+    }
   }
 )
 
-console.log("app readystate: " + app.readyState)
-if (app.readyState == "stopped") {
-  me.wakeInterval = undefined
-} else {
-  me.wakeInterval = 5 * 60 * 1000
-}
+console.log("app readystate: " + app.readyState) // doesnt work at all
 
 me.addEventListener('unload', function() {
   sendMessageToSleep(new Message("companion unloaded", ""))
@@ -65,6 +65,8 @@ function startSleepPollingTimer(queue:MsgQueue, timer: any) {
 }
 
 function sendMessageToSleep(msg:Message) {
+  console.log("app readystate: " + app.readyState)
+
   if (mockSleep) {
     toSleepQueue.clearQueue()
     return
