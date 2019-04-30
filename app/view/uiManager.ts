@@ -187,7 +187,7 @@ export class UIManager {
 
   setStatusPanic() {
     console.log("UI: status panic")
-    this.status.text = "APP PANICKED"
+    this.status.text = "Don't panic!"
   }
 
   initializeClock() {
