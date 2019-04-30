@@ -41,8 +41,6 @@ msgAdapter.init(
   }
 )
 
-console.log("app readystate: " + app.readyState) // doesnt work at all
-
 me.addEventListener('unload', function() {
   sendMessageToSleep(new Message("companion unloaded", ""))
   console.log("Companion unloaded")
@@ -65,7 +63,7 @@ function startSleepPollingTimer(queue:MsgQueue, timer: any) {
 }
 
 function sendMessageToSleep(msg:Message) {
-  console.log("app readystate: " + app.readyState)
+  // console.log("app readystate: " + app.readyState)
 
   if (mockSleep) {
     toSleepQueue.clearQueue()
@@ -88,7 +86,6 @@ function sendMessageToSleep(msg:Message) {
       // this most probably means server on phone is not started
       // TODO: what to do? Probably show something on the watch, like "start tracking on the phone"
       !debug && console.error("sendMessageToSleep err " + error)
-      // TODO do not remove msg from queue, resend it
     });
 
 }
@@ -102,9 +99,14 @@ function processMessageFromSleep(unparsedMsg:any) {
     let msgs = filterOutStopIfStartPresent(msgArray)
 
     msgs.forEach((msg: any) => {
-      console.log("Enqueue to watch: " + msg['name'] + " " + msg['data'])
-      // toWatchQueue.addToQueue(new Message(msg['name'], msg['data']))
-      msgAdapter.send(new Message(msg['name'], msg['data']))
+      let mess = new Message(msg['name'], msg['data'])
+
+      console.log("Enqueue to watch: " + mess.command + " " + mess.data)
+      if (mess.command == 'ping') {
+        msgAdapter.send_if_not_enqueued(mess)
+      } else {
+        msgAdapter.send(mess)
+      }
     });
   }
 }
