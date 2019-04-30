@@ -3,7 +3,6 @@ import { peerSocket } from "messaging";
 import { QueueMessage } from "./queueMessage";
 import { launchApp, memory } from "system";
 // @ts-ignore
-import fitlogger from "../../../node_modules/fitbit-logger/app"
 
 
 export class MessagingAdapter {
@@ -109,9 +108,6 @@ export class MessagingAdapter {
   }
 
   private send_next() {
-    fitlogger.log("send_next")
-
-
     this.debug && console.log("buffer:" + peerSocket.bufferedAmount)
     if (this.queue.length > 0) {
       let qMsg:QueueMessage = this.queue[0];
