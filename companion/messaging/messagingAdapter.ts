@@ -8,13 +8,11 @@ export class MessagingAdapter {
 
   last_send_message_id = -1;
   last_received_message_id = -1;
-  resend_timer: any = null;
   queue: any[] = []
 
   worker_timer: any = null;
 
   msgAckedCallback: any = null
-
 
   constructor() {
   }
@@ -59,6 +57,12 @@ export class MessagingAdapter {
     this.enqueue(new QueueMessage(this.get_next_id(), msg))
   }
 
+  public send_if_not_enqueued(msg: Message) {
+    if (!this.is_msg_enqueued(msg)) {
+      this.send(msg)
+    }
+  }
+
   private enqueue(qMsg: QueueMessage) {
     this.debug && console.log("MSG: enqueue " + qMsg);
     this.queue.push(qMsg);
@@ -66,7 +70,6 @@ export class MessagingAdapter {
       this.maybe_send_next()
     }
   }
-
 
   // maybe we can just shift() as we always get the first message acked - no need to search - but maybe does not matter
   private dequeue(id: number) {
@@ -86,6 +89,14 @@ export class MessagingAdapter {
     }
   }
 
+  private is_msg_enqueued(msg: Message) {
+    let res = this.queue.find((el: QueueMessage) => {
+      return (el.body.command == msg.command)
+    })
+    if (res) { return true }
+    return false
+  }
+
   private get_next_id() {
     if (this.last_send_message_id < 0) {
       this.last_send_message_id = Date.now() * 1000;
@@ -94,13 +105,14 @@ export class MessagingAdapter {
   }
 
   private maybe_send_next() {
+    this.debug && console.log("buffer:" + peerSocket.bufferedAmount)
     if (peerSocket.bufferedAmount < 100) {
       this.send_next()
     }
   }
 
   private send_next() {
-    this.debug && console.log("buffer:" + peerSocket.bufferedAmount)
+    // this.debug && console.log("buffer:" + peerSocket.bufferedAmount)
     if (this.queue.length > 0) {
       let qMsg: QueueMessage = this.queue[0];
 
@@ -129,7 +141,7 @@ export class MessagingAdapter {
     this.worker_timer = setInterval(function () {
       console.log("Worker tick")
       self.maybe_send_next();
-    }, 1000);
+    }, 2000);
 
   }
 
