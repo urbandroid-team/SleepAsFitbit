@@ -93,6 +93,7 @@ export class BusinessController {
 
   pauseTracking(timestamp: number) {
     if (timestamp > 0) {
+      this.ctx.tracking.trackingPaused = true
       this.ctx.ui.setStatusPause()
     } else if (this.ctx.tracking.trackingPaused) {
       this.resumeTracking()
