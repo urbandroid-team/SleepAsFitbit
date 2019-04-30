@@ -4,8 +4,6 @@ import { FileTransferAdapter } from "./messaging/fileTransferAdapter";
 import { me } from 'companion'
 import { MessagingAdapter } from "./messaging/messagingAdapter";
 import { MockAdapter } from "./messaging/mockAdapter";
-//@ts-ignore
-import fitlogger from "../node_modules/fitbit-logger/companion";
 import { app } from "peer";
 
 

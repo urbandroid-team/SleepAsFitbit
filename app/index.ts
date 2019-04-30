@@ -2,8 +2,6 @@ import { display } from "display";
 import { me } from 'appbit'
 import { Context } from "./controller/context";
 import { Message } from "./model/message";
-// @ts-ignore
-import fitlogger from "../node_modules/fitbit-logger/app";
 
   var debug = false;
   var fitbitSdk = 3;
