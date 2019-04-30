@@ -52,7 +52,7 @@ export class MsgManager {
         this.handleIncomingMessage(msg)
       },
         (msgAcked: Message) => {
-          console.log("Acked " + msgAcked.command)
+          console.log(msgAcked.command + " ACKED")
           if (msgAcked.command == MsgManager.FITBIT_MESSAGE_STOP_TRACK) {
             this.ctx.businessController.exitApp()
           }
