@@ -5,7 +5,7 @@
     "appDisplayName": "Sleep",
     "iconFile": "resources/icon.png",
     "wipeColor": "#4caf50",
-    "version": "0.10",
+    "version": "0.11",
     "requestedPermissions": [
       "access_heart_rate",
       "access_internet",
