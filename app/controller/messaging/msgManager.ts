@@ -84,7 +84,6 @@ export class MsgManager {
         break
       case MsgManager.FITBIT_MESSAGE_STOP_TRACK:
         this.ctx.businessController.stopTracking()
-        this.ctx.businessController.exitApp()
         break
       case MsgManager.FITBIT_MESSAGE_RESUME:
         this.ctx.businessController.resumeTracking()
