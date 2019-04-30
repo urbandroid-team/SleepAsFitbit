@@ -45,12 +45,11 @@ export class UIManager {
     // Buttons
     this.alarmBtnWrapper = document.getElementById('alarmBtns')
     this.trackingBtnWrapper = document.getElementById('trackingBtns')
-    this.trackingBtnWrapper.style.display = "none"
-
 
     this.trackingBtnBR = document.getElementById('tracking-btn-br')
     this.alarmBtnTR = document.getElementById('alarm-btn-tr')
     this.alarmBtnBR = document.getElementById('alarm-btn-br')
+    this.trackingBtnBR.style.display = 'none'
 
     // Upper row
     this.status = document.getElementById('status')
@@ -178,6 +177,7 @@ export class UIManager {
     console.log("UI: status tracking")
     this.status.text = "Tracking..."
     this.changeComboBtnIcons(this.trackingBtnBR, UIManager.RES_BTN_PAUSE, UIManager.RES_BTN_PAUSE)
+    this.trackingBtnBR.style.display = 'inline'
   }
 
   setStatusConnectionError() {
