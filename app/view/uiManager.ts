@@ -106,8 +106,7 @@ export class UIManager {
       this.runningPage.style.display="inline"
       this.exitPage.style.display="none"
     }
-    this.connectBtn.onclick = (event: any) => {
-      console.log(event)
+    this.connectBtn.onclick = () => {
       this.connectBtn.text = "Connecting..."
     }
 
