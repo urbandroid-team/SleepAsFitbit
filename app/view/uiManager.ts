@@ -121,6 +121,7 @@ export class UIManager {
           that.exitPage.style.display = "none";
         } else {
           that.runningPage.style.display = "none";
+          that.welcomePage.style.display = "none";
           that.exitPage.style.display = "inline";
         }
       }
