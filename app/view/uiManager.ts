@@ -191,6 +191,7 @@ export class UIManager {
     this.status.text = "Tracking..."
     this.changeComboBtnIcons(this.trackingBtnBR, UIManager.RES_BTN_PAUSE, UIManager.RES_BTN_PAUSE)
     this.trackingBtnBR.style.display = 'inline'
+    this.welcomePage.style.display = "none"
   }
 
   setStatusConnectionError() {
