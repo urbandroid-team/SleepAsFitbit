@@ -2,6 +2,19 @@
 
     <rect id="background" fill="black" x="0" y="0" width="100%" height="100%" />
 
+    <svg id="welcomePage">
+      <text id="startTitle" x="50%" y="50" height="100" font-family="System-Regular" fill="yellow" font-size="35" font-weight="bold" text-anchor="middle">Welcome!</text>
+      <textarea id="instructions" x="5" y="75" width="100%-10" height="450" font-family="System-Regular" fill="yellow" font-size="20" font-weight="bold" text-anchor="middle">
+        Start sleep tracking in the companion mobile app, then return here to connect.
+      </textarea>
+      <svg y="200" width="90%" height="100">
+        <use id="connectBtn" href="#square-button" x="5%" fill="fb-green">
+          <set href="#text" attributeName="text-buffer" to="Connect" />
+          <set href="#text" attributeName="text-length" to="13" />
+        </use>
+      </svg>
+    </svg>
+
     <svg id="runningPage" x="6" y="0" width="100%" height="100%">
 
       <svg class="text-container" id="text-status" y="0" x="0">
