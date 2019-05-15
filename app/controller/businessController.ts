@@ -31,8 +31,10 @@ export class BusinessController {
     // start acc on sensors controller
     this.ctx.sensorsController.startAcc((acc: number, accRaw: number) => {
       try {
-        this.batch_acc = this.batch_acc.concat(acc) // delat push aby se nevolal GC
-        this.batch_acc_raw = this.batch_acc_raw.concat(accRaw) // push ...
+        this.batch_acc.push(acc)
+        // this.batch_acc = this.batch_acc.concat(acc) // TODO: delat push aby se nevolal GC
+        this.batch_acc_raw.push(accRaw)
+        // this.batch_acc_raw = this.batch_acc_raw.concat(accRaw) // TODO: push ...
         if (this.batch_acc.length >= this.ctx.tracking.batchSize) {
           this.ctx.msgManager.msgAdapter.send(new Message(MsgManager.FITBIT_MESSAGE_DATA, this.formatOutgoingAccData(this.batch_acc, this.batch_acc_raw)))
           this.batch_acc = []
