@@ -175,7 +175,11 @@ export class UIManager {
 
   setStatusTracking() {
     console.log("UI: status tracking")
-    this.status.text = "Tracking..."
+    let hrText = ""
+    if (this.ctx.tracking.hrTracking) {
+      hrText = "(HR)"
+    }
+    this.status.text = "Tracking..." + hrText
     this.changeComboBtnIcons(this.trackingBtnBR, UIManager.RES_BTN_PAUSE, UIManager.RES_BTN_PAUSE)
     this.trackingBtnBR.style.display = 'inline'
   }
