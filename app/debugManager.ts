@@ -3,23 +3,21 @@ import { memory } from "system";
 
 export class DebugManager {
 
-  debug:boolean = true
+  debug:boolean = false
   ctx: Context
 
   constructor(context: Context) {
     this.ctx = context
-
+    this.observeMemoryPressure()
     this.observeMemory()
-
   }
 
   panic() {
-    if (memory.js.used > 60000) {
-      this.ctx.businessController.stopTracking()
-      this.ctx.businessController.stopAlarm()
-      this.ctx.msgManager.stopMessaging()
-      this.ctx.ui.setStatusPanic()
-    }
+    console.error("PANIC")
+    this.ctx.businessController.stopTracking()
+    this.ctx.businessController.stopAlarm()
+    this.ctx.msgManager.stopMessaging()
+    this.ctx.ui.setStatusPanic()
   }
 
   startMemLogTimer() {
@@ -31,10 +29,19 @@ export class DebugManager {
   }
 
   observeMemory() {
+    setInterval(() => {
+      if (memory.js.used > 60000) {
+        this.panic()
+      }
+    }, 2000);
+  }
+
+  observeMemoryPressure() {
+    let self = this
     memory.monitor.onmemorypressurechange = function (a) {
       let data = memory.monitor.pressure + " " + "M " + memory.js.used + " peak " + memory.js.peak
       console.log("memoryPressureChange:" + data);
-      this.ctx.msgManager.msgAdapter.sendPlain("Mem pressure", data)
+      self.ctx.msgManager.msgAdapter.sendPlain("Mem pressure", data)
     }
   }
 
