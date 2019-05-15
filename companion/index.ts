@@ -51,7 +51,7 @@ me.addEventListener('unload', function() {
 
 function startSleepPollingTimer(queue:MsgQueue, timer: any) {
 
-  toSleepQueue.addToQueue(new Message("companion started", " peerApp " + me.launchReasons.peerAppLaunched + " fileTransfer " + me.launchReasons.fileTransfer + " wokenUp " + me.launchReasons.wokenUp))
+  toSleepQueue.addToQueue(new Message("companionStart", " peerApp " + (me.launchReasons.peerAppLaunched ? 1 : 0) + " fileTrans " + (me.launchReasons.fileTransfer ? 1 : 0) + " wakeUp " + (me.launchReasons.wokenUp ? 1 : 0)))
 
   timer = setInterval(() => {
     // console.log(">> msg timer to Sleep TICK")
