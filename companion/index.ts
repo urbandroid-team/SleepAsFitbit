@@ -101,7 +101,13 @@ function processMessageFromSleep(unparsedMsg:any) {
     let msgs = filterOutStopIfStartPresent(msgArray)
 
     msgs.forEach((msg: any) => {
-      let mess = new Message(msg['name'], msg['data'])
+      let command = msg['name']
+      let data = msg['data']
+      if (data == 'null') {
+        data = undefined
+      }
+
+      let mess = new Message(command, data)
 
       console.log("Enqueue to watch: " + mess.command + " " + mess.data)
       if (mess.command == 'ping') {
