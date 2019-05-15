@@ -6,6 +6,7 @@ import { MessagingAdapter } from "./messaging/messagingAdapter";
 import { MockAdapter } from "./messaging/mockAdapter";
 import { app } from "peer";
 
+import { version } from "../version"
 
 const POLLING_INTERVAL = 1000
 
@@ -26,6 +27,7 @@ startSleepPollingTimer(toSleepQueue, toSleepTimer)
 // })
 
 me.wakeInterval = 5 * 60 * 1000
+toSleepQueue.addToQueue(new Message("version", version))
 
 msgAdapter.init(
   (msg: Message) => {
