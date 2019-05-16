@@ -16,27 +16,34 @@ export class UIManager {
   statusAlarmImg:any
   statusAlarmTime:any
   background:any
+  clock: any
+
+  welcomePage: any
+  runningPage: any
+  exitPage: any
+
   alarmBtnWrapper:any
   trackingBtnWrapper: any
   trackingBtnBR: any
   alarmBtnTR: any
   alarmBtnBR: any
-  clock: any
-
-  runningPage: any
-  exitPage: any
   btnExitYes: any
   btnExitNo: any
+  connectBtn: any
 
   constructor(context: Context) {
     this.ctx = context
   }
 
   initialize() {
+    // Pages
+    this.welcomePage = document.getElementById('welcomePage')
     this.background = document.getElementById('background')
     this.runningPage = document.getElementById('runningPage')
     this.exitPage = document.getElementById('exitPage')
-    this.exitPage.style.display="none"
+    
+    this.runningPage.style.display = "none"
+    this.exitPage.style.display = "none"
 
     // Exit dialog
     this.btnExitYes = document.getElementById("btn-yes")
@@ -50,6 +57,8 @@ export class UIManager {
     this.alarmBtnTR = document.getElementById('alarm-btn-tr')
     this.alarmBtnBR = document.getElementById('alarm-btn-br')
     this.trackingBtnBR.style.display = 'none'
+
+    this.connectBtn = document.getElementById('connectBtn')
 
     // Upper row
     this.status = document.getElementById('status')
@@ -97,6 +106,9 @@ export class UIManager {
       this.runningPage.style.display="inline"
       this.exitPage.style.display="none"
     }
+    this.connectBtn.onclick = () => {
+      this.connectBtn.text = "Connecting..."
+    }
 
     document.onkeypress = function (e) {
       e.preventDefault();
@@ -108,6 +120,7 @@ export class UIManager {
           that.exitPage.style.display = "none";
         } else {
           that.runningPage.style.display = "none";
+          that.welcomePage.style.display = "none";
           that.exitPage.style.display = "inline";
         }
       }
@@ -182,6 +195,8 @@ export class UIManager {
     this.status.text = "Tracking..." + hrText
     this.changeComboBtnIcons(this.trackingBtnBR, UIManager.RES_BTN_PAUSE, UIManager.RES_BTN_PAUSE)
     this.trackingBtnBR.style.display = 'inline'
+    this.welcomePage.style.display = "none"
+    this.runningPage.style.display = "inline"
   }
 
   setStatusConnectionError() {
