@@ -18,23 +18,35 @@ var debug = false
 
 let msgAdapter = new MessagingAdapter
 // let msgAdapter = new MessagingAdapter
+const wakeInterval = 5 * 60 * 1000
 
 console.log("Companion started")
 startSleepPollingTimer(toSleepQueue, toSleepTimer)
+
+// This doesn't work now - readyState is unreliable
+// setTimeout(() => {
+//   console.log("Watch app " + app.readyState)
+//   if (app.readyState == "stopped") {
+//     console.log("Cancelling wakeinterval");
+//     me.wakeInterval = undefined
+//   }
+// }, 6000);
 
 // fitlogger.init({
 //   doConsoleLog: true
 // })
 
-me.wakeInterval = 5 * 60 * 1000
+me.wakeInterval = wakeInterval
 toSleepQueue.addToQueue(new Message("version", version))
 
 msgAdapter.init(
-  (msg: Message) => {
-    toSleepQueue.addToQueue(msg)
+  (msgFromWatch: Message) => {
+    toSleepQueue.addToQueue(msgFromWatch)
+    me.wakeInterval = wakeInterval
   },
   (msgAcked: Message) => {
     if (msgAcked.command == "ping") {
+      console.log("Sending connected")
       sendMessageToSleep(new Message("connected", ""))
     }
     if (msgAcked.command == "stop") {
@@ -43,11 +55,16 @@ msgAdapter.init(
   }
 )
 
+
+
 me.addEventListener('unload', function() {
   sendMessageToSleep(new Message("companion unloaded", ""))
   console.log("Companion unloaded")
 })
 
+app.addEventListener("readystatechange", function () {
+  toSleepQueue.addToQueue(new Message("appRuns", app.readyState))
+})
 
 function startSleepPollingTimer(queue:MsgQueue, timer: any) {
 
@@ -129,6 +146,5 @@ function filterOutStopIfStartPresent(msgs:any[]) {
       return msg['name'] !== 'stop'
     })
   }
-
   return msgs
 }
