@@ -22,6 +22,7 @@ export class Acc {
   startSensor(receiver: any) {
     console.log("Accelerometer started")
     this.acc.onreading = () => {
+      console.log("Acc onReading")
       receiver(
         d.computeMaxDiffFromArray(this.acc.readings.x, this.acc.readings.y, this.acc.readings.z),
         d.computeMaxRawFromArray(this.acc.readings.x, this.acc.readings.y, this.acc.readings.z)
@@ -41,6 +42,7 @@ export class Hr {
   // @ts-ignore
   hrm: HeartRateSensor
   hrArr: any[]
+  restartTimer: any
 
   constructor() {
     // @ts-ignore
@@ -52,16 +54,18 @@ export class Hr {
     console.log("Started HR reading")
     this.hrm.onreading = () => {
       console.log("HR onReading " + this.hrm.heartRate)
+      console.log("HR before push")
       this.hrArr.push(this.hrm.heartRate)
+      console.log("HR after push")
 
       if (this.hrArr.length > 9) {
+        console.log("HR got 10 values")
         console.log("HR got 10 values, hrArr size: " + this.hrArr.length)
         this.stopSensor()
         this.scheduleSensorRestart( 5*60*1000 )
         receiver(d.computeMedianFromArray(this.hrArr))
         this.hrArr.length = 0
       }
-
     }
 
     this.hrm.start()
@@ -73,6 +77,8 @@ export class Hr {
   }
 
   scheduleSensorRestart(delayMilliseconds:number) {
-    setTimeout(() => { this.hrm.start() }, delayMilliseconds)
+    if (!this.restartTimer) {
+      this.restartTimer = setTimeout(() => { this.hrm.start(); }, delayMilliseconds);
+    }
   }
 }

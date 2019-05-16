@@ -22,7 +22,7 @@ export class SensorsController {
 
   stopAllSensors() {
     [this.acc, this.hr].forEach(sensor => {
-      if (sensor != null) { sensor.stopSensor() }
+      if (sensor) { sensor.stopSensor() }
     });
   }
 
