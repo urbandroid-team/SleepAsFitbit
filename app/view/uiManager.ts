@@ -29,7 +29,6 @@ export class UIManager {
   alarmBtnBR: any
   btnExitYes: any
   btnExitNo: any
-  connectBtn: any
 
   constructor(context: Context) {
     this.ctx = context
@@ -41,7 +40,7 @@ export class UIManager {
     this.background = document.getElementById('background')
     this.runningPage = document.getElementById('runningPage')
     this.exitPage = document.getElementById('exitPage')
-    
+
     this.runningPage.style.display = "none"
     this.exitPage.style.display = "none"
 
@@ -57,8 +56,6 @@ export class UIManager {
     this.alarmBtnTR = document.getElementById('alarm-btn-tr')
     this.alarmBtnBR = document.getElementById('alarm-btn-br')
     this.trackingBtnBR.style.display = 'none'
-
-    this.connectBtn = document.getElementById('connectBtn')
 
     // Upper row
     this.status = document.getElementById('status')
@@ -94,6 +91,7 @@ export class UIManager {
     this.alarmBtnBR.onclick = () => {
       this.ctx.businessController.snoozeAlarmFromWatch()
     }
+
     this.btnExitYes.onclick = () => {
       if (this.ctx.tracking.tracking) {
         this.ctx.businessController.stopTracking()
@@ -103,11 +101,13 @@ export class UIManager {
       }
     }
     this.btnExitNo.onclick = () => {
-      this.runningPage.style.display="inline"
       this.exitPage.style.display="none"
-    }
-    this.connectBtn.onclick = () => {
-      this.connectBtn.text = "Connecting..."
+
+      if (this.ctx.tracking.tracking) {
+        this.runningPage.style.display="inline"
+      } else {
+        this.welcomePage.style.display="inline"
+      }
     }
 
     document.onkeypress = function (e) {
@@ -131,7 +131,7 @@ export class UIManager {
   changeToAlarmScreen() {
     console.log("UI: alarm screen")
 
-    this.background.style.fill = '#999'
+    this.background.style.fill = '#008080'
 
     this.alarmBtnWrapper.style.display = "inline"
     this.trackingBtnWrapper.style.display = "none"
@@ -179,13 +179,11 @@ export class UIManager {
     this.alarmTime.text = ""
     this.alarmImg.href = "dismiss.png"
   }
-
   setStatusPause() {
     console.log("UI: status pause")
     this.status.text = "Paused.."
     this.changeComboBtnIcons(this.trackingBtnBR, UIManager.RES_BTN_PLAY, UIManager.RES_BTN_PLAY)
   }
-
   setStatusTracking() {
     console.log("UI: status tracking")
     let hrText = ""
@@ -198,17 +196,14 @@ export class UIManager {
     this.welcomePage.style.display = "none"
     this.runningPage.style.display = "inline"
   }
-
   setStatusConnectionError() {
     console.log("UI: status connection error")
     this.status.text = ""
   }
-
   setStatusPanic() {
     console.log("UI: status panic")
-    this.status.text = "Don't panic!"
+    this.status.text = "Err:Contact support"
   }
-
   initializeClock() {
     console.log("UI: initialize clock")
     clock.granularity = 'minutes';
@@ -219,13 +214,11 @@ export class UIManager {
         ("0" + evt.date.getMinutes()).slice(-2)
     };
   }
-
   pad(number:number, size:number):string {
     var s = String(number);
     while (s.length < (size || 2)) { s = "0" + s; }
     return s;
   }
-
   changeComboBtnIcons(button:any, image:string, pressedImage:string) {
     button.getElementById('combo-button-icon').image = image
     button.getElementById("combo-button-icon-press").image = pressedImage

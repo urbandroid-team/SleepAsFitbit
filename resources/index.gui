@@ -3,33 +3,31 @@
     <rect id="background" fill="black" x="0" y="0" width="100%" height="100%" />
 
     <svg id="welcomePage">
-      <text id="startTitle" x="50%" y="50" height="100" font-family="System-Regular" fill="yellow" font-size="35" font-weight="bold" text-anchor="middle">Welcome!</text>
-      <textarea id="instructions" x="5" y="75" width="100%-10" height="450" font-family="System-Regular" fill="yellow" font-size="20" font-weight="bold" text-anchor="middle">
-        Start sleep tracking in the companion mobile app, then return here to connect.
+      <text id="startTitle" x="50%" y="50" height="100" font-family="System-Regular" fill="yellow" font-size="35" font-weight="bold" text-anchor="middle">Good night...</text>
+      <textarea id="instructions" x="5" y="70" width="100%-10" height="450" font-family="System-Regular" fill="yellow" font-size="20" font-weight="bold" text-anchor="middle">
+        Start sleep tracking in the Sleep as Android phone app.
+        Make sure "Settings > Wearables > Use wearables" is set to Fitbit.
       </textarea>
-      <svg y="200" width="90%" height="100">
-        <use id="connectBtn" href="#square-button" x="5%" fill="fb-green">
-          <set href="#text" attributeName="text-buffer" to="Connect" />
-          <set href="#text" attributeName="text-length" to="13" />
-        </use>
-      </svg>
+      <textarea id="connecting" x="5" y="100%-70" width="100%-10" height="35" font-family="System-Regular" fill="white" font-size="35" font-weight="bold" text-anchor="middle">
+        Connecting...
+      </textarea>
     </svg>
 
     <svg id="runningPage" x="6" y="0" width="100%" height="100%">
 
       <svg class="text-container" id="text-status" y="0" x="0">
-        <text id="status" font-size="35" fill="grey" y="35">Connecting...</text>
+        <text id="status" font-size="35" fill="yellow" y="35">Connecting...</text>
         <image id="statusAlarmImg" y="5" width="40" height="40" href="alarm.png" fill="grey" />
-        <text id="statusAlarmTime" y="40" x="45" font-size="40" fill="grey" >ALARM</text>
+        <text id="statusAlarmTime" y="40" x="45" font-size="40" fill="white" >ALARM</text>
       </svg>
 
       <svg class="text-container" id="text-clock" y="35">
-        <text id="clock" font-size="120" y="120" font-family="Seville-Condensed" fill="grey">00:00</text>
+        <text id="clock" font-size="120" y="120" font-family="Seville-Condensed" fill="white">00:00</text>
       </svg>
 
       <svg class="text-container" id="text-alarm" y="100%-40">
-        <image id="alarmImg" y="0" width="35" height="35" href="dismiss.png" fill="grey" />
-        <text id="alarmTime" y="30" x="45" font-size="35" fill="grey"></text>
+        <image id="alarmImg" y="0" width="35" height="35" href="dismiss.png" fill="white" />
+        <text id="alarmTime" y="30" x="45" font-size="35" fill="white"></text>
       </svg>
 
       <g id="trackingBtns">

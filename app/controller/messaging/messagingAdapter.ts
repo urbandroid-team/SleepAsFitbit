@@ -7,7 +7,7 @@ import { launchApp, memory } from "system";
 
 export class MessagingAdapter {
 
-  debug = true;
+  debug = false;
 
   last_send_message_id = -1;
   last_received_message_id = -1;
@@ -28,11 +28,14 @@ export class MessagingAdapter {
     this.msgAckedCallback = msgAckedCallback
 
     peerSocket.addEventListener("open", function () {
+      console.log("peerSocket opened")
       self.send_next();
     });
 
     // Do we have closed?
     peerSocket.addEventListener("close", function () {
+      console.log("peerSocket closed")
+      self.resending_mode = false
       self.stop_worker();
     });
 
@@ -147,7 +150,7 @@ export class MessagingAdapter {
 
     let self = this
     if (this.resending_mode) {
-      this.sending_delay = 2*this.sending_delay
+      this.sending_delay = 5000
       this.worker_timer = setTimeout(() => {
         console.log("Worker in resending mode")
         self.send_next()
