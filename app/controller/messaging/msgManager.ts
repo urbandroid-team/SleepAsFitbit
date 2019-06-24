@@ -39,6 +39,7 @@ export class MsgManager {
   constructor(context: Context) {
     this.ctx = context
     this.msgAdapter = new MessagingAdapter
+    // this.debug = context.debugManager.debug
   }
 
   public startCompanionCommChannel() {

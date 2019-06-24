@@ -4,7 +4,7 @@ import { QueueMessage } from "../../app/controller/messaging/queueMessage";
 
 export class MessagingAdapter {
 
-  debug = true;
+  debug = false;
 
   last_send_message_id = -1;
   last_received_message_id = -1;
@@ -108,6 +108,9 @@ export class MessagingAdapter {
     this.debug && console.log("buffer:" + peerSocket.bufferedAmount)
     if (peerSocket.bufferedAmount < 100) {
       this.send_next()
+    } else {
+      console.log("buffer: " + peerSocket.bufferedAmount)
+      console.log("")
     }
   }
 
