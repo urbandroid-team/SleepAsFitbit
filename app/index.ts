@@ -3,10 +3,10 @@ import { me } from 'appbit'
 import { Context } from "./controller/context";
 import { Message } from "./model/message";
 
-  var debug = false;
-  var fitbitSdk = 3;
+var fitbitSdk = 3;
 
-  var ctx = new Context()
+var ctx = new Context()
+var debug = ctx.debugManager.debug
 
 try {
   // fitlogger.init({
@@ -28,8 +28,11 @@ try {
     me.appTimeoutEnabled = false;
     console.log("Setting app timeout: " + me.appTimeoutEnabled)
   }
-
   ctx.msgManager.startCompanionCommChannel()
+
+
+  // ctx.businessController.startTracking(true)
+
 
 } catch (error) {
   console.log(error)

@@ -15,8 +15,9 @@ export class Acc {
     // 10 readings per second, 100 readings per batch
     // the callback will be called once every batch/frequency seconds
 
-    // @ts-ignore
-    this.acc = new Accelerometer({ frequency: 10, batch: this.readingsPerBatch });
+    if (Accelerometer) {
+      this.acc = new Accelerometer({ frequency: 10, batch: this.readingsPerBatch });
+    }
   }
 
   startSensor(receiver: any) {
@@ -39,46 +40,35 @@ export class Acc {
 
 export class Hr {
 
-  // @ts-ignore
   hrm: HeartRateSensor
-  hrArr: any[]
-  restartTimer: any
+  hrArr: Float32Array
+  running: boolean = false
 
   constructor() {
-    // @ts-ignore
-    this.hrm = new HeartRateSensor({ frequency: 1 })
-    this.hrArr = []
+    if (HeartRateSensor) {
+      this.hrm = new HeartRateSensor({ frequency: 1, batch: 300 })
+    }
   }
 
   startSensor(receiver: any) {
-    console.log("Started HR reading")
-    this.hrm.onreading = () => {
-      console.log("HR onReading " + this.hrm.heartRate)
-      console.log("HR before push")
-      this.hrArr.push(this.hrm.heartRate)
-      console.log("HR after push")
+    console.log("HR startSensor")
+    if (this.running) { return }
 
-      if (this.hrArr.length > 9) {
-        console.log("HR got 10 values")
-        console.log("HR got 10 values, hrArr size: " + this.hrArr.length)
-        this.stopSensor()
-        this.scheduleSensorRestart( 5*60*1000 )
-        receiver(d.computeMedianFromArray(this.hrArr))
-        this.hrArr.length = 0
-      }
+    this.hrm.onreading = () => {
+      console.log("HR onReading")
+      receiver(d.computeMedianFromFloat32Array(this.hrm.readings.heartRate))
     }
 
     this.hrm.start()
   }
 
   stopSensor() {
+    console.log("HR stopSensor, running " + this.running)
+    if (!this.running) { return }
+
     console.log("HR stopping sensor")
     this.hrm.stop()
+    this.running = false
   }
 
-  scheduleSensorRestart(delayMilliseconds:number) {
-    if (!this.restartTimer) {
-      this.restartTimer = setTimeout(() => { this.hrm.start(); }, delayMilliseconds);
-    }
-  }
 }

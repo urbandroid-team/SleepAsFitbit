@@ -30,6 +30,12 @@ export function computeMedianFromArray(arr:any[]) {
   return arr[Math.round(arr.length / 2) - 1];
 }
 
+// Used for batched heart rates
+export function computeMedianFromFloat32Array(arr:Float32Array) {
+  arr.sort();
+  return arr[Math.round(arr.length / 2) - 1];
+}
+
 // // used for accelerometer DATA
 // export function computeMaxDiff(x: number, y: number, z: number, lastX: number, lastY: number, lastZ: number) {
 //   return Math.abs(x - lastX) + Math.abs(y - lastY) + Math.abs(z - lastZ);
