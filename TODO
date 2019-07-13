@@ -32,4 +32,12 @@ View
 
 [x] peek pop, popback
 [] fix alarm screen
-[] napsat Jonovi
+[x] napsat Jonovi
+
+
+[x] ACC delat push misto concat - done, otestovat
+[x] HR brat pouze jedno, nesbirat
+[x] zrychlit plivani zprav kdyz mam wakeup
+[x] fix panic mode
+
+[] UImanager should have an object to store pages and switch between them in a better fashion

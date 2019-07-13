@@ -55,8 +55,6 @@ msgAdapter.init(
   }
 )
 
-
-
 me.addEventListener('unload', function() {
   sendMessageToSleep(new Message("companion unloaded", ""))
   console.log("Companion unloaded")

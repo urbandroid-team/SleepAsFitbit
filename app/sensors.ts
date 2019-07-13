@@ -1,12 +1,10 @@
 // Implementation of the Sensor API for Fitbit SDKv2, using sensor batching
-
 import { Accelerometer } from "accelerometer"
 import { HeartRateSensor } from "heart-rate"
 import * as d from './dataCommons'
 
 export class Acc {
 
-  // @ts-ignore
   acc: Accelerometer
 
   readingsPerBatch:number = 100
@@ -14,7 +12,6 @@ export class Acc {
   constructor() {
     // 10 readings per second, 100 readings per batch
     // the callback will be called once every batch/frequency seconds
-
     if (Accelerometer) {
       this.acc = new Accelerometer({ frequency: 10, batch: this.readingsPerBatch });
     }
