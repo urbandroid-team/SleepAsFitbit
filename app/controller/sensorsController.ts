@@ -1,13 +1,22 @@
-import { Acc, Hr } from "../sensors";
+import { Acc, Hr, GeminiAcc } from "../sensors";
 import { Context } from "./context";
+import { me as device } from "device";
 
 export class SensorsController {
-  acc:Acc
+  acc:Acc | GeminiAcc
   hr:Hr
   ctx: Context
+  isDeviceGemini: boolean = false
+
 
   constructor(ctx: Context) {
-    this.acc = new Acc
+    if (device.modelId == '38' || device.modelName == 'Versa Lite') {
+      console.log("Aww yeah, gemini...")
+      this.isDeviceGemini = true
+      this.acc = new GeminiAcc
+    } else {
+      this.acc = new Acc
+    }
     this.hr = new Hr
     this.ctx = ctx
   }
