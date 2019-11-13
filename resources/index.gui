@@ -16,7 +16,7 @@
     <svg id="runningPage" x="6" y="0" width="100%" height="100%">
 
       <svg class="text-container" id="text-status" y="0" x="0">
-        <text id="status" font-size="35" fill="yellow" y="35">Connecting...</text>
+        <text id="status" font-size="35" fill="yellow" y="35" text-length="20">Connecting...</text>
         <image id="statusAlarmImg" y="5" width="40" height="40" href="alarm.png" fill="grey" />
         <text id="statusAlarmTime" y="40" x="45" font-size="40" fill="white" >ALARM</text>
       </svg>

@@ -2,7 +2,7 @@ import { inbox, outbox } from "file-transfer";
 import { Message } from "../../app/model/message";
 import { TextEncoder } from "../../common/encoding";
 
-export class FileTransferAdapter {
+export class WatchFileTransferAdapter {
 
   public init(msgReceivedCallback: any) {
     var self = this

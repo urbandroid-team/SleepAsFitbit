@@ -3,6 +3,7 @@ import { MsgManager } from "./messaging/msgManager";
 import { me } from "appbit";
 import { Message } from "../model/message";
 import { display } from "display";
+import { MsgConstants } from "../../common/msgConstants";
 
 // A facade class that is responsible for controling the flow of the app
 
@@ -32,7 +33,7 @@ export class BusinessController {
       try {
         this.batch_acc_raw.push(accRaw)
         if (this.batch_acc_raw.length >= this.ctx.tracking.batchSize) {
-          this.ctx.msgManager.msgAdapter.send(new Message(MsgManager.FITBIT_MESSAGE_DATA, this.formatOutgoingAccData([0], this.batch_acc_raw)))
+          this.ctx.msgManager.msgAdapter.send(new Message(MsgConstants.FITBIT_MESSAGE_DATA, this.formatOutgoingAccData([0], this.batch_acc_raw)))
           this.batch_acc_raw = []
         }
       } catch (error) {
@@ -46,7 +47,7 @@ export class BusinessController {
 
       this.ctx.sensorsController.startHr((hr: any) => {
         try {
-          this.ctx.msgManager.msgAdapter.send(new Message(MsgManager.FITBIT_MESSAGE_HR_DATA, hr))
+          this.ctx.msgManager.msgAdapter.send(new Message(MsgConstants.FITBIT_MESSAGE_HR_DATA, hr))
         } catch (error) {
           console.log(error)
           this.ctx.msgManager.msgAdapter.send(new Message("error in hr cb", error))
@@ -85,7 +86,7 @@ export class BusinessController {
   pauseTrackingFromWatch() {
     let timestamp = Date.now() + 5 * 60000
     this.pauseTracking(timestamp)
-    this.ctx.msgManager.msgAdapter.send(new Message(MsgManager.FITBIT_MESSAGE_PAUSE, timestamp))
+    this.ctx.msgManager.msgAdapter.send(new Message(MsgConstants.FITBIT_MESSAGE_PAUSE, timestamp))
   }
 
   pauseTracking(timestamp: number) {
@@ -99,7 +100,7 @@ export class BusinessController {
 
   resumeTrackingFromWatch() {
     this.resumeTracking()
-    this.ctx.msgManager.msgAdapter.send(new Message(MsgManager.FITBIT_MESSAGE_RESUME, ""))
+    this.ctx.msgManager.msgAdapter.send(new Message(MsgConstants.FITBIT_MESSAGE_RESUME, ""))
   }
 
   resumeTracking() {
@@ -126,12 +127,12 @@ export class BusinessController {
 
   dismissAlarmFromWatch() {
     // this.stopAlarm()
-    this.ctx.msgManager.msgAdapter.send(new Message(MsgManager.FITBIT_MESSAGE_ALARM_DISMISS, ""))
+    this.ctx.msgManager.msgAdapter.send(new Message(MsgConstants.FITBIT_MESSAGE_ALARM_DISMISS, ""))
   }
 
   snoozeAlarmFromWatch() {
     // this.stopAlarm()
-    this.ctx.msgManager.msgAdapter.send(new Message(MsgManager.FITBIT_MESSAGE_ALARM_SNOOZE, ""))
+    this.ctx.msgManager.msgAdapter.send(new Message(MsgConstants.FITBIT_MESSAGE_ALARM_SNOOZE, ""))
   }
 
   scheduleAlarm(h:number, m:number, timestamp: number) {

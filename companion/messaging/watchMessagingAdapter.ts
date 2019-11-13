@@ -1,33 +1,35 @@
 import { Message } from "../../app/model/message";
 import { peerSocket } from "messaging";
 import { QueueMessage } from "../../app/controller/messaging/queueMessage";
+import { AppConfig } from "../../common/appConfig";
+import { Context } from "../context";
+import { me } from "companion";
 
-export class MessagingAdapter {
+export class WatchMessagingAdapter {
 
-  debug = false;
+  debug = AppConfig.companionDebug;
 
-  last_send_message_id = -1;
-  last_received_message_id = -1;
+  lastSentMessageID = -1;
+  lastReceivedMessageID = -1;
   queue: any[] = []
 
-  worker_timer: any = null;
+  workerTimer: any = null;
 
-  msgAckedCallback: any = null
+  context: Context
 
-  constructor() {
+  constructor(context: Context) {
+    this.context = context
   }
 
-  public init(msgReceivedCallback: any, msgAckedCallback: any) {
+  public init() {
     let self = this
-    this.msgAckedCallback = msgAckedCallback
 
     peerSocket.addEventListener("open", function () {
-      self.maybe_send_next();
+      self.maybeSendNext();
     });
 
-    // Do we have closed?
     peerSocket.addEventListener("close", function () {
-      self.stop_worker();
+      self.stopWorker();
     });
 
     peerSocket.addEventListener("message", function (event) {
@@ -35,9 +37,9 @@ export class MessagingAdapter {
       // console.log(JSON.stringify(qMsg))
       if (!qMsg.ack) {
         self.debug && console.log("Received " + qMsg.body.command)
-        if (qMsg.id > self.last_received_message_id) {
-          msgReceivedCallback(new Message(qMsg.body.command, qMsg.body.data));
-          self.last_received_message_id = qMsg.id;
+        if (qMsg.id > self.lastReceivedMessageID) {
+          self.onMessageReceivedFromWatch(new Message(qMsg.body.command, qMsg.body.data))
+          self.lastReceivedMessageID = qMsg.id;
         }
         try {
           // send acked back
@@ -54,11 +56,11 @@ export class MessagingAdapter {
   }
 
   public send(msg: Message) {
-    this.enqueue(new QueueMessage(this.get_next_id(), msg))
+    this.enqueue(new QueueMessage(this.getNextId(), msg))
   }
 
-  public send_if_not_enqueued(msg: Message) {
-    if (!this.is_msg_enqueued(msg)) {
+  public sendIfNotEnqueued(msg: Message) {
+    if (!this.isMsgEnqueued(msg)) {
       this.send(msg)
     }
   }
@@ -67,7 +69,7 @@ export class MessagingAdapter {
     this.debug && console.log("MSG: enqueue " + qMsg);
     this.queue.push(qMsg);
     if (this.queue.length == 1) {
-      this.maybe_send_next()
+      this.maybeSendNext()
     }
   }
 
@@ -77,19 +79,35 @@ export class MessagingAdapter {
       let qMsg = this.queue[i]
       if (qMsg.id === id) {
         this.debug && console.log("QMSG: remove acked" + qMsg)
-        this.msgAckedCallback(qMsg.body)
+        this.onMessageAcked(qMsg.body)
         this.queue.shift();
         if (this.queue.length == 0) {
-          this.stop_worker();
+          this.stopWorker();
         } else {
-          this.maybe_send_next()
+          this.maybeSendNext()
         }
         break;
       }
     }
   }
 
-  private is_msg_enqueued(msg: Message) {
+  private onMessageReceivedFromWatch(msg: Message) {
+    this.context.phoneMessagingAdapter.enqueue(msg)
+    me.wakeInterval = AppConfig.defaultCompanionWakeInterval
+  }
+
+  private onMessageAcked(ackedMsg: Message) {
+    if (ackedMsg.command == "ping") {
+      console.log("Sending connected")
+      this.context.phoneMessagingAdapter.send('connected')
+    }
+    if (ackedMsg.command == "stop") {
+      me.wakeInterval = undefined
+    }
+
+  }
+
+  private isMsgEnqueued(msg: Message) {
     let res = this.queue.find((el: QueueMessage) => {
       return (el.body.command == msg.command)
     })
@@ -97,24 +115,24 @@ export class MessagingAdapter {
     return false
   }
 
-  private get_next_id() {
-    if (this.last_send_message_id < 0) {
-      this.last_send_message_id = Date.now() * 1000;
+  private getNextId() {
+    if (this.lastSentMessageID < 0) {
+      this.lastSentMessageID = Date.now() * 1000;
     }
-    return ++this.last_send_message_id;
+    return ++this.lastSentMessageID;
   }
 
-  private maybe_send_next() {
+  private maybeSendNext() {
     this.debug && console.log("buffer:" + peerSocket.bufferedAmount)
     if (peerSocket.bufferedAmount < 100) {
-      this.send_next()
+      this.sendNext()
     } else {
       console.log("buffer: " + peerSocket.bufferedAmount)
       console.log("")
     }
   }
 
-  private send_next() {
+  private sendNext() {
     // this.debug && console.log("buffer:" + peerSocket.bufferedAmount)
     if (this.queue.length > 0) {
       let qMsg: QueueMessage = this.queue[0];
@@ -123,7 +141,7 @@ export class MessagingAdapter {
       if (qMsg.expired()) {
         console.log("Msg expired " + qMsg.body.command)
         this.queue.shift()
-        this.maybe_send_next();
+        this.maybeSendNext();
         return;
       }
 
@@ -133,28 +151,25 @@ export class MessagingAdapter {
       } catch (error) {
         this.debug && console.log(error);
       }
-      this.start_worker()
+      this.startWorker()
     }
   }
 
-  private start_worker() {
-    this.stop_worker();
+  private startWorker() {
+    this.stopWorker();
 
     let self = this
-    this.worker_timer = setInterval(function () {
+    this.workerTimer = setInterval(function () {
       console.log("Worker tick")
-      self.maybe_send_next();
+      self.maybeSendNext();
     }, 2000);
 
   }
 
-  private stop_worker() {
-    if (this.worker_timer) {
-      clearInterval(this.worker_timer)
+  private stopWorker() {
+    if (this.workerTimer) {
+      clearInterval(this.workerTimer)
     }
   }
 
 }
-
-
-

@@ -1,11 +1,13 @@
 
 export class Message {
   command: string
-  data: any
+  data: any = ''
 
-  constructor(command:string, data:any) {
+  constructor(command:string, data?:any) {
     this.command = command
-    this.data = data
+    if (data) {
+      this.data = data
+    } 
   }
 
   serialize() {
