@@ -57,11 +57,11 @@ export class PhoneMessagingAdapter {
       return
     }
 
-    let url = 'http://localhost:1764/' + encodeURIComponent(msg.command) + '?data=' + encodeURIComponent(msg.data)
+    let url = 'http://127.0.0.1:1764/' + encodeURIComponent(msg.command) + '?data=' + encodeURIComponent(msg.data)
     // console.log("sendMessageToSleep " + url)
     fetch(url)
       .then((response: any) => {
-        // console.log("sendMessageToSleep response")
+        // console.log("sendMessageToSleep", response)
         this.runMessageSpecificHooks()
         this.toPhoneQueue.removeNextMessage()
         return response.text();
