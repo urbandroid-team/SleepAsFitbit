@@ -30,6 +30,8 @@ export class UIManager {
   btnExitYes: any
   btnExitNo: any
 
+  hrText: string = ""
+
   constructor(context: Context) {
     this.ctx = context
   }
@@ -186,11 +188,8 @@ export class UIManager {
   }
   setStatusTracking() {
     console.log("UI: status tracking")
-    let hrText = ""
-    if (this.ctx.tracking.hrTracking) {
-      hrText = "(HR)"
-    }
-    this.status.text = "Tracking..." + hrText
+    this.updateHr()
+    this.status.text = "Tracking" + this.hrText
     this.changeComboBtnIcons(this.trackingBtnBR, UIManager.RES_BTN_PAUSE, UIManager.RES_BTN_PAUSE)
     this.trackingBtnBR.style.display = 'inline'
     this.welcomePage.style.display = "none"
@@ -203,6 +202,13 @@ export class UIManager {
   setStatusPanic() {
     console.log("UI: status panic")
     this.status.text = "Err:Contact support"
+  }
+  updateHr() {
+    if (!this.ctx.tracking.tracking || !this.ctx.tracking.hrTracking) {
+      this.hrText = ""
+      return
+    }
+    this.hrText = " ❤" + this.ctx.sensorsController.hr.getLatestValue()
   }
   initializeClock() {
     console.log("UI: initialize clock")

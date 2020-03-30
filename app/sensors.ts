@@ -78,6 +78,7 @@ export class Hr {
   hrm: HeartRateSensor
   hrArr: Float32Array
   running: boolean = false
+  private latestValue: number = null
 
   constructor() {
     if (HeartRateSensor) {
@@ -91,7 +92,8 @@ export class Hr {
 
     this.hrm.onreading = () => {
       console.log("HR onReading")
-      receiver(d.computeMedianFromFloat32Array(this.hrm.readings.heartRate))
+      this.latestValue = d.computeMedianFromFloat32Array(this.hrm.readings.heartRate)
+      receiver(this.latestValue)
     }
 
     this.hrm.start()
@@ -104,6 +106,10 @@ export class Hr {
     console.log("HR stopping sensor")
     this.hrm.stop()
     this.running = false
+  }
+
+  getLatestValue() {
+    return this.latestValue
   }
 
 }
