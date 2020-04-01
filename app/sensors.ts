@@ -78,10 +78,11 @@ export class Hr {
   hrm: HeartRateSensor
   hrArr: Float32Array
   running: boolean = false
-  private latestValue: number = null
+  private latestValue: number = 0
 
   constructor() {
     if (HeartRateSensor) {
+      this.latestValue = new HeartRateSensor().heartRate
       this.hrm = new HeartRateSensor({ frequency: 1, batch: 300 })
     }
   }

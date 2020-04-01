@@ -17,6 +17,7 @@
 
       <svg class="text-container" id="text-status" y="0" x="0">
         <text id="status" font-size="35" fill="yellow" y="35" text-length="20">Connecting...</text>
+        <text id="hrText" font-size="35" fill="yellow" y="35" x="140" text-length="8"></text>
         <image id="statusAlarmImg" y="5" width="40" height="40" href="alarm.png" fill="grey" />
         <text id="statusAlarmTime" y="40" x="45" font-size="40" fill="white" >ALARM</text>
       </svg>

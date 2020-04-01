@@ -13,6 +13,7 @@ export class UIManager {
   alarmTime:any
   alarmImg:any
   status:any
+  hr:any
   statusAlarmImg:any
   statusAlarmTime:any
   background:any
@@ -29,8 +30,6 @@ export class UIManager {
   alarmBtnBR: any
   btnExitYes: any
   btnExitNo: any
-
-  hrText: string = ""
 
   constructor(context: Context) {
     this.ctx = context
@@ -61,6 +60,7 @@ export class UIManager {
 
     // Upper row
     this.status = document.getElementById('status')
+    this.hr = document.getElementById('hrText')
     this.statusAlarmImg = document.getElementById('statusAlarmImg')
     this.statusAlarmTime = document.getElementById('statusAlarmTime')
 
@@ -126,7 +126,6 @@ export class UIManager {
           that.exitPage.style.display = "inline";
         }
       }
-
     }
   }
 
@@ -189,7 +188,7 @@ export class UIManager {
   setStatusTracking() {
     console.log("UI: status tracking")
     this.updateHr()
-    this.status.text = "Tracking" + this.hrText
+    this.status.text = "Tracking"
     this.changeComboBtnIcons(this.trackingBtnBR, UIManager.RES_BTN_PAUSE, UIManager.RES_BTN_PAUSE)
     this.trackingBtnBR.style.display = 'inline'
     this.welcomePage.style.display = "none"
@@ -205,10 +204,10 @@ export class UIManager {
   }
   updateHr() {
     if (!this.ctx.tracking.tracking || !this.ctx.tracking.hrTracking) {
-      this.hrText = ""
+      this.hr.text = ""
       return
     }
-    this.hrText = " ❤" + this.ctx.sensorsController.hr.getLatestValue()
+    this.hr.text = " ❤" + this.ctx.sensorsController.hr.getLatestValue()
   }
   initializeClock() {
     console.log("UI: initialize clock")

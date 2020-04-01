@@ -15,6 +15,10 @@ export class BusinessController {
     this.ctx = context
   }
 
+  startTrackingIfNotTracking() {
+    if (!this.ctx.tracking.tracking) { this.startTracking(true) }
+  }
+
   startTracking(hrEnabled:boolean) {
     console.log("startTracking")
 
@@ -46,6 +50,7 @@ export class BusinessController {
     if (hrEnabled && me.permissions.granted("access_heart_rate")) {
 
       this.ctx.sensorsController.startHr((hr: any) => {
+        this.ctx.ui.updateHr()
         try {
           this.ctx.msgManager.msgAdapter.send(new Message(MsgConstants.FITBIT_MESSAGE_HR_DATA, hr))
         } catch (error) {

@@ -62,6 +62,7 @@ export class MsgManager {
         this.ctx.businessController.stopTracking()
         break
       case MsgConstants.FITBIT_MESSAGE_RESUME:
+        this.ctx.businessController.startTrackingIfNotTracking()
         this.ctx.businessController.resumeTracking()
         break
       case MsgConstants.FITBIT_MESSAGE_PAUSE_TIME:
@@ -74,13 +75,16 @@ export class MsgManager {
         this.ctx.businessController.stopAlarm()
         break
       case MsgConstants.FITBIT_MESSAGE_ALARM_TIME:
+        this.ctx.businessController.startTrackingIfNotTracking()
         let time = msg.data.split(':')
         this.ctx.businessController.scheduleAlarm(time[0], time[1], time[2])
         break
       case MsgConstants.FITBIT_MESSAGE_BATCH_SIZE:
+        this.ctx.businessController.startTrackingIfNotTracking()
         this.ctx.businessController.setBatchSize(msg.data)
         break
       case MsgConstants.FITBIT_MESSAGE_HINT:
+        this.ctx.businessController.startTrackingIfNotTracking()
         this.ctx.businessController.doHint(msg.data)
         break
       case MsgConstants.FITBIT_MESSAGE_SUSPEND:
