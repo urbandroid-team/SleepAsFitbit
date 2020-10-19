@@ -36,6 +36,7 @@ export class VibrationPlayer {
         vibration.start(pattern)
       }, 1000);
     } else {
+      this.currently_playing = false;
       return
     }
   }
