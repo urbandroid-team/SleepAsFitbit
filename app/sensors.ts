@@ -98,6 +98,7 @@ export class Hr {
     }
 
     this.hrm.start()
+    this.running = true;
   }
 
   stopSensor() {
