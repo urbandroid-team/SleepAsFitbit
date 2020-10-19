@@ -113,9 +113,7 @@ export class UIManager {
 
     document.onkeypress = function (e) {
       e.preventDefault();
-      if (e.key == "up" && that.exitPage.style.display == "inline") {
-      }
-      if (e.key === "back" || e.key === "down") {
+      if (e.key === "back") {
         if (that.exitPage.style.display === "inline") {
           that.background.style.fill = that.prevBackgroundFill
           that.runningPage.style.display = "inline";
