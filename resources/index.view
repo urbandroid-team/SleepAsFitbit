@@ -1,15 +1,12 @@
 <svg id="root" class="screen full-size">
   <use id="background" href="#app-gradient-background" class="app-gradient-background application-fill" apply-style="at-use">
 
-    <svg id="welcomePage">
-      <text id="startTitle" x="50%" y="50" height="100" font-family="System-Regular" fill="yellow" font-size="35" font-weight="bold" text-anchor="middle">Good night...</text>
-      <textarea id="instructions" x="5" y="70" width="100%-10" height="450" font-family="System-Regular" fill="yellow" font-size="20" font-weight="bold" text-anchor="middle">
-        Start sleep tracking in the Sleep as Android phone app.
-        Make sure "Settings > Wearables > Use wearables" is set to Fitbit.
-      </textarea>
-      <textarea id="connecting" x="5" y="100%-70" width="100%-10" height="35" font-family="System-Regular" fill="white" font-size="35" font-weight="bold" text-anchor="middle">
-        Connecting...
-      </textarea>
+    <svg id="welcomePage" class="horizontal-pad">
+      <text y="45" id="startTitle" fill="yellow" class="center-text" x="50%">Good night...</text>
+      <textarea y="$" id="instructions" class="p3" font-size="28" fill="yellow">
+      Start sleep tracking in the Sleep as Android phone app.
+Make sure "Settings > Wearables > Use wearables" is set to Fitbit.</textarea>
+      <text id="connecting" fill="white" font-weight="bold" class="center-text" x="50%" y="100%-30">Connecting...</text>
     </svg>
 
     <svg id="runningPage" x="6" y="0" width="100%" height="100%">
