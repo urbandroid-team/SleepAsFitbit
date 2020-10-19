@@ -184,6 +184,7 @@ export class UIManager {
     console.log("UI: status pause")
     this.status.text = "Paused.."
     this.changeComboBtnIcons(this.trackingBtnBR, UIManager.RES_BTN_PLAY, UIManager.RES_BTN_PLAY)
+    this.updateHr();
   }
   setStatusTracking() {
     console.log("UI: status tracking")

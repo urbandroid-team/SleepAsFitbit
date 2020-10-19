@@ -10,6 +10,7 @@ import { MsgConstants } from "../../common/msgConstants";
 export class BusinessController {
   ctx:Context
   batch_acc_raw: number[] = []
+  hrWasRunning: boolean;
 
   constructor(context:Context) {
     this.ctx = context
@@ -32,7 +33,12 @@ export class BusinessController {
       this.ctx.ui.setStatusTracking()
     }
 
+    this.startSensors();
+  }
+
+  startSensors() {
     // start acc on sensors controller
+    this.ctx.sensorsController.stopAllSensors();
     this.ctx.sensorsController.startAcc((acc: number, accRaw: number) => {
       try {
         this.batch_acc_raw.push(accRaw)
@@ -47,7 +53,7 @@ export class BusinessController {
     })
 
     // start hr on sensors controller
-    if (hrEnabled && me.permissions.granted("access_heart_rate")) {
+    if (this.ctx.tracking.hrTracking && me.permissions.granted("access_heart_rate")) {
 
       this.ctx.sensorsController.startHr((hr: any) => {
         this.ctx.ui.updateHr()
@@ -97,6 +103,7 @@ export class BusinessController {
   pauseTracking(timestamp: number) {
     if (timestamp > 0) {
       this.ctx.tracking.trackingPaused = true
+      this.ctx.sensorsController.stopAllSensors();
       this.ctx.ui.setStatusPause()
     } else if (this.ctx.tracking.trackingPaused) {
       this.resumeTracking()
@@ -111,6 +118,7 @@ export class BusinessController {
   resumeTracking() {
     this.ctx.tracking.trackingPaused = false
     this.ctx.ui.setStatusTracking()
+    this.startSensors();
   }
 
   startAlarm(vibrationDelay: number) {
