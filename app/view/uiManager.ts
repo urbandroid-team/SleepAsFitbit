@@ -2,6 +2,11 @@ import document from "document";
 import clock from 'clock';
 import { Context } from "../controller/context";
 
+enum StyleType {
+  DEFAULT,
+  ALARM
+}
+
 export class UIManager {
   static get RES_BTN_PAUSE() { return "pause.png" }
   static get RES_BTN_PLAY() { return "play.png" }
@@ -17,7 +22,7 @@ export class UIManager {
   statusAlarmImg:any
   statusAlarmTime:any
   background:any
-  prevBackgroundFill:string
+  prevBackgroundClass:string
   clock: any
 
   welcomePage: any
@@ -115,12 +120,12 @@ export class UIManager {
       e.preventDefault();
       if (e.key === "back") {
         if (that.exitPage.style.display === "inline") {
-          that.background.style.fill = that.prevBackgroundFill
+          that.background.class = that.prevBackgroundClass;
           that.runningPage.style.display = "inline";
           that.exitPage.style.display = "none";
         } else {
-          that.prevBackgroundFill = that.background.style.fill;
-          that.background.style.fill = 'black'
+          that.prevBackgroundClass = that.background.class;
+          that.setStyle(StyleType.DEFAULT);
           that.runningPage.style.display = "none";
           that.welcomePage.style.display = "none";
           that.exitPage.style.display = "inline";
@@ -129,10 +134,30 @@ export class UIManager {
     }
   }
 
+  changeElementClass(element:any, rm:string, add:string) {
+    let classes = element.class.split(' ').filter((c:string) => c !== rm);
+    if (classes.indexOf(add) === -1)
+      classes.push(add);
+    element.class = classes.join(" ");
+  }
+
+  setStyle(type:StyleType) {
+    switch (type) {
+      case StyleType.DEFAULT:
+        this.changeElementClass(this.background, "alarm-gradient-background",
+          "app-gradient-background");
+        break;
+      case StyleType.ALARM:
+        this.changeElementClass(this.background, "app-gradient-background",
+          "alarm-gradient-background");
+        break;
+    }
+  }
+
   changeToAlarmScreen() {
     console.log("UI: alarm screen")
 
-    this.background.style.fill = '#008080'
+    this.setStyle(StyleType.ALARM);
 
     this.alarmBtnWrapper.style.display = "inline"
     this.trackingBtn.style.display = "none"
@@ -149,7 +174,7 @@ export class UIManager {
   changeToTrackingScreen() {
     console.log("UI: tracking screen")
 
-    this.background.style.fill = 'black'
+    this.setStyle(StyleType.DEFAULT);
 
     this.alarmBtnWrapper.style.display = "none"
     this.trackingBtn.style.display = "inline"
