@@ -180,10 +180,16 @@ export class UIManager {
     }
   }
 
+  switchToRunninagPage() {
+    this.welcomePage.style.display = 'none';
+    this.runningPage.style.display = 'inline';
+  }
+
   changeToAlarmScreen() {
     console.log("UI: alarm screen")
 
     this.setStyle(StyleType.ALARM);
+    this.switchToRunninagPage();
 
     this.alarmBtnWrapper.style.display = "inline"
     this.trackingBtn.style.display = "none"
@@ -244,8 +250,7 @@ export class UIManager {
     this.hr.style.display = 'inline'
     this.changeButtonImageIcon(this.trackingBtn, UIManager.RES_BTN_PAUSE)
     this.trackingBtn.style.display = 'inline'
-    this.welcomePage.style.display = "none"
-    this.runningPage.style.display = "inline"
+    this.switchToRunninagPage();
   }
   setStatusConnectionError() {
     console.log("UI: status connection error")
