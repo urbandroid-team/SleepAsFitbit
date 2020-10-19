@@ -118,9 +118,12 @@ export class UIManager {
       }
       if (e.key === "back" || e.key === "down") {
         if (that.exitPage.style.display === "inline") {
+          that.background.style.fill = that.prevBackgroundFill
           that.runningPage.style.display = "inline";
           that.exitPage.style.display = "none";
         } else {
+          that.prevBackgroundFill = that.background.style.fill;
+          that.background.style.fill = 'black'
           that.runningPage.style.display = "none";
           that.welcomePage.style.display = "none";
           that.exitPage.style.display = "inline";
