@@ -1,0 +1,9 @@
+<svg>
+  <defs>
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="import" href="/mnt/sysassets/system_widget.defs" />
+    <link rel="import" href="/mnt/sysassets/widgets/baseview_widget.defs" />
+    <link rel="import" href="/mnt/sysassets/widgets/icon_button.defs" />
+    <link rel="import" href="/mnt/sysassets/widgets/text_button.defs" />
+  </defs>
+</svg>

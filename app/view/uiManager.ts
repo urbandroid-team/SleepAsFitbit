@@ -17,6 +17,7 @@ export class UIManager {
   statusAlarmImg:any
   statusAlarmTime:any
   background:any
+  prevBackgroundFill:string
   clock: any
 
   welcomePage: any
@@ -24,10 +25,9 @@ export class UIManager {
   exitPage: any
 
   alarmBtnWrapper:any
-  trackingBtnWrapper: any
-  trackingBtnBR: any
-  alarmBtnTR: any
-  alarmBtnBR: any
+  trackingBtn: any
+  alarmBtnSnooze: any
+  alarmBtnDismiss: any
   btnExitYes: any
   btnExitNo: any
 
@@ -51,12 +51,11 @@ export class UIManager {
 
     // Buttons
     this.alarmBtnWrapper = document.getElementById('alarmBtns')
-    this.trackingBtnWrapper = document.getElementById('trackingBtns')
+    this.trackingBtn = document.getElementById('trackingBtn')
+    this.trackingBtn.style.display = 'none'
 
-    this.trackingBtnBR = document.getElementById('tracking-btn-br')
-    this.alarmBtnTR = document.getElementById('alarm-btn-tr')
-    this.alarmBtnBR = document.getElementById('alarm-btn-br')
-    this.trackingBtnBR.style.display = 'none'
+    this.alarmBtnSnooze = document.getElementById('alarm-btn-snooze')
+    this.alarmBtnDismiss = document.getElementById('alarm-btn-dismiss')
 
     // Upper row
     this.status = document.getElementById('status')
@@ -78,7 +77,7 @@ export class UIManager {
     console.log("UI: RegisterButtonActions")
 
     let that = this
-    this.trackingBtnBR.onclick = () => {
+    this.trackingBtn.onclick = () => {
       if (that.ctx.tracking.trackingPaused) {
         that.ctx.tracking.trackingPaused = false
         that.ctx.businessController.resumeTrackingFromWatch()
@@ -87,10 +86,10 @@ export class UIManager {
         that.ctx.businessController.pauseTrackingFromWatch()
       }
     }
-    this.alarmBtnTR.onclick = () => {
+    this.alarmBtnDismiss.onclick = () => {
       this.ctx.businessController.dismissAlarmFromWatch()
     }
-    this.alarmBtnBR.onclick = () => {
+    this.alarmBtnSnooze.onclick = () => {
       this.ctx.businessController.snoozeAlarmFromWatch()
     }
 
@@ -138,7 +137,7 @@ export class UIManager {
     this.background.style.fill = '#008080'
 
     this.alarmBtnWrapper.style.display = "inline"
-    this.trackingBtnWrapper.style.display = "none"
+    this.trackingBtn.style.display = "none"
 
     this.hr.style.display = 'none'
     this.status.style.display = "none"
@@ -155,7 +154,7 @@ export class UIManager {
     this.background.style.fill = 'black'
 
     this.alarmBtnWrapper.style.display = "none"
-    this.trackingBtnWrapper.style.display = "inline"
+    this.trackingBtn.style.display = "inline"
 
     this.status.style.display = "inline"
     this.statusAlarmImg.style.display = "none"
@@ -163,7 +162,6 @@ export class UIManager {
 
     this.alarmImg.style.display = "inline"
     this.alarmTime.style.display = "inline"
-
   }
 
   setAlarmTime(h:number, m:number) {
@@ -187,16 +185,16 @@ export class UIManager {
   setStatusPause() {
     console.log("UI: status pause")
     this.status.text = "Paused.."
-    this.changeComboBtnIcons(this.trackingBtnBR, UIManager.RES_BTN_PLAY, UIManager.RES_BTN_PLAY)
     this.updateHr();
+    this.changeButtonImageIcon(this.trackingBtn, UIManager.RES_BTN_PLAY)
   }
   setStatusTracking() {
     console.log("UI: status tracking")
     this.updateHr()
     this.status.text = "Tracking"
     this.hr.style.display = 'inline'
-    this.changeComboBtnIcons(this.trackingBtnBR, UIManager.RES_BTN_PAUSE, UIManager.RES_BTN_PAUSE)
-    this.trackingBtnBR.style.display = 'inline'
+    this.changeButtonImageIcon(this.trackingBtn, UIManager.RES_BTN_PAUSE)
+    this.trackingBtn.style.display = 'inline'
     this.welcomePage.style.display = "none"
     this.runningPage.style.display = "inline"
   }
@@ -231,9 +229,7 @@ export class UIManager {
     while (s.length < (size || 2)) { s = "0" + s; }
     return s;
   }
-  changeComboBtnIcons(button:any, image:string, pressedImage:string) {
-    button.getElementById('combo-button-icon').image = image
-    button.getElementById("combo-button-icon-press").image = pressedImage
+  changeButtonImageIcon(button:any, image:string) {
+    button.image = image
   }
-
 }

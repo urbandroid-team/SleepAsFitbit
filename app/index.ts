@@ -35,6 +35,6 @@ try {
 
 
 } catch (error) {
-  console.log(error)
+  console.error(error)
   ctx.msgManager.msgAdapter.send(new Message("error", error))
 }

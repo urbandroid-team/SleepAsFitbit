@@ -1,3 +1,7 @@
+.application-fill { fill: #9bb548; }
+.foreground-fill { fill: fb-white; }
+.background-fill { fill: fb-black; }
+
 /* Upper row */
 #statusAlarmTime {
   display: none;
@@ -21,8 +25,29 @@
   text-length: 7;
 }
 
+.tracking-btn #image {
+  href: "pause.png";
+}
+
 /* BUTTONS */
-#trackingBtns {
+#trackingBtn {
+  x: 100%-100;
+  y: 100%-100;
 }
-#alarmBtns {
+
+#btn-yes #text {
+  text-buffer: "Yes";
 }
+
+#btn-no #text {
+  text-buffer: "No";
+}
+
+#alarm-btn-snooze #text {
+  text-buffer: "Snooze";
+}
+
+#alarm-btn-dismiss #text {
+  text-buffer: "Dismiss";
+}
+

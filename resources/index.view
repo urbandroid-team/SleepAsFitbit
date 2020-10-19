@@ -15,55 +15,36 @@
 
     <svg id="runningPage" x="6" y="0" width="100%" height="100%">
 
-      <svg class="text-container" id="text-status" y="0" x="0">
+      <svg class="text-container" id="text-status" x="20" y="20">
         <text id="status" font-size="35" fill="yellow" y="35" text-length="20">Connecting...</text>
         <text id="hrText" font-size="35" fill="yellow" y="35" x="140" text-length="8"></text>
         <image id="statusAlarmImg" y="5" width="40" height="40" href="alarm.png" fill="grey" />
         <text id="statusAlarmTime" y="40" x="45" font-size="40" fill="white" >ALARM</text>
       </svg>
 
-      <svg class="text-container" id="text-clock" y="35">
+      <svg class="text-container" id="text-clock" y="40">
         <text id="clock" font-size="120" y="120" font-family="Seville-Condensed" fill="white">00:00</text>
       </svg>
 
-      <svg class="text-container" id="text-alarm" y="100%-40">
+      <svg class="text-container" id="text-alarm" x="20" y="100%-75">
         <image id="alarmImg" y="0" width="35" height="35" href="dismiss.png" fill="white" />
         <text id="alarmTime" y="30" x="45" font-size="35" fill="white"></text>
       </svg>
 
-      <g id="trackingBtns">
-        <use id="tracking-btn-br" href="#combo-button-lower-right" fill="fb-peach">
-          <set href="combo-button-icon" attributeName="href" to="pause.png"/>
-          <set href="combo-button-icon-press" attributeName="href" to="pause.png"/>
-          <set href="combo-button-stroke" attributeName="display" to="inline"/>
-        </use>
-      </g>
+      <use id="trackingBtn" href="#icon-button" class="medium-button application-fill tracking-btn" />
 
-      <g id="alarmBtns">
-        <use id="alarm-btn-tr" href="#combo-button-upper-right" fill="fb-red">
-          <set href="combo-button-icon" attributeName="href" to="dismiss.png"/>
-          <set href="combo-button-icon-press" attributeName="href" to="dismiss.png"/>
-          <set href="combo-button-stroke" attributeName="display" to="inline"/>
-        </use>
+      <svg id="alarmBtns">
+        <use id="alarm-btn-dismiss" href="#text-button" class="text-button bottom left application-fill" />
+        <use id="alarm-btn-snooze" href="#text-button" class="text-button bottom right secondary application-fill" />
+      </svg>
 
-        <use id="alarm-btn-br" href="#combo-button-lower-right" fill="fb-peach">
-          <set href="combo-button-icon" attributeName="href" to="snooze.png"/>
-          <set href="combo-button-icon-press" attributeName="href" to="snooze.png"/>
-          <set href="combo-button-stroke" attributeName="display" to="inline"/>
-        </use>
-      </g>
     </svg>
 
     <svg id="exitPage">
       <text y="110" x="50%" id="Title" font-family="System-Regular" fill="yellow" font-size="35" font-weight="bold" text-anchor="middle">Exit: Are you sure?</text>
-      <svg y="$">
-        <use id="btn-yes" href="#square-button-toggle" x="50%" fill="fb-green">
-          <set href="#text" attributeName="text-buffer" to="Yes" />
-        </use>
-        <use id="btn-no" href="#square-button-toggle" value="1" fill="fb-red">
-          <set href="#text" attributeName="text-buffer" to="No" />
-        </use>
-      </svg>
+
+      <use id="btn-no" href="#text-button" class="text-button bottom left secondary application-fill" />
+      <use id="btn-yes" href="#text-button" class="text-button bottom right application-fill" />
     </svg>
 
 </svg>
