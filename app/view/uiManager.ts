@@ -23,6 +23,7 @@ export class UIManager {
   statusAlarmTime:any
   background:any
   prevBackgroundClass:string
+  root:any
   clock: any
 
   welcomePage: any
@@ -42,6 +43,7 @@ export class UIManager {
 
   initialize() {
     // Pages
+    this.root = document.getElementById('root');
     this.welcomePage = document.getElementById('welcomePage')
     this.background = document.getElementById('background')
     this.runningPage = document.getElementById('runningPage')
@@ -76,6 +78,7 @@ export class UIManager {
     this.alarmTime = document.getElementById("alarmTime")
 
     this.registerButtonActions()
+    this.overrideBackSwipe();
   }
 
   registerButtonActions() {
@@ -116,20 +119,43 @@ export class UIManager {
       }
     }
 
-    document.onkeypress = function (e) {
+    document.onkeypress = (e) => {
       e.preventDefault();
-      if (e.key === "back") {
-        if (that.exitPage.style.display === "inline") {
-          that.background.class = that.prevBackgroundClass;
-          that.runningPage.style.display = "inline";
-          that.exitPage.style.display = "none";
-        } else {
-          that.prevBackgroundClass = that.background.class;
-          that.setStyle(StyleType.DEFAULT);
-          that.runningPage.style.display = "none";
-          that.welcomePage.style.display = "none";
-          that.exitPage.style.display = "inline";
-        }
+      if (e.key === "back")
+        this.showExitPage();
+      else
+        this.closeExitPage();
+    }
+  }
+
+  showExitPage() {
+    if (this.exitPage.style.display === 'inline')
+      return;
+
+    this.prevBackgroundClass = this.background.class;
+    this.setStyle(StyleType.DEFAULT);
+    this.runningPage.style.display = "none";
+    this.welcomePage.style.display = "none";
+    this.exitPage.style.display = "inline";
+  }
+
+  closeExitPage() {
+    if (this.exitPage.style.display === 'none')
+      return;
+
+    this.background.class = this.prevBackgroundClass;
+    this.runningPage.style.display = "inline";
+    this.exitPage.style.display = "none";
+  }
+
+  overrideBackSwipe() {
+    console.log("UI: OverrideBackSwipe");
+
+    document.onbeforeunload = (e:Event) => {
+      if (this.ctx.tracking.tracking) {
+        e.preventDefault();
+        this.root.x = 0;
+        this.showExitPage();
       }
     }
   }

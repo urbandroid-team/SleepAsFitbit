@@ -1,4 +1,4 @@
-<svg class="screen full-size">
+<svg id="root" class="screen full-size">
   <use id="background" href="#app-gradient-background" class="app-gradient-background application-fill" apply-style="at-use">
 
     <svg id="welcomePage">
