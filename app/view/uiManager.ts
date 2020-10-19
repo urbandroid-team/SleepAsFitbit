@@ -137,6 +137,7 @@ export class UIManager {
     this.alarmBtnWrapper.style.display = "inline"
     this.trackingBtnWrapper.style.display = "none"
 
+    this.hr.style.display = 'none'
     this.status.style.display = "none"
     this.statusAlarmImg.style.display = "inline"
     this.statusAlarmTime.style.display = "inline"
@@ -190,6 +191,7 @@ export class UIManager {
     console.log("UI: status tracking")
     this.updateHr()
     this.status.text = "Tracking"
+    this.hr.style.display = 'inline'
     this.changeComboBtnIcons(this.trackingBtnBR, UIManager.RES_BTN_PAUSE, UIManager.RES_BTN_PAUSE)
     this.trackingBtnBR.style.display = 'inline'
     this.welcomePage.style.display = "none"
