@@ -203,7 +203,8 @@ export class UIManager {
     this.status.text = "Err:Contact support"
   }
   updateHr() {
-    if (!this.ctx.tracking.tracking || !this.ctx.tracking.hrTracking) {
+    if (!this.ctx.tracking.tracking || !this.ctx.tracking.hrTracking ||
+      !this.ctx.sensorsController.hr.getLatestValue()) {
       this.hr.text = ""
       return
     }
