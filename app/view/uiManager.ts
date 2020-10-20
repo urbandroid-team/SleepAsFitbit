@@ -119,9 +119,12 @@ export class UIManager {
       }
       if (e.key === "back" || e.key === "down") {
         if (that.exitPage.style.display === "inline") {
+          that.background.style.fill = that.prevBackgroundFill
           that.runningPage.style.display = "inline";
           that.exitPage.style.display = "none";
         } else {
+          that.prevBackgroundFill = that.background.style.fill;
+          that.background.style.fill = 'black'
           that.runningPage.style.display = "none";
           that.welcomePage.style.display = "none";
           that.exitPage.style.display = "inline";
@@ -138,6 +141,7 @@ export class UIManager {
     this.alarmBtnWrapper.style.display = "inline"
     this.trackingBtnWrapper.style.display = "none"
 
+    this.hr.style.display = 'none'
     this.status.style.display = "none"
     this.statusAlarmImg.style.display = "inline"
     this.statusAlarmTime.style.display = "inline"
@@ -185,11 +189,13 @@ export class UIManager {
     console.log("UI: status pause")
     this.status.text = "Paused.."
     this.changeComboBtnIcons(this.trackingBtnBR, UIManager.RES_BTN_PLAY, UIManager.RES_BTN_PLAY)
+    this.updateHr();
   }
   setStatusTracking() {
     console.log("UI: status tracking")
     this.updateHr()
     this.status.text = "Tracking"
+    this.hr.style.display = 'inline'
     this.changeComboBtnIcons(this.trackingBtnBR, UIManager.RES_BTN_PAUSE, UIManager.RES_BTN_PAUSE)
     this.trackingBtnBR.style.display = 'inline'
     this.welcomePage.style.display = "none"
@@ -212,7 +218,8 @@ export class UIManager {
     this.setStatusTracking()
   }
   updateHr() {
-    if (!this.ctx.tracking.tracking || !this.ctx.tracking.hrTracking) {
+    if (!this.ctx.tracking.tracking || !this.ctx.tracking.hrTracking ||
+      !this.ctx.sensorsController.hr.getLatestValue()) {
       this.hr.text = ""
       return
     }

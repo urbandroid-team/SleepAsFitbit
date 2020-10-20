@@ -77,19 +77,30 @@ export class Hr {
 
   hrm: HeartRateSensor
   hrArr: Float32Array
-  running: boolean = false
   private latestValue: number = 0
 
   constructor() {
-    if (HeartRateSensor) {
-      this.latestValue = new HeartRateSensor().heartRate
+    if (HeartRateSensor)
       this.hrm = new HeartRateSensor({ frequency: 1, batch: 300 })
-    }
   }
 
   startSensor(receiver: any) {
     console.log("HR startSensor")
-    if (this.running) { return }
+    if (this.hrm.activated) { return }
+
+    if (HeartRateSensor && !this.latestValue) {
+      const hrm = new HeartRateSensor({ frequency: 1 });
+      hrm.addEventListener("reading", () => {
+        if (this.latestValue)
+          return;
+
+        console.log(`HR initial reading: ${hrm.heartRate}`);
+        this.latestValue = hrm.heartRate;
+        hrm.stop()
+        receiver(this.latestValue)
+      });
+      hrm.start();
+    }
 
     this.hrm.onreading = () => {
       console.log("HR onReading")
@@ -101,12 +112,12 @@ export class Hr {
   }
 
   stopSensor() {
-    console.log("HR stopSensor, running " + this.running)
-    if (!this.running) { return }
+    console.log(`HR stopSensor, running: ${this.hrm.activated}`)
+    if (!this.hrm.activated) { return }
 
     console.log("HR stopping sensor")
     this.hrm.stop()
-    this.running = false
+    this.latestValue = 0
   }
 
   getLatestValue() {

@@ -25,7 +25,7 @@ export class VibrationPlayer {
     this.currently_playing = true
 
     if (repeat > 0) {
-      setTimeout(() => {
+      this.vibrationTimer = setTimeout(() => {
         --repeat
         vibration.start(pattern)
         this.start(pattern, repeat)
@@ -36,6 +36,8 @@ export class VibrationPlayer {
         vibration.start(pattern)
       }, 1000);
     } else {
+      this.vibrationTimer = null;
+      this.currently_playing = false;
       return
     }
   }
