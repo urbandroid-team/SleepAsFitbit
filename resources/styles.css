@@ -26,3 +26,13 @@
 }
 #alarmBtns {
 }
+
+#panic-counter-0,
+#panic-counter-1,
+#panic-counter-2,
+#panic-counter-3,
+#panic-counter-4,
+#panic-counter-5,
+#panic-counter-6 {
+ display: none;
+}

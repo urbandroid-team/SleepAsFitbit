@@ -18,6 +18,10 @@ export class DebugManager {
     this.ctx.businessController.stopAlarm()
     this.ctx.msgManager.stopMessaging()
     this.ctx.ui.setStatusPanic()
+
+    setTimeout(() => {
+      this.recoverFromPanic()
+    }, 10000)
   }
 
   startMemLogTimer() {
@@ -57,5 +61,10 @@ export class DebugManager {
     }, interval);
   }
 
+  private recoverFromPanic() {
+    this.ctx.businessController.startTrackingIfNotTracking()
+    this.ctx.msgManager.restartMessaging()
+    this.ctx.ui.recoverFromPanic()
 
+  }
 }

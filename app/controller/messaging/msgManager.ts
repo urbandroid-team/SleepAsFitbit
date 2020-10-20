@@ -47,6 +47,10 @@ export class MsgManager {
     this.msgAdapter.stop()
   }
 
+  public restartMessaging() {
+    this.startCompanionCommChannel()
+  }
+
   public sendStopTracking() {
     this.msgAdapter.send(new Message(MsgConstants.FITBIT_MESSAGE_STOP_TRACK, undefined))
   }
