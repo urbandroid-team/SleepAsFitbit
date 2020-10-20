@@ -5,7 +5,7 @@
     "appDisplayName": "Sleep",
     "iconFile": "resources/icon.png",
     "wipeColor": "#4caf50",
-    "version": "1.8",
+    "version": "1.9",
     "requestedPermissions": [
       "access_heart_rate",
       "access_internet",
@@ -24,12 +24,15 @@
     }
   },
   "devDependencies": {
-    "@fitbit/sdk": "~4.0.0",
-    "@fitbit/sdk-cli": "^1.7.1",
-    "fitbit-sdk-types": "^4.2.0"
+    "@fitbit/sdk": "~4.2.1",
+    "@fitbit/sdk-cli": "^1.7.3",
+    "fitbit-sdk-types": "^4.3.9"
   },
   "scripts": {
     "build": "fitbit-build",
     "prebuild": "cat package.json | echo 'export const version =' $(jq '.fitbit.version') > ./version.ts"
+  },
+  "dependencies": {
+    "io-ts": "^2.1.2"
   }
 }
