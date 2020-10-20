@@ -19,6 +19,7 @@ export class UIManager {
   statusAlarmTime:any
   background:any
   clock: any
+  prevBackgroundFill: string
 
   welcomePage: any
   runningPage: any
