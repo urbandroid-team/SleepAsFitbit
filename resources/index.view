@@ -11,6 +11,16 @@ Make sure "Settings > Wearables > Use wearables" is set to Fitbit.</textarea>
 
     <svg id="runningPage" x="6" y="0" width="100%" height="100%">
 
+      <svg class="text-container" id="panic-counters-group" y="20" x="30">
+        <rect id="panic-counter-0" class="panic-counter" x="0" />
+        <rect id="panic-counter-1" class="panic-counter" x="6" />
+        <rect id="panic-counter-2" class="panic-counter" x="12" />
+        <rect id="panic-counter-3" class="panic-counter" x="18" />
+        <rect id="panic-counter-4" class="panic-counter" x="24" />
+        <rect id="panic-counter-5" class="panic-counter" x="30" />
+        <rect id="panic-counter-6" class="panic-counter" x="36" />
+      </svg>
+
       <svg class="text-container" id="text-status" x="20" y="20">
         <text id="status" font-size="35" fill="yellow" y="35" text-length="20">Connecting...</text>
         <text id="hrText" font-size="35" fill="yellow" y="35" x="140" text-length="8"></text>

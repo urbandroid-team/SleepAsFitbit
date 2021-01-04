@@ -8,6 +8,7 @@ enum StyleType {
 }
 
 export class UIManager {
+  private panicCounter: number = 0;
   static get RES_BTN_PAUSE() { return "pause.png" }
   static get RES_BTN_PLAY() { return "play.png" }
 
@@ -259,6 +260,14 @@ export class UIManager {
   setStatusPanic() {
     console.log("UI: status panic")
     this.status.text = "Err:Contact support"
+    this.hr.text = ""
+
+    // @ts-ignore
+    document.getElementById('panic-counter-' + this.panicCounter).style.display = "inline"
+    this.panicCounter += 1
+  }
+  recoverFromPanic() {
+    this.setStatusTracking()
   }
   updateHr() {
     if (!this.ctx.tracking.tracking || !this.ctx.tracking.hrTracking ||

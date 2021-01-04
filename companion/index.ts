@@ -1,6 +1,6 @@
 import { Message } from "../app/model/message";
 import { me } from 'companion'
-import { app } from "peer";
+import { app, device } from "peer";
 import { AppConfig } from '../common/appConfig'
 import { Context } from "./context";
 
@@ -19,7 +19,7 @@ me.addEventListener('unload', function() {
 })
 
 app.addEventListener("readystatechange", function () {
-  context.phoneMessagingAdapter.enqueue(new Message("appRuns", app.readyState))
+  context.phoneMessagingAdapter.enqueue(new Message("appRuns", `${app.readyState} ${device.modelName} ${device.modelName}`))
 })
 
 

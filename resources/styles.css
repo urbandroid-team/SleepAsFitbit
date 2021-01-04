@@ -53,3 +53,10 @@
   text-buffer: "Dismiss";
 }
 
+.panic-counter {
+  y: 0;
+  display: none;
+  fill: red;
+  width: 3;
+  height: 2;
+}
