@@ -2,16 +2,16 @@ import { Message } from "../../model/message";
 import { peerSocket } from "messaging";
 import { QueueMessage } from "./queueMessage";
 import { launchApp, memory } from "system";
-// @ts-ignore
+import {Queue} from "./queue";
 
 
 export class MessagingAdapter {
 
-  debug = false;
+  debug = true;
 
   last_send_message_id = -1;
   last_received_message_id = -1;
-  queue: any[] = []
+  queue: Queue = new Queue()
 
   worker_timer: any = null;
 
@@ -73,7 +73,7 @@ export class MessagingAdapter {
 
   public stop() {
     this.stop_worker()
-    this.queue.length = 0
+    this.queue.clear()
     peerSocket.onmessage = () => {
       // do nothing
     }
@@ -81,7 +81,7 @@ export class MessagingAdapter {
 
   private enqueue(qMsg: QueueMessage) {
     this.debug && console.log("MSG: enqueue " + qMsg);
-    this.queue.push(qMsg);
+    this.queue.enqueue(qMsg);
     if (this.queue.length == 1) {
         this.send_next()
     }
@@ -89,13 +89,13 @@ export class MessagingAdapter {
 
   // maybe we can just shift() as we always get the first message acked - no need to search - but maybe does not matter
   private dequeue(id:number) {
-    for (var i = 0; i < this.queue.length; i++ ) {
-      let qMsg = this.queue[i]
+    for (let i = 0; i < this.queue.length; i++ ) {
+      let qMsg = this.queue.atIndex(i)
       if (qMsg.id === id) {
         this.debug && console.log("QMSG: remove acked " + qMsg)
         this.resending_mode = false
         this.msgAckedCallback(qMsg.body)
-        this.queue.shift();
+        this.queue.removeFirst();
         if (this.queue.length == 0) {
           this.stop_worker();
         } else {
@@ -115,15 +115,14 @@ export class MessagingAdapter {
 
   private send_next() {
     this.debug && console.log("buffer:" + peerSocket.bufferedAmount)
-    if (this.queue.length > 0) {
-      let qMsg:QueueMessage = this.queue[0];
 
-      // clear expired messages first
-      if (qMsg.expired()) {
-        this.queue.shift()
-        this.send_next();
-        return;
-      }
+    if (this.queue.length > 0) {
+      // Multi mode - squashing whole queue into one multi-message
+      this.queue.clearExpired()
+      if (!this.queue.length) return
+
+      this.queue.squashIntoMulti(this.get_next_id())
+      const qMsg = this.queue.first()
 
       this.debug && console.log("MSG: sending " + qMsg)
       try {
@@ -134,6 +133,7 @@ export class MessagingAdapter {
       }
       this.run_worker()
     }
+
   }
 
   private start_worker() {
