@@ -8,6 +8,7 @@ export enum MsgConstants {
   FITBIT_MESSAGE_ALARM_DISMISS = "alarm_dismiss",
   FITBIT_MESSAGE_PAUSE = "pause",
   FITBIT_MESSAGE_RESUME = "resume",
+  FITBIT_MESSAGE_MULTI = "multi",
 
   // to watch
   FITBIT_MESSAGE_PAUSE_TIME = "pause_time",
