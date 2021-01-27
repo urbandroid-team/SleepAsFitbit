@@ -1,24 +1,9 @@
-import { Message } from "../../model/message";
+import {MessagingAdapter} from "./messagingAdapter";
 
-export class MockAdapter {
+export class MockAdapter extends MessagingAdapter {
 
   constructor() {
-  }
-
-  public init(msgReceivedCallback: any) {
-    console.log("MOCK Messaging init")
-  }
-
-  public sendPlain(command: string, data: any) {
-    this.send(new Message(command, data))
-  }
-
-  public send(msg: Message) {
-    console.log("MOCK Sending msg: " + msg.toString())
-  }
-
-  public stop() {
-    console.log("MOCK Messaging stop")
+    super()
   }
 
 }
