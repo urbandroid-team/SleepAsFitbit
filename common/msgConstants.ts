@@ -20,6 +20,7 @@ export enum MsgConstants {
   FITBIT_MESSAGE_SUSPEND = "suspend",
   FITBIT_MESSAGE_CHECK_CONNECTED = "ping",
   FITBIT_MESSAGE_STOP_SENT_TO_SLEEP_FROM_COMPANION = "companion_stopping_sleep",
+  FITBIT_MESSAGE_SET_MULTI = "set_multi",
 
   // from watch
   FITBIT_MESSAGE_CONFIRM_CONNECTED = "connected",

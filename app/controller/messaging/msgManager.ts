@@ -2,21 +2,21 @@ import { Context } from "../context"
 import { Message } from "../../model/message";
 import { FileTransferAdapter } from "./fileTransferAdapter";
 import { MockAdapter } from "./mockAdapter";
-import { MessagingAdapter } from "./messagingAdapter";
-import { QueueMessage } from "./queueMessage";
+import { SocketMessagingAdapter } from "./socketMessagingAdapter";
 import { MsgConstants } from '../../../common/msgConstants'
+import {MessagingAdapter} from "./messagingAdapter";
 
 export class MsgManager {
   // Static constants
   // static get MESSAGING_INTERVAL() { return 1000 }
 
   ctx:Context
-  msgAdapter: FileTransferAdapter | MessagingAdapter | MockAdapter
+  msgAdapter: MessagingAdapter
   debug = false;
 
   constructor(context: Context) {
     this.ctx = context
-    this.msgAdapter = new MessagingAdapter
+    this.msgAdapter = new SocketMessagingAdapter
     // this.debug = context.debugManager.debug
   }
 
@@ -59,6 +59,9 @@ export class MsgManager {
     console.log("MsgManager received: " + msg.serialize())
 
     switch (msg.command) {
+      case MsgConstants.FITBIT_MESSAGE_SET_MULTI:
+        this.setMessagingMode("multi")
+        break
       case MsgConstants.FITBIT_MESSAGE_START_TRACK:
         this.ctx.businessController.startTracking(msg.data)
         break
@@ -104,5 +107,7 @@ export class MsgManager {
     }
   }
 
-
+  private setMessagingMode(mode: 'single' | 'multi') {
+    this.msgAdapter.messagingMode = mode
+  }
 }

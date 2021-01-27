@@ -2,10 +2,12 @@ import { inbox, outbox } from "file-transfer";
 import { Message } from "../../model/message";
 import { readFileSync } from "fs";
 import { TextDecoder, TextEncoder } from "../../../common/encoding";
+import {MessagingAdapter} from "./messagingAdapter";
 
-export class FileTransferAdapter {
+export class FileTransferAdapter extends MessagingAdapter {
 
   constructor() {
+    super()
   }
 
   public init(msgReceivedCallback:any) {
