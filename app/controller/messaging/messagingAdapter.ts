@@ -1,13 +1,13 @@
 import { Message } from "../../model/message";
 import { peerSocket } from "messaging";
 import { QueueMessage } from "./queueMessage";
-import { launchApp, memory } from "system";
+import { memory } from "system";
 import {Queue} from "./queue";
 
 
 export class MessagingAdapter {
 
-  debug = true;
+  debug = false;
 
   last_send_message_id = -1;
   last_received_message_id = -1;
