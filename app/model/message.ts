@@ -1,3 +1,4 @@
+import {MsgConstants} from "../../common/msgConstants";
 
 export class Message {
   command: string
@@ -28,5 +29,9 @@ export class Message {
     console.log(JSON.stringify(str))
     let ar = str.split("*")
     return (new Message(ar[0], ar[1]))
+  }
+
+  isMultiMessage(): boolean {
+    return this.command === MsgConstants.FITBIT_MESSAGE_MULTI
   }
 }
