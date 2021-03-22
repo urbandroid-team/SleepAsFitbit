@@ -5,6 +5,7 @@ import { MockAdapter } from "./mockAdapter";
 import { SocketMessagingAdapter } from "./socketMessagingAdapter";
 import { MsgConstants } from '../../../common/msgConstants'
 import {MessagingAdapter} from "./messagingAdapter";
+import {AppConfig} from "../../../common/appConfig";
 
 export class MsgManager {
   // Static constants
@@ -12,7 +13,7 @@ export class MsgManager {
 
   ctx:Context
   msgAdapter: MessagingAdapter
-  debug = false;
+  debug = AppConfig.DEBUG_MSG_MANAGER
 
   constructor(context: Context) {
     this.ctx = context

@@ -75,7 +75,7 @@ export class PhoneMessagingAdapter {
           // this most probably means server on phone is not started
           console.warn("Can't connect to Sleep. Is sleep tracking running on the phone?")
         } else {
-          !AppConfig.companionDebug && console.error("sendMessageToSleep err " + error)
+          !AppConfig.DEBUG_COMPANION && console.error("sendMessageToSleep err " + error)
         }
       });
   }

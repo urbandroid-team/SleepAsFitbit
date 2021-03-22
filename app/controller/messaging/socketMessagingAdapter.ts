@@ -4,11 +4,12 @@ import { QueueMessage } from "./queueMessage";
 import { memory } from "system";
 import {Queue} from "./queue";
 import {MessagingAdapter} from "./messagingAdapter";
+import {AppConfig} from "../../../common/appConfig";
 
 
 export class SocketMessagingAdapter extends MessagingAdapter {
 
-  debug = false;
+  debug = AppConfig.DEBUG_SOCKET_MESSAGING_ADAPTER
 
   last_send_message_id = -1;
   last_received_message_id = -1;
