@@ -2,11 +2,11 @@ import { display } from "display";
 import { me } from 'appbit'
 import { Context } from "./controller/context";
 import { Message } from "./model/message";
+import {AppConfig} from "../common/appConfig";
 
 var fitbitSdk = 3;
 
 var ctx = new Context()
-var debug = ctx.debugManager.debug
 
 try {
   // fitlogger.init({
@@ -19,7 +19,7 @@ try {
   ctx.ui.changeToTrackingScreen()
   ctx.ui.initializeClock()
 
-  if (debug) {
+  if (AppConfig.DEBUG_MAIN) {
     display.autoOff = false;
     display.on = true;
   }

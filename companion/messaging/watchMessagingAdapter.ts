@@ -7,7 +7,7 @@ import { me } from "companion";
 
 export class WatchMessagingAdapter {
 
-  debug = AppConfig.companionDebug;
+  debug = AppConfig.DEBUG_COMPANION;
 
   lastSentMessageID = -1;
   lastReceivedMessageID = -1;

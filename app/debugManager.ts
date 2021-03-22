@@ -2,8 +2,6 @@ import { Context } from "./controller/context";
 import { memory } from "system";
 
 export class DebugManager {
-
-  debug:boolean = false
   ctx: Context
 
   constructor(context: Context) {
