@@ -1,6 +1,4 @@
 import {QueueMessage} from "./queueMessage";
-import {MsgConstants} from "../../../common/msgConstants";
-import { Message } from "../../model/message";
 import {MultiMessage} from "../../model/MultiMessage";
 
 export class Queue {
@@ -35,8 +33,16 @@ export class Queue {
 	}
 
 	squashIntoMulti(idForMultiMsg: number) {
+		// TODO: if there's already one multi-message, we can't keep wrapping it with multi ad infinitum
+
+
 		this._queue = [this._queue.reduce((multiMsg, msg) => {
-			(multiMsg.body as MultiMessage).addMessage(msg.body)
+			if (msg.body.isMultiMessage()) {
+				// console.log('Add multi to multi', msg.body);
+				(multiMsg.body as MultiMessage).addMessage(msg.body.data)
+			} else {
+				(multiMsg.body as MultiMessage).addMessage(msg.body)
+			}
 			return multiMsg
 		}, new QueueMessage(idForMultiMsg, new MultiMessage()))]
 	}
