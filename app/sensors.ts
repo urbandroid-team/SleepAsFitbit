@@ -81,7 +81,7 @@ export class Hr {
 
   constructor() {
     if (HeartRateSensor)
-      this.hrm = new HeartRateSensor({ frequency: 1, batch: 250 })
+      this.hrm = new HeartRateSensor({ frequency: 1, batch: 60 })
   }
 
   startSensor(receiver: any) {
