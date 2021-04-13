@@ -65,6 +65,12 @@ export class UIManager {
     this.alarmBtnSnooze = document.getElementById('alarm-btn-snooze')
     this.alarmBtnDismiss = document.getElementById('alarm-btn-dismiss')
 
+    // Panic dots
+    for (let i = 0; i < 7; i++) {
+      // @ts-ignore
+      document.getElementById('panic-counter-' + i).style.display = "none"
+    }
+
     // Upper row
     this.status = document.getElementById('status')
     this.hr = document.getElementById('hrText')
