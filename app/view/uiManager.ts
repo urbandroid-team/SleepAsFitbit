@@ -275,7 +275,7 @@ export class UIManager {
       this.hr.text = ""
       return
     }
-    this.hr.text = " ❤" + this.ctx.sensorsController.hr.getLatestValue()
+    this.hr.text = " ❤" + this.ctx.sensorsController.hr.getLatestValue() || '-'
   }
   initializeClock() {
     console.log("UI: initialize clock")

@@ -86,20 +86,9 @@ export class Hr {
 
   startSensor(receiver: any) {
     console.log("HR startSensor")
-    if (this.hrm.activated) { return }
-
-    if (HeartRateSensor && !this.latestValue) {
-      const hrm = new HeartRateSensor({ frequency: 1 });
-      hrm.addEventListener("reading", () => {
-        if (this.latestValue)
-          return;
-
-        console.log(`HR initial reading: ${hrm.heartRate}`);
-        this.latestValue = hrm.heartRate;
-        hrm.stop()
-        receiver(this.latestValue)
-      });
-      hrm.start();
+    if (this.hrm.activated) {
+      console.log('Hr#startSensor: already activated')
+      return
     }
 
     this.hrm.onreading = () => {
@@ -109,6 +98,12 @@ export class Hr {
     }
 
     this.hrm.start()
+
+    if (!this.latestValue) {
+      console.log(`HR initial reading: ${this.hrm.heartRate}`);
+      this.latestValue = this.hrm.heartRate
+      receiver(this.latestValue)
+    }
   }
 
   stopSensor() {
