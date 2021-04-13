@@ -259,7 +259,7 @@ export class UIManager {
   }
   setStatusPanic() {
     console.log("UI: status panic")
-    this.status.text = "Err:Contact support"
+    // this.status.text = "Err:Contact support"
     this.hr.text = ""
 
     // @ts-ignore
