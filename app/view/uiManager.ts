@@ -1,7 +1,7 @@
 import document from "document";
 import clock from 'clock';
 import { Context } from "../controller/context";
-import { display } from "display";
+import {Display, display} from "display";
 
 enum StyleType {
   DEFAULT,
@@ -38,6 +38,8 @@ export class UIManager {
   alarmBtnDismiss: any
   btnExitYes: any
   btnExitNo: any
+
+  displayTimeoutHandle: any
 
   constructor(context: Context) {
     this.ctx = context
@@ -88,7 +90,6 @@ export class UIManager {
     this.registerButtonActions()
     this.overrideBackSwipe();
 
-    display.brightnessOverride = "dim"
   }
 
   registerButtonActions() {
@@ -200,6 +201,8 @@ export class UIManager {
 
     this.setStyle(StyleType.ALARM);
     this.switchToRunninagPage();
+    display.brightnessOverride = "max"
+    this.unsetShortDisplayTimeout()
 
     this.alarmBtnWrapper.style.display = "inline"
     this.trackingBtn.style.display = "none"
@@ -215,6 +218,9 @@ export class UIManager {
 
   changeToTrackingScreen() {
     console.log("UI: tracking screen")
+
+    display.brightnessOverride = "dim"
+    this.setShortDisplayTimeout()
 
     this.setStyle(StyleType.DEFAULT);
 
@@ -303,5 +309,23 @@ export class UIManager {
   }
   changeButtonImageIcon(button:any, image:string) {
     button.image = image
+  }
+
+  private setShortDisplayTimeout() {
+    if (this.displayTimeoutHandle) return
+
+    display.onchange = ((event: Event) => {
+      if (display.on) {
+        this.displayTimeoutHandle = setTimeout(() => {
+          display.on = false
+        }, 4000)
+      }
+    })
+  }
+
+  private unsetShortDisplayTimeout() {
+    if (!this.displayTimeoutHandle) return
+    clearTimeout(this.displayTimeoutHandle)
+    this.displayTimeoutHandle = null
   }
 }
