@@ -1,6 +1,7 @@
 import document from "document";
 import clock from 'clock';
 import { Context } from "../controller/context";
+import { display } from "display";
 
 export class UIManager {
   private panicCounter: number = 0;
@@ -80,6 +81,8 @@ export class UIManager {
     this.alarmTime = document.getElementById("alarmTime")
 
     this.registerButtonActions()
+
+    display.brightnessOverride = "dim"
   }
 
   registerButtonActions() {
