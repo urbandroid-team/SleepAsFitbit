@@ -1,7 +1,7 @@
 import document from "document";
 import clock from 'clock';
 import { Context } from "../controller/context";
-import { display } from "display";
+import {Display, display} from "display";
 
 export class UIManager {
   private panicCounter: number = 0;
@@ -33,6 +33,8 @@ export class UIManager {
   alarmBtnBR: any
   btnExitYes: any
   btnExitNo: any
+
+  displayTimeoutHandle: any
 
   constructor(context: Context) {
     this.ctx = context
@@ -82,7 +84,6 @@ export class UIManager {
 
     this.registerButtonActions()
 
-    display.brightnessOverride = "dim"
   }
 
   registerButtonActions() {
@@ -146,6 +147,9 @@ export class UIManager {
   changeToAlarmScreen() {
     console.log("UI: alarm screen")
 
+    display.brightnessOverride = "max"
+    this.unsetShortDisplayTimeout()
+
     this.background.style.fill = '#008080'
 
     this.alarmBtnWrapper.style.display = "inline"
@@ -162,6 +166,9 @@ export class UIManager {
 
   changeToTrackingScreen() {
     console.log("UI: tracking screen")
+
+    display.brightnessOverride = "dim"
+    this.setShortDisplayTimeout()
 
     this.background.style.fill = 'black'
 
@@ -255,4 +262,21 @@ export class UIManager {
     button.getElementById("combo-button-icon-press").image = pressedImage
   }
 
+  private setShortDisplayTimeout() {
+    if (this.displayTimeoutHandle) return
+
+    display.onchange = ((event: Event) => {
+      if (display.on) {
+        this.displayTimeoutHandle = setTimeout(() => {
+          display.on = false
+        }, 4000)
+      }
+    })
+  }
+
+  private unsetShortDisplayTimeout() {
+    if (!this.displayTimeoutHandle) return
+    clearTimeout(this.displayTimeoutHandle)
+    this.displayTimeoutHandle = null
+  }
 }
