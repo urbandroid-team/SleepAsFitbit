@@ -1,6 +1,7 @@
 import document from "document";
 import clock from 'clock';
 import { Context } from "../controller/context";
+import { display } from "display";
 
 enum StyleType {
   DEFAULT,
@@ -86,6 +87,8 @@ export class UIManager {
 
     this.registerButtonActions()
     this.overrideBackSwipe();
+
+    display.brightnessOverride = "dim"
   }
 
   registerButtonActions() {
