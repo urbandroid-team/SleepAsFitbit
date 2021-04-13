@@ -60,6 +60,12 @@ export class UIManager {
     this.alarmBtnBR = document.getElementById('alarm-btn-br')
     this.trackingBtnBR.style.display = 'none'
 
+    // Panic dots
+    for (let i = 0; i < 7; i++) {
+      // @ts-ignore
+      document.getElementById('panic-counter-' + i).style.display = "none"
+    }
+
     // Upper row
     this.status = document.getElementById('status')
     this.hr = document.getElementById('hrText')
