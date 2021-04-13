@@ -113,4 +113,9 @@ export class MsgManager {
   private setMessagingMode(mode: 'single' | 'multi') {
     this.msgAdapter.messagingMode = mode
   }
+
+  sendRecoveredFromPanic() {
+    this.msgAdapter.send(new Message(MsgConstants.FITBIT_MESSAGE_PANIC_RECOVERY))
+
+  }
 }

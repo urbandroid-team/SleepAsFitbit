@@ -63,6 +63,7 @@ export class DebugManager {
     this.ctx.businessController.startTrackingIfNotTracking()
     this.ctx.msgManager.restartMessaging()
     this.ctx.ui.recoverFromPanic()
+    this.ctx.msgManager.sendRecoveredFromPanic()
 
   }
 }
