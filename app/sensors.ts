@@ -101,8 +101,10 @@ export class Hr {
 
     if (!this.latestValue) {
       console.log(`HR initial reading: ${this.hrm.heartRate}`);
-      this.latestValue = this.hrm.heartRate
-      receiver(this.latestValue)
+      if (this.hrm.heartRate) {
+        this.latestValue = this.hrm.heartRate
+        receiver(this.latestValue)
+      }
     }
   }
 
