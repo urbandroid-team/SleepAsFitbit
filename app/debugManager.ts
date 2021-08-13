@@ -12,7 +12,7 @@ export class DebugManager {
 
   panic() {
     console.error("PANIC")
-    this.ctx.businessController.stopTracking()
+    this.ctx.businessController.stopTrackingFromWatch()
     this.ctx.businessController.stopAlarm()
     this.ctx.msgManager.stopMessaging()
     this.ctx.ui.setStatusPanic()

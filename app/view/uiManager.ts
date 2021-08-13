@@ -114,7 +114,7 @@ export class UIManager {
 
     this.btnExitYes.onclick = () => {
       if (this.ctx.tracking.tracking) {
-        this.ctx.businessController.stopTracking()
+        this.ctx.businessController.stopTrackingFromWatch()
         this.ctx.businessController.exitApp(10000)
       } else {
         that.ctx.businessController.exitApp()
