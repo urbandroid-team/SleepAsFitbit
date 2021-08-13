@@ -72,11 +72,11 @@ export class BusinessController {
   }
 
   stopTrackingFromPhone() {
-    this.stopTracking(false)
+    return this.stopTracking(false)
   }
 
   stopTrackingFromWatch() {
-    this.stopTracking(true)
+    return this.stopTracking(true)
   }
 
   private stopTracking(sendStopToPhone: boolean) {
