@@ -71,12 +71,20 @@ export class BusinessController {
     return [maxDataArr.join(':'), maxRawDataArr.join(':')].join(';')
   }
 
-  stopTracking() {
+  stopTrackingFromPhone() {
+    this.stopTracking(false)
+  }
+
+  stopTrackingFromWatch() {
+    this.stopTracking(true)
+  }
+
+  private stopTracking(sendStopToPhone: boolean) {
     if (this.ctx.tracking.tracking) {
       console.log("stopTracking")
       this.ctx.sensorsController.stopAllSensors()
       this.ctx.queue.clearQueue()
-      this.ctx.msgManager.sendStopTracking()
+      if (sendStopToPhone) this.ctx.msgManager.sendStopTracking()
       return true
     } else {
       console.log("stopTracking - ignored due to no tracking")
