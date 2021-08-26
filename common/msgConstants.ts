@@ -24,5 +24,6 @@ export enum MsgConstants {
 
   // from watch
   FITBIT_MESSAGE_CONFIRM_CONNECTED = "connected",
-  FITBIT_MESSAGE_PANIC_RECOVERY = "panic_recovery"
+  FITBIT_MESSAGE_PANIC_RECOVERY = "panic_recovery",
+  FITBIT_MESSAGE_PANIC = "panic",
 }

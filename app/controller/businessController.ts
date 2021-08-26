@@ -79,6 +79,11 @@ export class BusinessController {
     return this.stopTracking(true)
   }
 
+  stopTrackingDueToPanicMode() {
+    return this.stopTracking(false)
+    this.ctx.msgManager.sendPanicOccurred()
+  }
+
   private stopTracking(sendStopToPhone: boolean) {
     if (this.ctx.tracking.tracking) {
       console.log("stopTracking")
