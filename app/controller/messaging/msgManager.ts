@@ -118,4 +118,8 @@ export class MsgManager {
     this.msgAdapter.send(new Message(MsgConstants.FITBIT_MESSAGE_PANIC_RECOVERY))
 
   }
+
+  sendPanicOccurred() {
+    this.msgAdapter.send(new Message(MsgConstants.FITBIT_MESSAGE_PANIC))
+  }
 }
